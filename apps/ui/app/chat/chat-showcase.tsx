@@ -1,6 +1,10 @@
 "use client";
 
 import {
+  PageHeaderDescription,
+  PageHeaderHeading,
+} from "@coss/ui/shared/page-header";
+import {
   ArrowRightIcon,
   ArrowUpRightIcon,
   CheckIcon,
@@ -15,11 +19,12 @@ import { useCopyToClipboard } from "@/registry/default/hooks/use-copy-to-clipboa
 import { Badge } from "@/registry/default/ui/badge";
 import { Button } from "@/registry/default/ui/button";
 import { DrawerTrigger } from "@/registry/default/ui/drawer";
-import { Tabs, TabsList, TabsPanel, TabsTab } from "@/registry/default/ui/tabs";
+import { Tabs, TabsPanel, TabsPrimitive } from "@/registry/default/ui/tabs";
 import { ChatFeatures } from "./chat-features";
 import { ChatLayouts } from "./chat-layouts";
 import { ChatPreview } from "./chat-preview";
 import { ChatStatesSection } from "./chat-states-section";
+import { PageHero } from "@/components/page-hero";
 
 const COMPONENT_MAP = [
   { area: "Conversation", components: ["ChatConversation", "useChatScroll"] },
@@ -108,70 +113,77 @@ export function ChatShowcase() {
     <ChatDemo
       renderTriggers={(select) => (
         <>
-          <section className="container grid items-center gap-12 py-14 md:grid-cols-2 md:gap-14 md:py-20 lg:gap-24">
-            <div className="flex min-w-0 flex-col items-start">
-              <Badge
-                variant="outline"
-                className="mb-6 h-7 gap-1.5 rounded-full px-2.5 text-xs shadow-xs/5 sm:h-7"
-              >
-                <MessagesSquareIcon aria-hidden="true" className="size-3.5" />
-                Chat UI
-              </Badge>
-              <h1 className="font-bold font-heading text-5xl leading-none tracking-tight lg:text-6xl xl:text-7xl">
-                Make room
-                <br />
-                for conversation.
-              </h1>
-              <p className="mt-6 max-w-md text-pretty text-lg text-muted-foreground">
-                Chat components for React with replies, reactions, mentions, and
-                delivery states built in. Copy the source and make it yours.
-              </p>
-              <div className="mt-8 flex flex-wrap gap-2.5">
-                <DrawerTrigger
-                  render={<Button size="lg" />}
-                  onClick={() => select("conversation")}
-                >
-                  Open the full demo
-                  <ArrowUpRightIcon aria-hidden="true" />
-                </DrawerTrigger>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  render={<Link href="/docs/chat" />}
-                >
-                  Read the docs
-                </Button>
-              </div>
-              <div className="mt-5">
-                <InstallCommand command="npx shadcn@latest add @coss/chat" />
-              </div>
-              <p className="mt-8 text-muted-foreground text-xs">
-                Built with Base UI, Tailwind CSS, and Motion
-              </p>
-            </div>
-            <div className="mx-auto w-full max-w-md">
-              <Tabs defaultValue="direct" className="gap-5">
-                <TabsList
+          <PageHero
+            aside={
+              <Tabs defaultValue="direct" className="w-full max-w-md">
+                <TabsPrimitive.List
                   aria-label="Conversation type"
-                  className="self-center"
+                  className="absolute right-5 bottom-4 flex gap-2 font-mono text-xs leading-relaxed"
                 >
-                  <TabsTab value="direct">Direct message</TabsTab>
-                  <TabsTab value="group">Group chat</TabsTab>
-                </TabsList>
-                <TabsPanel value="direct">
-                  <ChatPreview direct />
+                  <TabsPrimitive.Tab
+                    className="cursor-pointer rounded-sm text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring data-active:text-foreground"
+                    value="direct"
+                  >
+                    direct message
+                  </TabsPrimitive.Tab>
+                  <span aria-hidden="true" className="text-muted-foreground/48">
+                    ·
+                  </span>
+                  <TabsPrimitive.Tab
+                    className="cursor-pointer rounded-sm text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring data-active:text-foreground"
+                    value="group"
+                  >
+                    group chat
+                  </TabsPrimitive.Tab>
+                </TabsPrimitive.List>
+                <TabsPanel className="relative" value="direct">
+                  <ChatPreview className="h-120" direct />
                 </TabsPanel>
-                <TabsPanel value="group">
-                  <ChatPreview />
+                <TabsPanel className="relative" value="group">
+                  <ChatPreview className="h-120" />
                 </TabsPanel>
               </Tabs>
-            </div>
-          </section>
-
-          <section
-            aria-labelledby="chat-features"
-            className="border-t bg-muted/24"
+            }
           >
+            <Badge
+              variant="outline"
+              className="h-7 gap-1.5 rounded-full px-2.5 text-xs shadow-xs/5 sm:h-7"
+            >
+              <MessagesSquareIcon aria-hidden="true" className="size-3.5" />
+              Chat UI
+            </Badge>
+            <PageHeaderHeading>
+              Make room
+              <br />
+              for conversation.
+            </PageHeaderHeading>
+            <PageHeaderDescription className="max-w-xl text-pretty">
+              Chat components for React with replies, reactions, mentions, and
+              delivery states built in. Copy the source and make it yours.
+            </PageHeaderDescription>
+            <div className="mt-2 flex flex-wrap gap-2">
+              <DrawerTrigger
+                render={<Button size="lg" />}
+                onClick={() => select("conversation")}
+              >
+                Open the full demo
+                <ArrowUpRightIcon aria-hidden="true" />
+              </DrawerTrigger>
+              <Button
+                size="lg"
+                variant="outline"
+                render={<Link href="/docs/chat" />}
+              >
+                Read the docs
+              </Button>
+            </div>
+            <InstallCommand command="npx shadcn@latest add @coss/chat" />
+            <p className="text-muted-foreground text-xs">
+              Built with Base UI, Tailwind CSS, and Motion
+            </p>
+          </PageHero>
+
+          <section aria-labelledby="chat-features" className="bg-muted/24">
             <div className="container py-14 md:py-20">
               <SectionHeading
                 id="chat-features"

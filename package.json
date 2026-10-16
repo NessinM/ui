@@ -29,5 +29,8 @@
     "apps/*",
     "apps/examples/*",
     "packages/*"
-  ]
+  ],
+  "patchedDependencies": {
+    "@lucasmarkes/hairline@0.5.1": "patches/@lucasmarkes%2Fhairline@0.5.1.patch"
+  }
 }

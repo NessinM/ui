@@ -1,0 +1,14 @@
+diff --git a/dist/index.js b/dist/index.js
+index f6cef05016c9d1e6be80a4dd06e232797baf3330..a987bd3d384c38e10159cf065bfb1382e94758ad 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -4525,7 +4525,8 @@ var mount26 = ({ stage, svg, read }, value) => {
+     if (key === tl.key) return;
+     tl.key = key;
+     const r = turned(p.x, p.y, HALF2, 3.6, p.a);
+-    put(tl.el, slab3(P, front2, r, inset(C, r, 1), p.z, p.z + TH5));
++    // patched: a concentric lip; inset() overshoots the tile at some turns
++    put(tl.el, slab3(P, front2, r, turned(p.x, p.y, HALF2 - 1.2, 2.4, p.a), p.z, p.z + TH5));
+   }
+   let order2 = "";
+   function paintOrder2() {

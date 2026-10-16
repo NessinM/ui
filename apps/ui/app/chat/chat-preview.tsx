@@ -122,7 +122,13 @@ const DIRECT_REPLIES = [
   "Perfect. Let’s catch up this afternoon.",
 ];
 
-export function ChatPreview({ direct = false }: { direct?: boolean }) {
+export function ChatPreview({
+  className,
+  direct = false,
+}: {
+  className?: string;
+  direct?: boolean;
+}) {
   const previewId = useId();
   const initialMessages = direct ? DIRECT_MESSAGES : GROUP_MESSAGES;
   const members: MemberId[] = direct ? ["maya"] : ["maya", "jordan", "alex"];
@@ -379,7 +385,10 @@ export function ChatPreview({ direct = false }: { direct?: boolean }) {
           cancelReply();
         }
       }}
-      className="flex h-144 min-w-0 flex-col overflow-hidden rounded-2xl border bg-popover shadow-lg/5"
+      className={cn(
+        "flex h-144 min-w-0 flex-col overflow-hidden rounded-2xl border bg-popover shadow-lg/5",
+        className,
+      )}
     >
       <div className="flex shrink-0 items-center justify-between gap-4 px-4 py-3.5">
         <div className="flex items-center gap-3">

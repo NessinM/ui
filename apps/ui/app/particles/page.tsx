@@ -1,5 +1,4 @@
 import {
-  PageHeader,
   PageHeaderDescription,
   PageHeaderHeading,
 } from "@coss/ui/shared/page-header";
@@ -9,6 +8,7 @@ import { isValidRegistryCategory } from "@/registry/registry-categories";
 import { particles } from "@/registry/registry-particles";
 import { ParticlesDisplay } from "./particles-display";
 import SearchContainer from "./search-container";
+import { PageHero } from "@/components/page-hero";
 
 const particleCount = particles.length;
 
@@ -58,19 +58,21 @@ export default function Page({
   searchParams: Promise<{ tags?: string }>;
 }) {
   return (
-    <div className="container w-full">
-      <PageHeader className="*:pb-8!">
+    <>
+      <PageHero figure="riffle">
         <PageHeaderHeading>Browse Particles</PageHeaderHeading>
         <PageHeaderDescription className="max-w-2xl">
           {description}
         </PageHeaderDescription>
-      </PageHeader>
-      <Suspense>
-        <SearchContainer />
-      </Suspense>
-      <Suspense>
-        <ParticlesDisplayServer searchParams={searchParams} />
-      </Suspense>
-    </div>
+        <Suspense>
+          <SearchContainer />
+        </Suspense>
+      </PageHero>
+      <div className="container w-full pt-8 md:pt-12">
+        <Suspense>
+          <ParticlesDisplayServer searchParams={searchParams} />
+        </Suspense>
+      </div>
+    </>
   );
 }

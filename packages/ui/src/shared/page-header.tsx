@@ -20,7 +20,10 @@ function PageHeaderHeading({
 }: React.ComponentProps<"h1">) {
   return (
     <h1
-      className={cn("font-bold font-heading text-4xl lg:text-5xl", className)}
+      className={cn(
+        "text-balance font-bold font-heading text-[clamp(2.25rem,1.5rem+2.6vw,4rem)] leading-none [font-variation-settings:'GEOM'_50]",
+        className,
+      )}
       {...props}
     />
   );
