@@ -2213,6 +2213,19 @@ export const particles: ParticleItem[] = [
     type: "registry:block",
   },
   {
+    categories: categories("composer", "loading"),
+    dependencies: ["lucide-react"],
+    description: "Composer whose send button becomes Stop while busy",
+    files: [{ path: "particles/p-composer-12.tsx", type: "registry:block" }],
+    meta: {
+      className:
+        "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-xl",
+    },
+    name: "p-composer-12",
+    registryDependencies: ["@coss/button", "@coss/composer"],
+    type: "registry:block",
+  },
+  {
     categories: categories("command", "dialog"),
     dependencies: ["lucide-react"],
     description: "Command palette with dialog",

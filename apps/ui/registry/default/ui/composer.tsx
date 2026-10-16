@@ -69,6 +69,7 @@ function ComposerFrame({
     },
     "data-disabled": editor?.disabled ? "" : undefined,
     "data-readonly": editor?.readOnly ? "" : undefined,
+    "data-busy": editor?.busy ? "" : undefined,
     children: (
       <>
         {children}
@@ -83,7 +84,7 @@ function ComposerFrame({
       </>
     ),
     className: cn(
-      "relative flex min-h-0 min-w-0 cursor-text flex-col rounded-(--composer-radius) border border-input bg-background not-dark:bg-clip-padding pb-[calc(var(--composer-padding)-1px)] text-foreground shadow-xs/5 ring-ring/24 transition-shadow [--composer-radius:var(--radius-xl)] [--composer-max-rows:4] [--composer-padding:--spacing(2)] before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--composer-radius)-1px)] not-data-disabled:not-has-[[data-slot=composer-input]:focus-visible]:not-has-aria-invalid:before:shadow-[0_1px_--theme(--color-black/4%)] has-[[data-slot=composer-input]:focus-visible]:has-aria-invalid:border-destructive/64 has-[[data-slot=composer-input]:focus-visible]:has-aria-invalid:ring-destructive/16 has-[[data-slot=composer-input]:focus-visible]:border-ring has-aria-invalid:border-destructive/36 has-[[data-slot=composer-input]:focus-visible]:shadow-none has-aria-invalid:shadow-none has-[[data-slot=composer-input]:focus-visible]:ring-[3px] aria-invalid:border-destructive/36 aria-invalid:shadow-none data-disabled:opacity-64 data-disabled:shadow-none dark:bg-input/32 dark:aria-invalid:ring-destructive/24 dark:has-aria-invalid:ring-destructive/24 dark:not-data-disabled:not-has-[[data-slot=composer-input]:focus-visible]:not-has-aria-invalid:before:shadow-[0_-1px_--theme(--color-white/6%)] md:[--composer-max-rows:8]",
+      "relative flex min-h-0 min-w-0 cursor-text flex-col rounded-(--composer-radius) border border-input bg-background not-dark:bg-clip-padding pb-[calc(var(--composer-padding)-1px)] text-foreground shadow-xs/5 ring-ring/24 transition-shadow [--composer-max-rows:4] [--composer-padding:--spacing(2)] [--composer-radius:var(--radius-xl)] before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--composer-radius)-1px)] not-data-disabled:not-has-[[data-slot=composer-input]:focus-visible]:not-has-aria-invalid:before:shadow-[0_1px_--theme(--color-black/4%)] has-[[data-slot=composer-input]:focus-visible]:has-aria-invalid:border-destructive/64 has-[[data-slot=composer-input]:focus-visible]:has-aria-invalid:ring-destructive/16 has-[[data-slot=composer-input]:focus-visible]:border-ring has-aria-invalid:border-destructive/36 has-[[data-slot=composer-input]:focus-visible]:shadow-none has-aria-invalid:shadow-none has-[[data-slot=composer-input]:focus-visible]:ring-[3px] aria-invalid:border-destructive/36 aria-invalid:shadow-none data-disabled:opacity-64 data-disabled:shadow-none dark:bg-input/32 dark:aria-invalid:ring-destructive/24 dark:has-aria-invalid:ring-destructive/24 dark:not-data-disabled:not-has-[[data-slot=composer-input]:focus-visible]:not-has-aria-invalid:before:shadow-[0_-1px_--theme(--color-white/6%)] md:[--composer-max-rows:8]",
       "data-[layout=adaptive]:data-multiline:grid-rows-[minmax(0,1fr)_auto] data-[layout=adaptive]:grid data-[layout=adaptive]:grid-cols-[auto_minmax(0,1fr)_auto] data-[layout=adaptive]:items-center data-[layout=adaptive]:not-data-multiline:px-[calc(--spacing(2)-1px)] data-[layout=adaptive]:not-data-multiline:pt-[calc(var(--composer-padding)-1px)]",
       className,
     ),
@@ -117,6 +118,8 @@ export function Composer({
   submitDisabled,
   allowEmpty,
   submitOnEnter,
+  busy,
+  onStop,
   name,
   getSuggestionsAnnouncement,
   ...frameProps
@@ -136,6 +139,8 @@ export function Composer({
       submitDisabled={submitDisabled}
       allowEmpty={allowEmpty}
       submitOnEnter={submitOnEnter}
+      busy={busy}
+      onStop={onStop}
       getSuggestionsAnnouncement={getSuggestionsAnnouncement}
     >
       <ComposerFrame {...frameProps} layout={layout} name={name} />
@@ -463,14 +468,19 @@ export function ComposerSubmit({
   className,
   style,
   render,
+  stopRender,
   ref,
   ...props
-}: Omit<ComponentProps<typeof ButtonPrimitive>, "type">): ReactElement {
+}: Omit<ComponentProps<typeof ButtonPrimitive>, "type"> & {
+  stopRender?: ComponentProps<typeof ButtonPrimitive>["render"];
+}): ReactElement {
   const editor = useComposerEditorContext();
+  const stopping = Boolean(editor?.busy && stopRender);
   const defaultProps = {
     "data-slot": "composer-submit",
+    "data-busy": editor?.busy ? "" : undefined,
     type: "button" as const,
-    disabled: disabled ?? !editor?.canSubmit,
+    disabled: disabled ?? (stopping ? false : !editor?.canSubmit),
     onPointerDown: (event: PointerEvent<HTMLButtonElement>): void => {
       const input = editor?.rootRef.current?.querySelector(
         '[data-slot="composer-input"]',
@@ -485,7 +495,8 @@ export function ComposerSubmit({
     onClick: (event: MouseEvent<HTMLButtonElement>): void => {
       if (event.defaultPrevented || disabled) return;
       event.preventDefault();
-      editor?.submit();
+      if (stopping) editor?.stop();
+      else editor?.submit();
     },
   };
   return (
@@ -493,7 +504,7 @@ export function ComposerSubmit({
       {...mergeProps<"button">(defaultProps, props)}
       className={className}
       style={style}
-      render={render}
+      render={stopping ? stopRender : render}
       ref={ref}
     />
   );
