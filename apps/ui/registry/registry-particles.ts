@@ -156,6 +156,68 @@ export const particles: ParticleItem[] = [
     type: "registry:block",
   },
   {
+    categories: categories("agent", "card", "error"),
+    description:
+      "Approval card that responds, resolves, or shows an error when the answer fails",
+    files: [{ path: "particles/p-agent-20.tsx", type: "registry:block" }],
+    meta: {
+      className:
+        "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm",
+    },
+    name: "p-agent-20",
+    registryDependencies: [
+      "@coss/agent",
+      "@coss/button",
+      "@coss/label",
+      "@coss/switch",
+    ],
+    type: "registry:block",
+  },
+  {
+    categories: categories("agent", "card"),
+    description:
+      "Group approval card with approve all, skip all, and one shared question",
+    files: [{ path: "particles/p-agent-21.tsx", type: "registry:block" }],
+    meta: {
+      className:
+        "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm",
+    },
+    name: "p-agent-21",
+    registryDependencies: [
+      "@coss/agent",
+      "@coss/button",
+      "@coss/label",
+      "@coss/switch",
+    ],
+    type: "registry:block",
+  },
+  {
+    categories: categories("agent", "dialog", "error"),
+    description:
+      "Thumbs up and down feedback with reasons, details, and a failure state",
+    files: [{ path: "particles/p-agent-22.tsx", type: "registry:block" }],
+    meta: {
+      className:
+        "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm",
+    },
+    name: "p-agent-22",
+    registryDependencies: ["@coss/agent", "@coss/label", "@coss/switch"],
+    type: "registry:block",
+  },
+  {
+    categories: categories("agent", "error"),
+    description:
+      "Failed agent turn with retry and check status recovery actions",
+    files: [{ path: "particles/p-agent-23.tsx", type: "registry:block" }],
+    meta: {
+      className:
+        "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm",
+    },
+    name: "p-agent-23",
+    registryDependencies: ["@coss/agent", "@coss/label", "@coss/switch"],
+    type: "registry:block",
+  },
+  {
     categories: categories("alert", "info"),
     dependencies: ["lucide-react"],
     description: "Info alert",

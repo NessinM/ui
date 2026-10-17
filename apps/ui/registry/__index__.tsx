@@ -1169,15 +1169,23 @@ export const Index: Record<string, any> = {
     name: "agent",
     description: "Agent conversation, messages, message actions, and a screen reader announcer built on chat.",
     type: "registry:ui",
-    registryDependencies: ["@coss/button","@coss/chat","@coss/composer","@coss/toolbar","@coss/tooltip","@coss/use-copy-to-clipboard","@coss/use-media-query","@coss/utils"],
+    registryDependencies: ["@coss/badge","@coss/button","@coss/card","@coss/chat","@coss/composer","@coss/dialog","@coss/field","@coss/fieldset","@coss/form","@coss/textarea","@coss/toggle","@coss/toolbar","@coss/tooltip","@coss/use-copy-to-clipboard","@coss/use-media-query","@coss/utils"],
     files: [{
       path: "registry/default/agent/agent-announcer.tsx",
       type: "registry:component",
       target: "@components/agent/agent-announcer.tsx"
     },{
+      path: "registry/default/agent/agent-approval-card.tsx",
+      type: "registry:component",
+      target: "@components/agent/agent-approval-card.tsx"
+    },{
       path: "registry/default/agent/agent-conversation.tsx",
       type: "registry:component",
       target: "@components/agent/agent-conversation.tsx"
+    },{
+      path: "registry/default/agent/agent-error-recovery.tsx",
+      type: "registry:component",
+      target: "@components/agent/agent-error-recovery.tsx"
     },{
       path: "registry/default/agent/agent-message-actions.tsx",
       type: "registry:component",
@@ -1187,9 +1195,17 @@ export const Index: Record<string, any> = {
       type: "registry:component",
       target: "@components/agent/agent-message.tsx"
     },{
+      path: "registry/default/agent/agent-response-feedback.tsx",
+      type: "registry:component",
+      target: "@components/agent/agent-response-feedback.tsx"
+    },{
       path: "registry/default/agent/hooks/use-agent-announcer.ts",
       type: "registry:component",
       target: "@components/agent/hooks/use-agent-announcer.ts"
+    },{
+      path: "registry/default/agent/hooks/use-agent-pending-choice.ts",
+      type: "registry:component",
+      target: "@components/agent/hooks/use-agent-pending-choice.ts"
     },{
       path: "registry/default/agent/hooks/use-agent-reduced-motion.ts",
       type: "registry:component",
@@ -1198,6 +1214,14 @@ export const Index: Record<string, any> = {
       path: "registry/default/agent/lib/get-agent-announcement.ts",
       type: "registry:component",
       target: "@components/agent/lib/get-agent-announcement.ts"
+    },{
+      path: "registry/default/agent/lib/get-agent-approval-state.ts",
+      type: "registry:component",
+      target: "@components/agent/lib/get-agent-approval-state.ts"
+    },{
+      path: "registry/default/agent/lib/get-agent-feedback.ts",
+      type: "registry:component",
+      target: "@components/agent/lib/get-agent-feedback.ts"
     },{
       path: "registry/default/agent/lib/get-agent-scroll-offset.ts",
       type: "registry:component",
@@ -1407,6 +1431,78 @@ export const Index: Record<string, any> = {
       return { default: mod.default || mod[exportName] }
     }),
     categories: ["agent","info"],
+    meta: {"className":"**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm"},
+  },
+  "p-agent-20": {
+    name: "p-agent-20",
+    description: "Approval card that responds, resolves, or shows an error when the answer fails",
+    type: "registry:block",
+    registryDependencies: ["@coss/agent","@coss/button","@coss/label","@coss/switch"],
+    files: [{
+      path: "registry/default/particles/p-agent-20.tsx",
+      type: "registry:block",
+      target: ""
+    }],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/default/particles/p-agent-20.tsx")
+      const exportName = Object.keys(mod).find(key => typeof mod[key] === 'function' || typeof mod[key] === 'object') || item.name
+      return { default: mod.default || mod[exportName] }
+    }),
+    categories: ["agent","card","error"],
+    meta: {"className":"**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm"},
+  },
+  "p-agent-21": {
+    name: "p-agent-21",
+    description: "Group approval card with approve all, skip all, and one shared question",
+    type: "registry:block",
+    registryDependencies: ["@coss/agent","@coss/button","@coss/label","@coss/switch"],
+    files: [{
+      path: "registry/default/particles/p-agent-21.tsx",
+      type: "registry:block",
+      target: ""
+    }],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/default/particles/p-agent-21.tsx")
+      const exportName = Object.keys(mod).find(key => typeof mod[key] === 'function' || typeof mod[key] === 'object') || item.name
+      return { default: mod.default || mod[exportName] }
+    }),
+    categories: ["agent","card"],
+    meta: {"className":"**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm"},
+  },
+  "p-agent-22": {
+    name: "p-agent-22",
+    description: "Thumbs up and down feedback with reasons, details, and a failure state",
+    type: "registry:block",
+    registryDependencies: ["@coss/agent","@coss/label","@coss/switch"],
+    files: [{
+      path: "registry/default/particles/p-agent-22.tsx",
+      type: "registry:block",
+      target: ""
+    }],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/default/particles/p-agent-22.tsx")
+      const exportName = Object.keys(mod).find(key => typeof mod[key] === 'function' || typeof mod[key] === 'object') || item.name
+      return { default: mod.default || mod[exportName] }
+    }),
+    categories: ["agent","dialog","error"],
+    meta: {"className":"**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm"},
+  },
+  "p-agent-23": {
+    name: "p-agent-23",
+    description: "Failed agent turn with retry and check status recovery actions",
+    type: "registry:block",
+    registryDependencies: ["@coss/agent","@coss/label","@coss/switch"],
+    files: [{
+      path: "registry/default/particles/p-agent-23.tsx",
+      type: "registry:block",
+      target: ""
+    }],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/default/particles/p-agent-23.tsx")
+      const exportName = Object.keys(mod).find(key => typeof mod[key] === 'function' || typeof mod[key] === 'object') || item.name
+      return { default: mod.default || mod[exportName] }
+    }),
+    categories: ["agent","error"],
     meta: {"className":"**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm"},
   },
   "p-alert-4": {

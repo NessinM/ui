@@ -163,6 +163,70 @@ A phase without a label is never announced. Pass the error message or the approv
 
 Every transition the agent parts add has a reduced-motion path: CSS transitions use `motion-reduce:transition-none`, and loops such as the streaming caret run only under `motion-safe`. Parts the family composes, such as chat’s jump to latest and coss tooltips, follow their own primitives. For motion timed in JavaScript, such as an exit delay before a crossfade, read `useAgentReducedMotion()` and skip the delay when it returns `true`. Follow the same policy in your compositions.
 
+## Approvals, feedback and recovery
+
+These parts sit inside a turn: an approval card when the agent needs a yes before acting, feedback under a finished reply, and recovery when a turn fails. Every word comes from your application through props, and every result that should be heard goes through the [announcer](#announcer): pass `announcer.announce` to `announce`. None of them adds its own live region.
+
+| Component | File | Responsibility |
+| --- | --- | --- |
+| `AgentApprovalCard` | `agent/agent-approval-card.tsx` | One approval with idle, responding, approved, denied and error states |
+| `AgentApprovalGroupCard` | `agent/agent-approval-card.tsx` | Several approvals answered together, with approve all and skip all |
+| `getAgentApprovalState`, `getAgentApprovalGroupShared` | `agent/lib/get-agent-approval-state.ts` | The pure rules for a card’s state and a group’s shared wording |
+| `AgentResponseFeedback` | `agent/agent-response-feedback.tsx` | Thumbs up and down, reasons and details, saving and failure |
+| `getAgentFeedbackAction`, `getAgentFeedbackSubmission` | `agent/lib/get-agent-feedback.ts` | What a rating press does, and what a thumbs down submits |
+| `AgentErrorRecovery` | `agent/agent-error-recovery.tsx` | A failed turn’s message with retry and check-status actions |
+
+### Approval card
+
+<ComponentPreview name="p-agent-20" />
+
+`AgentApprovalCard` asks the question in `prompt` and calls `onRespond` with `"approved"` or `"denied"`. Its labels are the default verbs, `approve` and `deny`, the resolved lines, `approved` and `denied`, and the `error` line. A prompt’s `approveLabel` and `denyLabel` replace the verbs for that action, such as “Cancel booking”. The prompt can also carry a `context` line, `details` lines and a `badge`.
+
+The card renders its resolved states itself, so your transcript doesn’t need its own “Approved” row. It derives one state from three inputs, by this rule:
+
+| Input | State |
+| --- | --- |
+| `decision` is set, from your agent runtime | `approved` or `denied`, whatever else is true |
+| `responding`, or `onRespond`’s promise is running | `responding`: both actions are disabled |
+| `error`, or `onRespond`’s promise rejected | `error`: the error line shows, and the person can answer again |
+| None of these | `idle` |
+
+Return a promise from `onRespond` when your runtime confirms answers, or pass `responding` and `error` yourself. A rejection also announces the `error` label. Set `decision` once the runtime records the answer; the card keeps it even if a late response or a stale error arrives. Announce the question itself through the announcer’s `approval` phase, with the question as `detail`.
+
+When answering removes the focused button, the card moves focus to the resolved line, or back to the button after an error, so keyboard users keep their place. Set `disabled` while the agent can’t take an answer, such as during another turn. `getAgentApprovalState` is the rule behind the card; use it to test your mapping from runtime states.
+
+### Group approval card
+
+<ComponentPreview name="p-agent-21" />
+
+`AgentApprovalGroupCard` takes `items`, each an `id` and a `prompt`, and answers them together: approve all or skip all. It calls `onRespond` once with the decision, and your application answers each item. It renders nothing when `items` is empty.
+
+When every item asks the same `question`, the card asks it once, using the first item’s `sharedQuestion` when it has one, such as a plural. When the questions differ, each item shows its own. When every item has the same `approveLabel`, approve all uses that verb. `getAgentApprovalGroupShared(items)` returns both decisions. The group takes the same `decision`, `responding`, `error`, `disabled` and `announce` props as the single card.
+
+### Composing a crossfade
+
+Neither card animates into what comes next. To crossfade a card into a status line once it’s answered, wrap it in your own element and select on its stable attributes: `data-slot="agent-approval-card"` or `"agent-approval-group-card"` on the root, and `data-state` with the card’s state. Inside, the footer is `agent-approval-footer`, the resolved or error line is `agent-approval-status`, and the actions are `agent-approval-approve` and `agent-approval-deny`. Time any exit in JavaScript with `useAgentReducedMotion()`, and give CSS transitions a `motion-reduce:` variant.
+
+### Response feedback
+
+<ComponentPreview name="p-agent-22" />
+
+`AgentResponseFeedback` is a pair of thumbs for a finished reply. Place it inside `AgentMessageActions`, beside the copy action. It’s controlled: pass the shown rating as `value` and update it when `onFeedback` resolves.
+
+- **A thumbs up** calls `onFeedback` with `{ rating: "positive", reasons: [], details: "" }`.
+- **A thumbs down** opens a dialog first. With `reasons`, the person picks at least one; without them, the dialog asks only for details. `detailsMaxLength` caps the details field, and the submitted details are trimmed and capped to it.
+- **Pressing the shown rating again** calls `onFeedback(null)`. Keep the rating shown if your application can’t delete a stored one.
+
+While `onFeedback` runs, the pressed button shows a spinner and repeat presses are ignored. When it rejects, the `error` label shows beside the thumbs, or in the dialog, and is announced; a saved rating announces `submitted`. Retrying is up to your application, for example one delayed retry inside `onFeedback` before it rejects. Show feedback with the message’s `actionsAlwaysVisible` when the error must stay visible without hover.
+
+### Error recovery
+
+<ComponentPreview name="p-agent-23" />
+
+`AgentErrorRecovery` shows a failed turn: your message as children, and up to two actions. Pass `retryLabel` and `onRetry` to run the turn again, and `checkStatusLabel` and `onCheckStatus` when the turn may have changed something and running it again could repeat that. An action renders only when it has both a label and a handler. Your application decides what failed, from its own failure codes, and which action fits. Remove the slot once recovery starts, and announce the failure through the announcer’s `failed` phase with your message as `detail`.
+
+Place it where the reply would have been, inside the failed `AgentMessage` or its `footer`. The root is a `div` with `data-slot="agent-error-recovery"`; use `render` to change its element.
+
 ## Before shipping
 
 Check keyboard-only operation of message actions, a screen reader with streamed replies, a touch device and reduced motion. Test long replies, stopped and failed turns, and switching conversations, with your own agent runtime.

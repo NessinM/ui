@@ -1,0 +1,26 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "p-agent-22",
+  "description": "Thumbs up and down feedback with reasons, details, and a failure state",
+  "registryDependencies": [
+    "@coss/agent",
+    "@coss/label",
+    "@coss/switch"
+  ],
+  "files": [
+    {
+      "path": "registry/default/particles/p-agent-22.tsx",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\nimport { AgentAnnouncer } from \"@/registry/default/agent/agent-announcer\";\nimport { AgentMessage } from \"@/registry/default/agent/agent-message\";\nimport {\n  AgentMessageActions,\n  AgentMessageCopyAction,\n} from \"@/registry/default/agent/agent-message-actions\";\nimport { AgentResponseFeedback } from \"@/registry/default/agent/agent-response-feedback\";\nimport { useAgentAnnouncer } from \"@/registry/default/agent/hooks/use-agent-announcer\";\nimport type {\n  AgentFeedbackRating,\n  AgentFeedbackValue,\n} from \"@/registry/default/agent/lib/get-agent-feedback\";\nimport { Label } from \"@/registry/default/ui/label\";\nimport { Switch } from \"@/registry/default/ui/switch\";\n\nconst answer =\n  \"Your Thursday is clear after 2 pm. I held 2:00–2:30 pm for the design review and sent the invite to the team.\";\n\nconst labels = {\n  cancel: \"Cancel\",\n  details: \"Details\",\n  detailsPlaceholder: \"What should the agent have done?\",\n  dialogDescription: \"Your feedback helps improve the agent.\",\n  dialogTitle: \"What went wrong?\",\n  error: \"Feedback wasn’t saved\",\n  negative: \"Bad response\",\n  positive: \"Good response\",\n  reasons: \"Pick at least one reason\",\n  submit: \"Send feedback\",\n  submitted: \"Thanks for your feedback\",\n};\n\nconst reasons = [\n  { label: \"Wrong time\", value: \"wrong_time\" },\n  { label: \"Wrong person\", value: \"wrong_person\" },\n  { label: \"Didn’t do what I asked\", value: \"ignored_request\" },\n  { label: \"Other\", value: \"other\" },\n];\n\nexport default function Particle() {\n  const [rating, setRating] = useState<AgentFeedbackRating | null>(null);\n  const [failSaves, setFailSaves] = useState(false);\n  const announcer = useAgentAnnouncer({ labels: {}, phase: \"idle\" });\n\n  const saveFeedback = (feedback: AgentFeedbackValue | null) =>\n    new Promise<void>((resolve, reject) => {\n      window.setTimeout(() => {\n        if (failSaves) {\n          reject(new Error(\"Not saved\"));\n          return;\n        }\n        setRating(feedback?.rating ?? null);\n        resolve();\n      }, 800);\n    });\n\n  return (\n    <div className=\"flex w-full max-w-sm flex-col gap-6\">\n      <AgentMessage\n        actions={\n          <AgentMessageActions label=\"Response actions\">\n            <AgentMessageCopyAction\n              copiedLabel=\"Copied\"\n              label=\"Copy\"\n              onCopy={() => announcer.announce(\"Copied\")}\n              text={answer}\n            />\n            <AgentResponseFeedback\n              announce={announcer.announce}\n              detailsMaxLength={200}\n              labels={labels}\n              onFeedback={saveFeedback}\n              reasons={reasons}\n              value={rating}\n            />\n          </AgentMessageActions>\n        }\n        actionsAlwaysVisible\n        from=\"assistant\"\n      >\n        {answer}\n      </AgentMessage>\n      <div className=\"flex flex-col gap-4\">\n        <Label>\n          <Switch checked={failSaves} onCheckedChange={setFailSaves} />\n          Fail saves\n        </Label>\n        <p aria-hidden=\"true\" className=\"text-muted-foreground text-sm\">\n          Screen readers hear:{\" \"}\n          <span className=\"font-medium text-foreground\">\n            {announcer.message || \"nothing yet\"}\n          </span>\n        </p>\n      </div>\n      <AgentAnnouncer announcer={announcer} />\n    </div>\n  );\n}\n",
+      "type": "registry:block"
+    }
+  ],
+  "meta": {
+    "className": "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm"
+  },
+  "categories": [
+    "agent",
+    "dialog",
+    "error"
+  ],
+  "type": "registry:block"
+}

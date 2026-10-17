@@ -1,0 +1,27 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "p-agent-20",
+  "description": "Approval card that responds, resolves, or shows an error when the answer fails",
+  "registryDependencies": [
+    "@coss/agent",
+    "@coss/button",
+    "@coss/label",
+    "@coss/switch"
+  ],
+  "files": [
+    {
+      "path": "registry/default/particles/p-agent-20.tsx",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\nimport { AgentAnnouncer } from \"@/registry/default/agent/agent-announcer\";\nimport { AgentApprovalCard } from \"@/registry/default/agent/agent-approval-card\";\nimport { useAgentAnnouncer } from \"@/registry/default/agent/hooks/use-agent-announcer\";\nimport type { AgentApprovalDecision } from \"@/registry/default/agent/lib/get-agent-approval-state\";\nimport { Button } from \"@/registry/default/ui/button\";\nimport { Label } from \"@/registry/default/ui/label\";\nimport { Switch } from \"@/registry/default/ui/switch\";\n\nconst prompt = {\n  approveLabel: \"Cancel booking\",\n  badge: \"Bookings\",\n  context: \"Dana gets a cancellation email with your note.\",\n  denyLabel: \"Keep it\",\n  question: \"Cancel your 3 pm call with Dana?\",\n};\n\nconst labels = {\n  approve: \"Confirm\",\n  approved: \"Booking cancelled\",\n  denied: \"Booking kept\",\n  deny: \"Cancel\",\n  error: \"Your answer didn’t go through. Try again.\",\n};\n\nexport default function Particle() {\n  const [decision, setDecision] = useState<AgentApprovalDecision | null>(null);\n  const [failAnswers, setFailAnswers] = useState(false);\n  const announcer = useAgentAnnouncer({\n    detail: prompt.question,\n    labels: {},\n    phase: decision ? \"idle\" : \"approval\",\n  });\n\n  const respond = (choice: AgentApprovalDecision) =>\n    new Promise<void>((resolve, reject) => {\n      window.setTimeout(() => {\n        if (failAnswers) {\n          reject(new Error(\"Not delivered\"));\n          return;\n        }\n        setDecision(choice);\n        resolve();\n      }, 1000);\n    });\n\n  return (\n    <div className=\"flex w-full max-w-sm flex-col gap-4\">\n      <AgentApprovalCard\n        announce={announcer.announce}\n        decision={decision}\n        labels={labels}\n        onRespond={respond}\n        prompt={prompt}\n      />\n      <div className=\"flex flex-wrap items-center justify-between gap-4\">\n        <Label>\n          <Switch checked={failAnswers} onCheckedChange={setFailAnswers} />\n          Fail answers\n        </Label>\n        <Button\n          disabled={!decision}\n          onClick={() => setDecision(null)}\n          size=\"sm\"\n          variant=\"outline\"\n        >\n          Ask again\n        </Button>\n      </div>\n      <AgentAnnouncer announcer={announcer} />\n    </div>\n  );\n}\n",
+      "type": "registry:block"
+    }
+  ],
+  "meta": {
+    "className": "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm"
+  },
+  "categories": [
+    "agent",
+    "card",
+    "error"
+  ],
+  "type": "registry:block"
+}

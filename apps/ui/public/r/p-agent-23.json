@@ -1,0 +1,25 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "p-agent-23",
+  "description": "Failed agent turn with retry and check status recovery actions",
+  "registryDependencies": [
+    "@coss/agent",
+    "@coss/label",
+    "@coss/switch"
+  ],
+  "files": [
+    {
+      "path": "registry/default/particles/p-agent-23.tsx",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\nimport { AgentErrorRecovery } from \"@/registry/default/agent/agent-error-recovery\";\nimport { AgentMessage } from \"@/registry/default/agent/agent-message\";\nimport { Label } from \"@/registry/default/ui/label\";\nimport { Switch } from \"@/registry/default/ui/switch\";\n\nexport default function Particle() {\n  const [mayHaveWritten, setMayHaveWritten] = useState(false);\n  const [attempts, setAttempts] = useState(0);\n  const recover = () => setAttempts(attempts + 1);\n\n  return (\n    <div className=\"flex w-full max-w-sm flex-col gap-6\">\n      <AgentMessage from=\"user\">Move my 1:1 with Priya to Friday.</AgentMessage>\n      <AgentMessage\n        footer={attempts > 0 ? `Recovery attempts: ${attempts}` : undefined}\n        from=\"assistant\"\n      >\n        {mayHaveWritten ? (\n          <AgentErrorRecovery\n            checkStatusLabel=\"Check status\"\n            onCheckStatus={recover}\n          >\n            The connection dropped after the agent started changing your\n            calendar. It may have finished.\n          </AgentErrorRecovery>\n        ) : (\n          <AgentErrorRecovery onRetry={recover} retryLabel=\"Try again\">\n            The connection dropped before the agent replied.\n          </AgentErrorRecovery>\n        )}\n      </AgentMessage>\n      <Label>\n        <Switch checked={mayHaveWritten} onCheckedChange={setMayHaveWritten} />\n        Turn may have changed something\n      </Label>\n    </div>\n  );\n}\n",
+      "type": "registry:block"
+    }
+  ],
+  "meta": {
+    "className": "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm"
+  },
+  "categories": [
+    "agent",
+    "error"
+  ],
+  "type": "registry:block"
+}
