@@ -16,16 +16,16 @@ export default function Particle() {
   const [value, setValue] = useState<ComposerValue>([]);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState("");
-  const timeout = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const replyTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
-  useEffect(() => () => clearTimeout(timeout.current), []);
+  useEffect(() => () => clearTimeout(replyTimer.current), []);
 
   return (
     <div className="flex w-full max-w-xl flex-col gap-2">
       <Composer
         busy={busy}
         onStop={() => {
-          clearTimeout(timeout.current);
+          clearTimeout(replyTimer.current);
           setBusy(false);
           setNotice("Stopped.");
         }}
@@ -33,7 +33,7 @@ export default function Particle() {
           setValue([]);
           setBusy(true);
           setNotice("Generating a reply…");
-          timeout.current = setTimeout(() => {
+          replyTimer.current = setTimeout(() => {
             setBusy(false);
             setNotice("Reply ready.");
           }, 4000);

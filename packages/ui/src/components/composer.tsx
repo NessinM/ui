@@ -475,12 +475,12 @@ export function ComposerSubmit({
   stopRender?: ComponentProps<typeof ButtonPrimitive>["render"];
 }): ReactElement {
   const editor = useComposerEditorContext();
-  const stopping = Boolean(editor?.busy && stopRender);
+  const showingStop = Boolean(editor?.busy && stopRender);
   const defaultProps = {
     "data-slot": "composer-submit",
     "data-busy": editor?.busy ? "" : undefined,
     type: "button" as const,
-    disabled: disabled ?? (stopping ? false : !editor?.canSubmit),
+    disabled: disabled ?? (showingStop ? false : !editor?.canSubmit),
     onPointerDown: (event: PointerEvent<HTMLButtonElement>): void => {
       const input = editor?.rootRef.current?.querySelector(
         '[data-slot="composer-input"]',
@@ -495,7 +495,7 @@ export function ComposerSubmit({
     onClick: (event: MouseEvent<HTMLButtonElement>): void => {
       if (event.defaultPrevented || disabled) return;
       event.preventDefault();
-      if (stopping) editor?.stop();
+      if (showingStop) editor?.stop();
       else editor?.submit();
     },
   };
@@ -504,7 +504,7 @@ export function ComposerSubmit({
       {...mergeProps<"button">(defaultProps, props)}
       className={className}
       style={style}
-      render={stopping ? stopRender : render}
+      render={showingStop ? stopRender : render}
       ref={ref}
     />
   );
