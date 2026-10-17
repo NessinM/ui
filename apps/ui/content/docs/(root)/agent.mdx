@@ -122,7 +122,7 @@ It differs from `ChatConversation` in three ways:
 
 `AgentMessage` requires `from`, either `"user"` or `"assistant"`. User messages render in the chat bubble at the end of the row. Assistant replies render full width with no bubble, so Markdown, tables and code have room. String children render through `ChatMessageText`; pass `ChatMessageMarkdown` or your own content for anything richer.
 
-Pass the agent’s identity mark, such as an avatar or a logo, to `avatar`. It sits in the chat avatar column, at the top of the reply. Use it on assistant replies; mark it `aria-hidden` when the conversation already names the agent.
+Pass the agent’s identity mark, such as an avatar or a logo, to `avatar` on assistant replies; user messages ignore it. It sits in the chat avatar column, at the top of the reply. Mark it `aria-hidden` when it’s decorative, as it is when the conversation’s label already names the agent.
 
 Set `streaming` while the reply is still arriving. It sets `data-streaming` on the content, as in chat. Put `ChatMessageCaret` inside the last text block and remove it when the stream ends. Render the `footer` from the start, for example with a “Writing…” label that becomes a `ChatMessageTimestamp`, so the row doesn’t jump when the reply finishes.
 
