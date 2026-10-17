@@ -25,9 +25,26 @@ import {
   type ComposerEditorController,
   type ComposerItemValue,
   type ComposerValue,
+  getComposerText,
   type UseComposerEditorOptions,
   useComposerEditor,
 } from "@/registry/default/hooks/use-composer-editor";
+
+// Keep a small return margin so measuring the alternate layout cannot make the composer flicker.
+const STACK_HYSTERESIS_PX = 12;
+
+export function shouldStackComposer(
+  text: string,
+  lineWidth: number,
+  inlineWidth: number,
+  isStacked: boolean,
+): boolean {
+  if (!text) return false;
+  return (
+    text.includes("\n") ||
+    lineWidth > inlineWidth - (isStacked ? STACK_HYSTERESIS_PX : 0)
+  );
+}
 
 type ComposerEditorOptions = Omit<
   UseComposerEditorOptions,
@@ -383,6 +400,8 @@ function useComposerInputLayout() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [input, setInput] = useState<HTMLElement | null>(null);
   const scheduleMeasureRef = useRef<(() => void) | null>(null);
+  const textRef = useRef("");
+  textRef.current = getComposerText(editor?.value ?? []);
   useLayoutEffect(() => {
     for (const host of editor?.tokenHosts ?? []) {
       const fallback = host.previousElementSibling;
@@ -456,19 +475,20 @@ function useComposerInputLayout() {
 
       // Measure at the narrow, one-line width even after the actions move below.
       // This keeps the layout from oscillating when full-width text fits one line.
+      const isStacked = frame.hasAttribute("data-multiline");
       frame.removeAttribute("data-multiline");
-      const minHeight = input.style.getPropertyValue("min-height");
-      const minHeightPriority = input.style.getPropertyPriority("min-height");
-      input.style.setProperty("min-height", "0px", "important");
-      const contentHeight = input.scrollHeight;
-      if (minHeight) {
-        input.style.setProperty("min-height", minHeight, minHeightPriority);
-      } else {
-        input.style.removeProperty("min-height");
-      }
+      const whiteSpace = input.style.whiteSpace;
+      input.style.whiteSpace = "pre";
+      const lineWidth = input.scrollWidth;
+      input.style.whiteSpace = whiteSpace;
       frame.toggleAttribute(
         "data-multiline",
-        contentHeight > lineHeight * 1.5 + padding,
+        shouldStackComposer(
+          textRef.current,
+          lineWidth,
+          input.clientWidth,
+          isStacked,
+        ),
       );
     }
     scheduleMeasureRef.current = scheduleMeasure;
