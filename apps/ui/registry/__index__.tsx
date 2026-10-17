@@ -1169,15 +1169,27 @@ export const Index: Record<string, any> = {
     name: "agent",
     description: "Agent conversation, messages, message actions, and a screen reader announcer built on chat.",
     type: "registry:ui",
-    registryDependencies: ["@coss/button","@coss/chat","@coss/composer","@coss/toolbar","@coss/tooltip","@coss/use-copy-to-clipboard","@coss/use-media-query","@coss/utils"],
+    registryDependencies: ["@coss/alert-dialog","@coss/button","@coss/chat","@coss/combobox","@coss/composer","@coss/context-menu","@coss/empty","@coss/menu","@coss/spinner","@coss/toolbar","@coss/tooltip","@coss/use-copy-to-clipboard","@coss/use-media-query","@coss/utils"],
     files: [{
+      path: "registry/default/agent/agent-action-bar.tsx",
+      type: "registry:component",
+      target: "@components/agent/agent-action-bar.tsx"
+    },{
       path: "registry/default/agent/agent-announcer.tsx",
       type: "registry:component",
       target: "@components/agent/agent-announcer.tsx"
     },{
+      path: "registry/default/agent/agent-conversation-menu.tsx",
+      type: "registry:component",
+      target: "@components/agent/agent-conversation-menu.tsx"
+    },{
       path: "registry/default/agent/agent-conversation.tsx",
       type: "registry:component",
       target: "@components/agent/agent-conversation.tsx"
+    },{
+      path: "registry/default/agent/agent-history.tsx",
+      type: "registry:component",
+      target: "@components/agent/agent-history.tsx"
     },{
       path: "registry/default/agent/agent-message-actions.tsx",
       type: "registry:component",
@@ -1195,6 +1207,14 @@ export const Index: Record<string, any> = {
       type: "registry:component",
       target: "@components/agent/hooks/use-agent-reduced-motion.ts"
     },{
+      path: "registry/default/agent/lib/copy-agent-text.ts",
+      type: "registry:component",
+      target: "@components/agent/lib/copy-agent-text.ts"
+    },{
+      path: "registry/default/agent/lib/filter-agent-history.ts",
+      type: "registry:component",
+      target: "@components/agent/lib/filter-agent-history.ts"
+    },{
       path: "registry/default/agent/lib/get-agent-announcement.ts",
       type: "registry:component",
       target: "@components/agent/lib/get-agent-announcement.ts"
@@ -1202,9 +1222,13 @@ export const Index: Record<string, any> = {
       path: "registry/default/agent/lib/get-agent-scroll-offset.ts",
       type: "registry:component",
       target: "@components/agent/lib/get-agent-scroll-offset.ts"
+    },{
+      path: "registry/default/agent/lib/is-agent-session-unread.ts",
+      type: "registry:component",
+      target: "@components/agent/lib/is-agent-session-unread.ts"
     }],
     component: React.lazy(async () => {
-      const mod = await import("@/registry/default/agent/agent-announcer.tsx")
+      const mod = await import("@/registry/default/agent/agent-action-bar.tsx")
       const exportName = Object.keys(mod).find(key => typeof mod[key] === 'function' || typeof mod[key] === 'object') || item.name
       return { default: mod.default || mod[exportName] }
     }),
@@ -1408,6 +1432,78 @@ export const Index: Record<string, any> = {
     }),
     categories: ["agent","info"],
     meta: {"className":"**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm"},
+  },
+  "p-agent-30": {
+    name: "p-agent-30",
+    description: "Action bar with session chips, unread dots, close on hover, and a launcher",
+    type: "registry:block",
+    registryDependencies: ["@coss/agent","@coss/button"],
+    files: [{
+      path: "registry/default/particles/p-agent-30.tsx",
+      type: "registry:block",
+      target: ""
+    }],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/default/particles/p-agent-30.tsx")
+      const exportName = Object.keys(mod).find(key => typeof mod[key] === 'function' || typeof mod[key] === 'object') || item.name
+      return { default: mod.default || mod[exportName] }
+    }),
+    categories: ["agent","button"],
+    meta: {"className":"**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-xl"},
+  },
+  "p-agent-31": {
+    name: "p-agent-31",
+    description: "Searchable conversation history with the open conversation selected",
+    type: "registry:block",
+    registryDependencies: ["@coss/agent","@coss/button"],
+    files: [{
+      path: "registry/default/particles/p-agent-31.tsx",
+      type: "registry:block",
+      target: ""
+    }],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/default/particles/p-agent-31.tsx")
+      const exportName = Object.keys(mod).find(key => typeof mod[key] === 'function' || typeof mod[key] === 'object') || item.name
+      return { default: mod.default || mod[exportName] }
+    }),
+    categories: ["agent","combobox","search"],
+    meta: undefined,
+  },
+  "p-agent-32": {
+    name: "p-agent-32",
+    description: "Conversation history with no conversations yet, or loading",
+    type: "registry:block",
+    registryDependencies: ["@coss/agent","@coss/button","@coss/label","@coss/switch"],
+    files: [{
+      path: "registry/default/particles/p-agent-32.tsx",
+      type: "registry:block",
+      target: ""
+    }],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/default/particles/p-agent-32.tsx")
+      const exportName = Object.keys(mod).find(key => typeof mod[key] === 'function' || typeof mod[key] === 'object') || item.name
+      return { default: mod.default || mod[exportName] }
+    }),
+    categories: ["agent","combobox","empty state","loading"],
+    meta: undefined,
+  },
+  "p-agent-33": {
+    name: "p-agent-33",
+    description: "Conversation menu that copies as Markdown and confirms before deleting",
+    type: "registry:block",
+    registryDependencies: ["@coss/agent","@coss/button"],
+    files: [{
+      path: "registry/default/particles/p-agent-33.tsx",
+      type: "registry:block",
+      target: ""
+    }],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/default/particles/p-agent-33.tsx")
+      const exportName = Object.keys(mod).find(key => typeof mod[key] === 'function' || typeof mod[key] === 'object') || item.name
+      return { default: mod.default || mod[exportName] }
+    }),
+    categories: ["agent","menu","dropdown","copy"],
+    meta: {"className":"**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-xs"},
   },
   "p-alert-4": {
     name: "p-alert-4",

@@ -156,6 +156,57 @@ export const particles: ParticleItem[] = [
     type: "registry:block",
   },
   {
+    categories: categories("agent", "button"),
+    dependencies: ["lucide-react"],
+    description:
+      "Action bar with session chips, unread dots, close on hover, and a launcher",
+    files: [{ path: "particles/p-agent-30.tsx", type: "registry:block" }],
+    meta: {
+      className:
+        "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-xl",
+    },
+    name: "p-agent-30",
+    registryDependencies: ["@coss/agent", "@coss/button"],
+    type: "registry:block",
+  },
+  {
+    categories: categories("agent", "combobox", "search"),
+    dependencies: ["lucide-react"],
+    description:
+      "Searchable conversation history with the open conversation selected",
+    files: [{ path: "particles/p-agent-31.tsx", type: "registry:block" }],
+    name: "p-agent-31",
+    registryDependencies: ["@coss/agent", "@coss/button"],
+    type: "registry:block",
+  },
+  {
+    categories: categories("agent", "combobox", "empty state", "loading"),
+    dependencies: ["lucide-react"],
+    description: "Conversation history with no conversations yet, or loading",
+    files: [{ path: "particles/p-agent-32.tsx", type: "registry:block" }],
+    name: "p-agent-32",
+    registryDependencies: [
+      "@coss/agent",
+      "@coss/button",
+      "@coss/label",
+      "@coss/switch",
+    ],
+    type: "registry:block",
+  },
+  {
+    categories: categories("agent", "menu", "dropdown", "copy"),
+    description:
+      "Conversation menu that copies as Markdown and confirms before deleting",
+    files: [{ path: "particles/p-agent-33.tsx", type: "registry:block" }],
+    meta: {
+      className:
+        "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-xs",
+    },
+    name: "p-agent-33",
+    registryDependencies: ["@coss/agent", "@coss/button"],
+    type: "registry:block",
+  },
+  {
     categories: categories("alert", "info"),
     dependencies: ["lucide-react"],
     description: "Info alert",

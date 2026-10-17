@@ -1,0 +1,27 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "p-agent-30",
+  "description": "Action bar with session chips, unread dots, close on hover, and a launcher",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "@coss/agent",
+    "@coss/button"
+  ],
+  "files": [
+    {
+      "path": "registry/default/particles/p-agent-30.tsx",
+      "content": "\"use client\";\n\nimport { SparklesIcon } from \"lucide-react\";\nimport { useState } from \"react\";\nimport {\n  AgentActionBar,\n  AgentActionBarLauncher,\n  AgentActionBarSession,\n} from \"@/registry/default/agent/agent-action-bar\";\nimport { isAgentSessionUnread } from \"@/registry/default/agent/lib/is-agent-session-unread\";\nimport { Button } from \"@/registry/default/ui/button\";\n\ntype Session = {\n  id: string;\n  title: string;\n  updatedAt: number;\n  seenAt: number;\n};\n\nconst initialSessions: Session[] = [\n  { id: \"offsite\", seenAt: 2, title: \"Plan the Lisbon offsite\", updatedAt: 2 },\n  { id: \"invoices\", seenAt: 1, title: \"Chase overdue invoices\", updatedAt: 3 },\n  { id: \"standup\", seenAt: 1, title: \"Summarize standup notes\", updatedAt: 1 },\n];\n\nexport default function Particle() {\n  const [sessions, setSessions] = useState(initialSessions);\n  const [activeId, setActiveId] = useState<string | null>(\"offsite\");\n  const [clock, setClock] = useState(4);\n\n  const open = (id: string | null) => {\n    setActiveId(id);\n    setSessions((current) =>\n      current.map((session) =>\n        session.id === id ? { ...session, seenAt: clock } : session,\n      ),\n    );\n    setClock(clock + 1);\n  };\n\n  const close = (id: string) => {\n    setSessions((current) => current.filter((session) => session.id !== id));\n    if (activeId === id) setActiveId(null);\n  };\n\n  const replyInBackground = () => {\n    const background = sessions.find((session) => session.id !== activeId);\n    if (!background) return;\n    setSessions((current) =>\n      current.map((session) =>\n        session.id === background.id\n          ? { ...session, updatedAt: clock }\n          : session,\n      ),\n    );\n    setClock(clock + 1);\n  };\n\n  return (\n    <div className=\"flex w-full flex-col items-end gap-4\">\n      <AgentActionBar className=\"w-full\" label=\"Agent sessions\">\n        {sessions.map((session) => (\n          <AgentActionBarSession\n            active={session.id === activeId}\n            closeLabel={`Close ${session.title}`}\n            closeOthersLabel=\"Close other sessions\"\n            key={session.id}\n            label={session.title}\n            onClick={() => open(session.id)}\n            onClose={() => close(session.id)}\n            onCloseOthers={() =>\n              setSessions((current) =>\n                current.filter((other) => other.id === session.id),\n              )\n            }\n            unread={isAgentSessionUnread({\n              active: session.id === activeId,\n              seenAt: session.seenAt,\n              updatedAt: session.updatedAt,\n            })}\n            unreadLabel=\"Unread\"\n          />\n        ))}\n        <AgentActionBarLauncher\n          active={activeId === null}\n          mark={<SparklesIcon />}\n          onClick={() => open(null)}\n        >\n          Ask\n        </AgentActionBarLauncher>\n      </AgentActionBar>\n      <Button\n        disabled={!sessions.some((session) => session.id !== activeId)}\n        onClick={replyInBackground}\n        size=\"sm\"\n        variant=\"outline\"\n      >\n        Reply in a background session\n      </Button>\n    </div>\n  );\n}\n",
+      "type": "registry:block"
+    }
+  ],
+  "meta": {
+    "className": "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-xl"
+  },
+  "categories": [
+    "agent",
+    "button"
+  ],
+  "type": "registry:block"
+}

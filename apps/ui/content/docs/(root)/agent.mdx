@@ -163,6 +163,59 @@ A phase without a label is never announced. Pass the error message or the approv
 
 Every transition the agent parts add has a reduced-motion path: CSS transitions use `motion-reduce:transition-none`, and loops such as the streaming caret run only under `motion-safe`. Parts the family composes, such as chat’s jump to latest and coss tooltips, follow their own primitives. For motion timed in JavaScript, such as an exit delay before a crossfade, read `useAgentReducedMotion()` and skip the delay when it returns `true`. Follow the same policy in your compositions.
 
+## Chrome
+
+The chrome sits around a conversation: an action bar to switch between open sessions, a history to find older ones, and a menu for the open one. Your application owns the sessions, their titles, when they were seen, and what opening, closing and deleting do. The parts take that state and those handlers as props, and every visible string as a label.
+
+| Components | File | Responsibility |
+| --- | --- | --- |
+| `AgentActionBar`, `AgentActionBarSession`, `AgentActionBarLauncher` | `agent/agent-action-bar.tsx` | Labelled row of session chips with unread and close, and a launcher with an identity mark |
+| `isAgentSessionUnread` | `agent/lib/is-agent-session-unread.ts` | The rule for when a session is unread |
+| `AgentHistory`, `filterAgentHistory` | `agent/agent-history.tsx`, `agent/lib/filter-agent-history.ts` | Searchable history on coss Combobox, with empty and loading states |
+| `AgentConversationMenu` | `agent/agent-conversation-menu.tsx` | Copy as Markdown, announced, and delete behind a confirmation |
+
+### Action bar
+
+<ComponentPreview name="p-agent-30" />
+
+`AgentActionBar` is a labelled group; pass its name as `label`. Place it yourself, for example fixed to a corner of the page. Put one `AgentActionBarSession` in it for each open session, then an `AgentActionBarLauncher` to start a new one.
+
+A session chip shows its `label`, truncated when space is short. Set `active` on the session that’s open, which sets `aria-current`. Props other than the chip’s own go to the session button, so a chip can be the `render` of a popover trigger that opens the session in a panel.
+
+- **Unread.** Set `unread` to show a dot, and pass `unreadLabel` so screen readers hear it after the title. Derive it with `isAgentSessionUnread({ active, updatedAt, seenAt })`: a session is unread when it changed after the reader last saw it, and never while it’s open. Without `seenAt` there’s no baseline, so the session stays read; pass `seenAt: 0` for a session the reader has never opened. Record `seenAt` when the reader opens or leaves a session.
+- **Close.** Pass `onClose` and a `closeLabel` that names the session, such as “Close Plan the offsite”, since every chip has one. On fine pointers the close button shows while the chip is hovered or anything in it has focus. On touch it’s always shown. A chip without `onClose` has no close button.
+- **Close others.** Pass `onCloseOthers` and `closeOthersLabel` to add a context menu with close and close others.
+
+`AgentActionBarLauncher` takes its label as children and your agent’s identity mark, such as a logo, as `mark`. The mark is hidden from screen readers, so the label names the button. Set `active` while the new conversation is open.
+
+A chip or launcher without `onClick` or `render` is disabled.
+
+### History
+
+<ComponentPreview name="p-agent-31" />
+
+`AgentHistory` opens a searchable list of conversations from a `trigger`, an icon button that it renders through the combobox trigger and names with `labels.history`. Rows are coss Combobox items, so arrow keys, typeahead and highlighting work as they do in any combobox.
+
+- **Items** need an `id`, a `title` and an `updatedAt` date. Add `metadata` for short text before the date and `unread` for the dot, derived with `isAgentSessionUnread`. Format dates with `labels.formatDate`.
+- **The open conversation** is the list’s selected item: pass its id as `activeId` and it shows the combobox check. Choosing another row calls `onSelect` with that item.
+- **Search** filters titles as the reader types, ignoring case, and lists matches newest first. `filterAgentHistory(items, query)` is the rule. Pass `onStartChat` and `labels.startChat` to add a start row above the list.
+- **Placement** defaults to `side="top"` and `align="end"`, for a bar at the bottom of the page.
+
+<ComponentPreview name="p-agent-32" />
+
+With no items, the popup shows an empty state with `labels.emptyTitle`, an optional `labels.emptyDescription`, and a start button when you pass `onStartChat`. Set `loading` while the first page loads to show a spinner instead.
+
+### Conversation menu
+
+<ComponentPreview name="p-agent-33" />
+
+`AgentConversationMenu` is an icon button, named by `labels.menu`, with a menu for the open conversation. Pass the conversation’s `announcer`: it hears `labels.copied` or `labels.copyFailed` once after each copy, through the conversation’s one status region. Anything with an `announce` method works.
+
+- **Copy as Markdown** writes `markdown` to the clipboard. Without `markdown` there’s no copy item, and while it’s empty the item is disabled. The menu closes on copy, so add your own toast if sighted readers need to see the result.
+- **Delete** asks for confirmation in an alert dialog with `labels.deleteTitle` and `labels.deleteDescription`, then calls `onDelete`. Without `onDelete` there’s no delete item.
+
+Other props go to the trigger button.
+
 ## Before shipping
 
 Check keyboard-only operation of message actions, a screen reader with streamed replies, a touch device and reduced motion. Test long replies, stopped and failed turns, and switching conversations, with your own agent runtime.

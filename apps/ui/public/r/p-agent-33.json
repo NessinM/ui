@@ -1,0 +1,26 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "p-agent-33",
+  "description": "Conversation menu that copies as Markdown and confirms before deleting",
+  "registryDependencies": [
+    "@coss/agent",
+    "@coss/button"
+  ],
+  "files": [
+    {
+      "path": "registry/default/particles/p-agent-33.tsx",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\nimport { AgentAnnouncer } from \"@/registry/default/agent/agent-announcer\";\nimport { AgentConversationMenu } from \"@/registry/default/agent/agent-conversation-menu\";\nimport { useAgentAnnouncer } from \"@/registry/default/agent/hooks/use-agent-announcer\";\nimport { Button } from \"@/registry/default/ui/button\";\n\nconst markdown = `**You:** Plan the Lisbon offsite.\n\n**Assistant:** Here’s a three-day outline with venues near Alfama.`;\n\nconst menuLabels = {\n  cancel: \"Cancel\",\n  copied: \"Conversation copied as Markdown\",\n  copyAsMarkdown: \"Copy as Markdown\",\n  copyFailed: \"Couldn’t copy the conversation\",\n  delete: \"Delete\",\n  deleteConfirm: \"Delete\",\n  deleteDescription:\n    \"This permanently deletes the conversation and its replies.\",\n  deleteTitle: \"Delete this conversation?\",\n  menu: \"Conversation options\",\n};\n\nexport default function Particle() {\n  const [deleted, setDeleted] = useState(false);\n  const announcer = useAgentAnnouncer({ labels: {}, phase: \"idle\" });\n\n  if (deleted)\n    return (\n      <div className=\"flex flex-col items-center gap-2 text-sm\">\n        <p className=\"text-muted-foreground\">Conversation deleted.</p>\n        <Button onClick={() => setDeleted(false)} size=\"sm\" variant=\"outline\">\n          Restore\n        </Button>\n      </div>\n    );\n\n  return (\n    <div className=\"flex w-full max-w-xs flex-col gap-4\">\n      <div className=\"flex items-center justify-between gap-2 border-b pb-2\">\n        <span className=\"truncate font-medium text-sm\">\n          Plan the Lisbon offsite\n        </span>\n        <AgentConversationMenu\n          announcer={announcer}\n          labels={menuLabels}\n          markdown={markdown}\n          onDelete={() => setDeleted(true)}\n        />\n      </div>\n      <p aria-hidden=\"true\" className=\"text-muted-foreground text-sm\">\n        Screen readers hear:{\" \"}\n        <span className=\"font-medium text-foreground\">\n          {announcer.message || \"nothing yet\"}\n        </span>\n      </p>\n      <AgentAnnouncer announcer={announcer} />\n    </div>\n  );\n}\n",
+      "type": "registry:block"
+    }
+  ],
+  "meta": {
+    "className": "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-xs"
+  },
+  "categories": [
+    "agent",
+    "menu",
+    "dropdown",
+    "copy"
+  ],
+  "type": "registry:block"
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "p-agent-32",
+  "description": "Conversation history with no conversations yet, or loading",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "@coss/agent",
+    "@coss/button",
+    "@coss/label",
+    "@coss/switch"
+  ],
+  "files": [
+    {
+      "path": "registry/default/particles/p-agent-32.tsx",
+      "content": "\"use client\";\n\nimport { HistoryIcon } from \"lucide-react\";\nimport { useState } from \"react\";\nimport {\n  AgentHistory,\n  type AgentHistoryItem,\n} from \"@/registry/default/agent/agent-history\";\nimport { Button } from \"@/registry/default/ui/button\";\nimport { Label } from \"@/registry/default/ui/label\";\nimport { Switch } from \"@/registry/default/ui/switch\";\n\nconst dateFormat = new Intl.DateTimeFormat(\"en\", {\n  day: \"numeric\",\n  month: \"short\",\n});\n\nconst labels = {\n  emptyDescription: \"Conversations you start with the assistant show up here.\",\n  emptyTitle: \"No conversations yet\",\n  formatDate: (date: Date) => dateFormat.format(date),\n  history: \"Conversation history\",\n  loading: \"Loading conversations…\",\n  noResults: \"No conversations found.\",\n  search: \"Search conversations\",\n  startChat: \"New conversation\",\n  unread: \"Unread\",\n};\n\nconst items: AgentHistoryItem[] = [];\n\nexport default function Particle() {\n  const [loading, setLoading] = useState(false);\n  const [started, setStarted] = useState(0);\n\n  return (\n    <div className=\"flex flex-col items-center gap-4\">\n      <AgentHistory\n        items={items}\n        labels={labels}\n        loading={loading}\n        onSelect={() => {}}\n        onStartChat={() => setStarted(started + 1)}\n        side=\"bottom\"\n        trigger={\n          <Button size=\"icon-sm\" variant=\"outline\">\n            <HistoryIcon aria-hidden=\"true\" />\n          </Button>\n        }\n      />\n      <Label>\n        <Switch checked={loading} onCheckedChange={setLoading} />\n        Loading\n      </Label>\n      {started > 0 && (\n        <p className=\"text-muted-foreground text-sm\">\n          Started {started} {started === 1 ? \"conversation\" : \"conversations\"}\n        </p>\n      )}\n    </div>\n  );\n}\n",
+      "type": "registry:block"
+    }
+  ],
+  "categories": [
+    "agent",
+    "combobox",
+    "empty state",
+    "loading"
+  ],
+  "type": "registry:block"
+}

@@ -1,0 +1,25 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "p-agent-31",
+  "description": "Searchable conversation history with the open conversation selected",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "@coss/agent",
+    "@coss/button"
+  ],
+  "files": [
+    {
+      "path": "registry/default/particles/p-agent-31.tsx",
+      "content": "\"use client\";\n\nimport { HistoryIcon } from \"lucide-react\";\nimport { useState } from \"react\";\nimport {\n  AgentHistory,\n  type AgentHistoryItem,\n} from \"@/registry/default/agent/agent-history\";\nimport { Button } from \"@/registry/default/ui/button\";\n\nconst dateFormat = new Intl.DateTimeFormat(\"en\", {\n  day: \"numeric\",\n  month: \"short\",\n});\n\nconst labels = {\n  emptyDescription: \"Conversations you start with the assistant show up here.\",\n  emptyTitle: \"No conversations yet\",\n  formatDate: (date: Date) => dateFormat.format(date),\n  history: \"Conversation history\",\n  loading: \"Loading conversations…\",\n  noResults: \"No conversations found.\",\n  search: \"Search conversations\",\n  startChat: \"New conversation\",\n  unread: \"Unread\",\n};\n\nconst items: AgentHistoryItem[] = [\n  {\n    id: \"offsite\",\n    title: \"Plan the Lisbon offsite\",\n    updatedAt: new Date(\"2026-10-15T10:00:00Z\"),\n  },\n  {\n    id: \"invoices\",\n    metadata: \"3 tools\",\n    title: \"Chase overdue invoices\",\n    unread: true,\n    updatedAt: new Date(\"2026-10-17T08:00:00Z\"),\n  },\n  {\n    id: \"flights\",\n    title: \"Compare flights to Lisbon for the whole team\",\n    updatedAt: new Date(\"2026-10-16T12:00:00Z\"),\n  },\n  {\n    id: \"standup\",\n    title: \"Summarize standup notes\",\n    updatedAt: new Date(\"2026-10-09T09:00:00Z\"),\n  },\n];\n\nexport default function Particle() {\n  const [activeId, setActiveId] = useState(\"offsite\");\n  const active = items.find((item) => item.id === activeId);\n\n  return (\n    <div className=\"flex items-center gap-2\">\n      <span className=\"text-muted-foreground text-sm\">\n        {active?.title ?? \"New conversation\"}\n      </span>\n      <AgentHistory\n        activeId={activeId}\n        items={items}\n        labels={labels}\n        onSelect={(item) => setActiveId(item.id)}\n        onStartChat={() => setActiveId(\"\")}\n        side=\"bottom\"\n        trigger={\n          <Button size=\"icon-sm\" variant=\"ghost\">\n            <HistoryIcon aria-hidden=\"true\" />\n          </Button>\n        }\n      />\n    </div>\n  );\n}\n",
+      "type": "registry:block"
+    }
+  ],
+  "categories": [
+    "agent",
+    "combobox",
+    "search"
+  ],
+  "type": "registry:block"
+}

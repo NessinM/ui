@@ -1223,9 +1223,15 @@
         "@base-ui/react"
       ],
       "registryDependencies": [
+        "@coss/alert-dialog",
         "@coss/button",
         "@coss/chat",
+        "@coss/combobox",
         "@coss/composer",
+        "@coss/context-menu",
+        "@coss/empty",
+        "@coss/menu",
+        "@coss/spinner",
         "@coss/toolbar",
         "@coss/tooltip",
         "@coss/use-copy-to-clipboard",
@@ -1234,14 +1240,29 @@
       ],
       "files": [
         {
+          "path": "registry/default/agent/agent-action-bar.tsx",
+          "type": "registry:component",
+          "target": "@components/agent/agent-action-bar.tsx"
+        },
+        {
           "path": "registry/default/agent/agent-announcer.tsx",
           "type": "registry:component",
           "target": "@components/agent/agent-announcer.tsx"
         },
         {
+          "path": "registry/default/agent/agent-conversation-menu.tsx",
+          "type": "registry:component",
+          "target": "@components/agent/agent-conversation-menu.tsx"
+        },
+        {
           "path": "registry/default/agent/agent-conversation.tsx",
           "type": "registry:component",
           "target": "@components/agent/agent-conversation.tsx"
+        },
+        {
+          "path": "registry/default/agent/agent-history.tsx",
+          "type": "registry:component",
+          "target": "@components/agent/agent-history.tsx"
         },
         {
           "path": "registry/default/agent/agent-message-actions.tsx",
@@ -1264,6 +1285,16 @@
           "target": "@components/agent/hooks/use-agent-reduced-motion.ts"
         },
         {
+          "path": "registry/default/agent/lib/copy-agent-text.ts",
+          "type": "registry:component",
+          "target": "@components/agent/lib/copy-agent-text.ts"
+        },
+        {
+          "path": "registry/default/agent/lib/filter-agent-history.ts",
+          "type": "registry:component",
+          "target": "@components/agent/lib/filter-agent-history.ts"
+        },
+        {
           "path": "registry/default/agent/lib/get-agent-announcement.ts",
           "type": "registry:component",
           "target": "@components/agent/lib/get-agent-announcement.ts"
@@ -1272,6 +1303,11 @@
           "path": "registry/default/agent/lib/get-agent-scroll-offset.ts",
           "type": "registry:component",
           "target": "@components/agent/lib/get-agent-scroll-offset.ts"
+        },
+        {
+          "path": "registry/default/agent/lib/is-agent-session-unread.ts",
+          "type": "registry:component",
+          "target": "@components/agent/lib/is-agent-session-unread.ts"
         }
       ]
     },
@@ -1519,6 +1555,104 @@
         "className": "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm"
       },
       "name": "p-agent-4",
+      "registryDependencies": [
+        "@coss/agent",
+        "@coss/button"
+      ],
+      "type": "registry:block"
+    },
+    {
+      "categories": [
+        "agent",
+        "button"
+      ],
+      "dependencies": [
+        "lucide-react"
+      ],
+      "description": "Action bar with session chips, unread dots, close on hover, and a launcher",
+      "files": [
+        {
+          "path": "registry/default/particles/p-agent-30.tsx",
+          "type": "registry:block"
+        }
+      ],
+      "meta": {
+        "className": "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-xl"
+      },
+      "name": "p-agent-30",
+      "registryDependencies": [
+        "@coss/agent",
+        "@coss/button"
+      ],
+      "type": "registry:block"
+    },
+    {
+      "categories": [
+        "agent",
+        "combobox",
+        "search"
+      ],
+      "dependencies": [
+        "lucide-react"
+      ],
+      "description": "Searchable conversation history with the open conversation selected",
+      "files": [
+        {
+          "path": "registry/default/particles/p-agent-31.tsx",
+          "type": "registry:block"
+        }
+      ],
+      "name": "p-agent-31",
+      "registryDependencies": [
+        "@coss/agent",
+        "@coss/button"
+      ],
+      "type": "registry:block"
+    },
+    {
+      "categories": [
+        "agent",
+        "combobox",
+        "empty state",
+        "loading"
+      ],
+      "dependencies": [
+        "lucide-react"
+      ],
+      "description": "Conversation history with no conversations yet, or loading",
+      "files": [
+        {
+          "path": "registry/default/particles/p-agent-32.tsx",
+          "type": "registry:block"
+        }
+      ],
+      "name": "p-agent-32",
+      "registryDependencies": [
+        "@coss/agent",
+        "@coss/button",
+        "@coss/label",
+        "@coss/switch"
+      ],
+      "type": "registry:block"
+    },
+    {
+      "categories": [
+        "agent",
+        "menu",
+        "dropdown",
+        "copy"
+      ],
+      "description": "Conversation menu that copies as Markdown and confirms before deleting",
+      "files": [
+        {
+          "path": "registry/default/particles/p-agent-33.tsx",
+          "type": "registry:block"
+        }
+      ],
+      "meta": {
+        "className": "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-xs"
+      },
+      "name": "p-agent-33",
       "registryDependencies": [
         "@coss/agent",
         "@coss/button"
