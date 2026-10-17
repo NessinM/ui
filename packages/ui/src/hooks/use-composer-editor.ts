@@ -57,6 +57,8 @@ type UseComposerEditorOptions = {
   submitDisabled?: boolean;
   allowEmpty?: boolean;
   submitOnEnter?: "desktop" | "always" | "never";
+  busy?: boolean;
+  onStop?: () => void;
 };
 
 type ComposerEditorController = {
@@ -70,7 +72,9 @@ type ComposerEditorController = {
   canSubmit: boolean;
   disabled: boolean;
   readOnly: boolean;
+  busy: boolean;
   submit: () => void;
+  stop: () => void;
   insertTrigger: (character: string) => void;
   reset: (value?: ComposerValue) => void;
   status: "ready" | "loading" | "error";
@@ -98,6 +102,8 @@ export function useComposerEditor({
   submitDisabled = false,
   allowEmpty = false,
   submitOnEnter = "always",
+  busy = false,
+  onStop,
 }: UseComposerEditorOptions): ComposerEditorController {
   const inputRef = useRef<HTMLDivElement>(null);
   const [inputElement, setInputElement] = useState<HTMLDivElement | null>(null);
@@ -151,6 +157,7 @@ export function useComposerEditor({
     !disabled &&
     !readOnly &&
     !submitDisabled &&
+    !busy &&
     (allowEmpty || Boolean(getComposerText(value).trim()));
   const onQueryChangeRef = useRef(onQueryChange);
   onQueryChangeRef.current = onQueryChange;
@@ -484,8 +491,12 @@ export function useComposerEditor({
     canSubmit,
     disabled,
     readOnly,
+    busy,
     tokenHosts,
     submit,
+    stop: () => {
+      if (busy) onStop?.();
+    },
     insertTrigger,
     rootRef,
     reset: (next = []) => {

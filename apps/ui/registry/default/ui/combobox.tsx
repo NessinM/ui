@@ -7,58 +7,14 @@ import { cn } from "@/registry/default/lib/utils";
 import { Input } from "@/registry/default/ui/input";
 import { ScrollArea } from "@/registry/default/ui/scroll-area";
 
-type DialogLike<T> = {
-  getAttribute(name: string): string | null;
-  parentElement: T | null;
-};
-
-function isDialog(node: DialogLike<unknown>): boolean {
-  const role = node.getAttribute("role");
-  return role === "dialog" || role === "alertdialog";
-}
-
-function closestDialog<T extends DialogLike<T>>(node: T | null): T | null {
-  for (let current = node; current; current = current.parentElement) {
-    if (isDialog(current)) return current;
-  }
-  return null;
-}
-
-// The dialog a combobox popup should portal into, so the popup stays inside its focus trap and scroll lock.
-export function resolveDialogContainer<T extends DialogLike<T>>(
-  anchor: T | null,
-): T | null {
-  const dialog = closestDialog(anchor);
-  // A combobox popup is itself a role="dialog". When the anchor sits inside one (a nested combobox), skip past it so a popup never portals into itself.
-  if (dialog?.getAttribute("data-slot") === "combobox-popup") {
-    return closestDialog(dialog.parentElement);
-  }
-  return dialog;
-}
-
-// Forwards a node to a callback or object ref, so a caller's ref survives an internal one.
-export function assignRef<T>(
-  ref: React.Ref<T> | undefined,
-  node: T | null,
-): void {
-  if (typeof ref === "function") ref(node);
-  else if (ref) ref.current = node;
-}
-
 export const ComboboxContext: React.Context<{
   chipsRef: React.RefObject<Element | null> | null;
-  dialogContainer: HTMLElement | null;
-  registerDialogAnchor: (node: HTMLElement | null) => void;
   multiple: boolean;
 }> = React.createContext<{
   chipsRef: React.RefObject<Element | null> | null;
-  dialogContainer: HTMLElement | null;
-  registerDialogAnchor: (node: HTMLElement | null) => void;
   multiple: boolean;
 }>({
   chipsRef: null,
-  dialogContainer: null,
-  registerDialogAnchor: () => {},
   multiple: false,
 });
 
@@ -70,21 +26,8 @@ export function Combobox<
   props: ComboboxPrimitive.Root.Props<Value, Multiple, Item>,
 ): React.ReactElement {
   const chipsRef = React.useRef<Element | null>(null);
-  const [dialogContainer, setDialogContainer] =
-    React.useState<HTMLElement | null>(null);
-  // Resolved from the anchor's ref callback, so it settles when the node attaches.
-  const registerDialogAnchor = React.useCallback((node: HTMLElement | null) => {
-    setDialogContainer(resolveDialogContainer(node));
-  }, []);
   return (
-    <ComboboxContext.Provider
-      value={{
-        chipsRef,
-        dialogContainer,
-        registerDialogAnchor,
-        multiple: !!props.multiple,
-      }}
-    >
+    <ComboboxContext.Provider value={{ chipsRef, multiple: !!props.multiple }}>
       <ComboboxPrimitive.Root {...props} />
     </ComboboxContext.Provider>
   );
@@ -201,25 +144,12 @@ export function ComboboxInput({
 export function ComboboxTrigger({
   className,
   children,
-  ref,
   ...props
-}: ComboboxPrimitive.Trigger.Props & {
-  ref?: React.Ref<HTMLButtonElement>;
-}): React.ReactElement {
-  const { registerDialogAnchor } = React.useContext(ComboboxContext);
-  const setRef = React.useCallback(
-    (node: HTMLButtonElement | null) => {
-      registerDialogAnchor(node);
-      assignRef(ref, node);
-    },
-    [ref, registerDialogAnchor],
-  );
-
+}: ComboboxPrimitive.Trigger.Props): React.ReactElement {
   return (
     <ComboboxPrimitive.Trigger
       className={className}
       data-slot="combobox-trigger"
-      ref={setRef}
       {...props}
     >
       {children}
@@ -245,15 +175,11 @@ export function ComboboxPopup({
   anchor?: ComboboxPrimitive.Positioner.Props["anchor"];
   portalProps?: ComboboxPrimitive.Portal.Props;
 }): React.ReactElement {
-  const { chipsRef, dialogContainer } = React.useContext(ComboboxContext);
+  const { chipsRef } = React.useContext(ComboboxContext);
   const anchor = anchorProp ?? chipsRef;
 
-  // A body-portalled popup falls outside a dialog's focus trap and scroll lock, so when inside one, portal into the dialog element to keep search and scroll working.
   return (
-    <ComboboxPrimitive.Portal
-      {...portalProps}
-      container={portalProps?.container ?? dialogContainer ?? undefined}
-    >
+    <ComboboxPrimitive.Portal {...portalProps}>
       <ComboboxPrimitive.Positioner
         align={align}
         alignOffset={alignOffset}
@@ -445,21 +371,11 @@ export function ComboboxChips({
   className,
   children,
   startAddon,
-  ref,
   ...props
 }: ComboboxPrimitive.Chips.Props & {
   startAddon?: React.ReactNode;
-  ref?: React.Ref<HTMLDivElement>;
 }): React.ReactElement {
-  const { chipsRef, registerDialogAnchor } = React.useContext(ComboboxContext);
-  const setChipsRef = React.useCallback(
-    (node: HTMLDivElement | null) => {
-      if (chipsRef) chipsRef.current = node;
-      registerDialogAnchor(node);
-      assignRef(ref, node);
-    },
-    [chipsRef, ref, registerDialogAnchor],
-  );
+  const { chipsRef } = React.useContext(ComboboxContext);
 
   return (
     <ComboboxPrimitive.Chips
@@ -468,7 +384,7 @@ export function ComboboxChips({
         className,
       )}
       data-slot="combobox-chips"
-      ref={setChipsRef}
+      ref={chipsRef as React.Ref<HTMLDivElement> | null}
       {...props}
     >
       {startAddon && (
