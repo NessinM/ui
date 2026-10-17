@@ -48,8 +48,8 @@ export function AgentStatusIndicator({
   render,
   ...props
 }: AgentStatusIndicatorProps): ReactElement {
-  const busy = isAgentStatusBusy(status);
   const Icon = isAgentStatusBusy(status) ? undefined : settledIcons[status];
+  const busy = !Icon;
   const defaultProps = {
     children: (
       <>

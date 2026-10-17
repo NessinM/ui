@@ -197,7 +197,7 @@ Under reduced motion the spinner and the shimmer stop, and the label stays in th
 
 `AgentToolActivity` puts a run of tool calls behind one summary line, closed until the reader opens it. Pass the calls as `AgentToolCall` objects, each with an `id`, a tool `name` and a `state` of `running`, `done`, `failed` or `denied`, plus its `output` or `error`.
 
-The summary comes from `labels`, localized functions that take a count. Failures win, then running calls, then declined calls, then the completed count. A single running call shows its tool’s own label instead of a count, such as “Checking availability”.
+`labels` holds the localized text. The summary comes from `done`, `running`, `failed` and `denied`, which take a count. Failures win, then running calls, then declined calls, then the completed count. A single running call shows its tool’s own label instead of a count, such as “Checking availability”.
 
 `renderers` is the tool-renderer registry: an object from tool name to how that tool’s calls look.
 
@@ -207,7 +207,7 @@ The summary comes from `labels`, localized functions that take a count. Failures
 | `icon` | The row’s icon. Defaults to a wrench |
 | `render(call)` | The row’s content for a call, such as a summary of its output. Return nothing to keep the label |
 
-By default a running row pulses, a failed row shows its `error` after the label, and a declined row strikes its label through. `getAgentToolSummary` is the pure rule behind the summary line.
+By default a running row pulses. A failed row reads `labels.callFailed(label)` followed by its `error`, and a declined row reads `labels.callDenied(label)`, so the state is in the text, not only in its color. `getAgentToolSummary` is the pure rule behind the summary line.
 
 ### Result list
 

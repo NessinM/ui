@@ -23,6 +23,8 @@ type Part =
   | { type: "slots"; items: AgentResultItem[] };
 
 const toolLabels = {
+  callDenied: (label: string) => `${label}, declined`,
+  callFailed: (label: string) => `${label} failed.`,
   denied: (count: number) =>
     count === 1 ? "Declined 1 step" : `Declined ${count} steps`,
   done: (count: number) =>

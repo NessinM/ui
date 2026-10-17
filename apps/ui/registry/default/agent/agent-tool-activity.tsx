@@ -44,9 +44,11 @@ export type AgentToolActivityProps = Omit<
 function AgentToolCallContent({
   call,
   renderer,
+  labels,
 }: {
   call: AgentToolCall;
   renderer: AgentToolRenderer | undefined;
+  labels: AgentToolActivityLabels;
 }): ReactNode {
   const custom = renderer?.render?.(call);
   if (custom !== undefined && custom !== null) return custom;
@@ -57,14 +59,18 @@ function AgentToolCallContent({
     case "failed":
       return (
         <>
-          <span className="font-medium">{label}</span>
+          <span className="font-medium">{labels.callFailed(label)}</span>
           {call.error && (
             <span className="text-muted-foreground"> {call.error}</span>
           )}
         </>
       );
     case "denied":
-      return <del className="text-muted-foreground">{label}</del>;
+      return (
+        <span className="text-muted-foreground">
+          {labels.callDenied(label)}
+        </span>
+      );
     default:
       return label;
   }
@@ -111,7 +117,11 @@ export function AgentToolActivity({
                   {renderer?.icon ?? <WrenchIcon />}
                 </span>
                 <div className="min-w-0">
-                  <AgentToolCallContent call={call} renderer={renderer} />
+                  <AgentToolCallContent
+                    call={call}
+                    labels={labels}
+                    renderer={renderer}
+                  />
                 </div>
               </li>
             );

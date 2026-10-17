@@ -10,6 +10,8 @@ import type { AgentToolCall } from "@/registry/default/agent/lib/get-agent-tool-
 import { Button } from "@/registry/default/ui/button";
 
 const labels = {
+  callDenied: (label: string) => `${label}, declined`,
+  callFailed: (label: string) => `${label} failed.`,
   denied: (count: number) =>
     count === 1 ? "Declined 1 step" : `Declined ${count} steps`,
   done: (count: number) =>

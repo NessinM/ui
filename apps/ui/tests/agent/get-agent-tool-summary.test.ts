@@ -5,6 +5,8 @@ import {
 } from "../../registry/default/agent/lib/get-agent-tool-summary";
 
 const labels = {
+  callDenied: (label: string) => `${label}, declined`,
+  callFailed: (label: string) => `${label} failed.`,
   denied: (count: number) => `Declined ${count}`,
   done: (count: number) => `Completed ${count}`,
   failed: (count: number) => `${count} failed`,
