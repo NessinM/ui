@@ -180,7 +180,7 @@ The chrome sits around a conversation: an action bar to switch between open sess
 
 `AgentActionBar` is a labelled group; pass its name as `label`. Place it yourself, for example fixed to a corner of the page. Put one `AgentActionBarSession` in it for each open session, then an `AgentActionBarLauncher` to start a new one.
 
-A session chip shows its `label`, truncated when space is short. Set `active` on the session that’s open, which sets `aria-current`. Props other than the chip’s own go to the session button, so a chip can be the `render` of a popover trigger that opens the session in a panel.
+A session chip shows its `label`, truncated when space is short. Set `active` on the session that’s open, which sets `aria-current`. `className` styles the chip. Props other than the chip’s own go to the session button, so a chip can be the `render` of a popover trigger that opens the session in a panel, and data attributes you pass, such as an anchor id, land on that button.
 
 - **Unread.** Set `unread` to show a dot, and pass `unreadLabel` so screen readers hear it after the title. Derive it with `isAgentSessionUnread({ active, updatedAt, seenAt })`: a session is unread when it changed after the reader last saw it, and never while it’s open. Without `seenAt` there’s no baseline, so the session stays read; pass `seenAt: 0` for a session the reader has never opened. Record `seenAt` when the reader opens or leaves a session.
 - **Close.** Pass `onClose` and a `closeLabel` that names the session, such as “Close Plan the offsite”, since every chip has one. On fine pointers the close button shows while the chip is hovered or anything in it has focus. On touch it’s always shown. A chip without `onClose` has no close button.
@@ -197,7 +197,7 @@ A chip or launcher without `onClick` or `render` is disabled.
 `AgentHistory` opens a searchable list of conversations from a `trigger`, an icon button that it renders through the combobox trigger and names with `labels.history`. Rows are coss Combobox items, so arrow keys, typeahead and highlighting work as they do in any combobox.
 
 - **Items** need an `id`, a `title` and an `updatedAt` date. Add `metadata` for short text before the date and `unread` for the dot, derived with `isAgentSessionUnread`. Format dates with `labels.formatDate`.
-- **The open conversation** is the list’s selected item: pass its id as `activeId` and it shows the combobox check. Choosing another row calls `onSelect` with that item.
+- **The open conversation** is the list’s selected item: pass its id as `activeId` and it shows the combobox check. Choosing a row calls `onSelect` with that item, even the open one, so you can bring a minimized panel back.
 - **Search** filters titles as the reader types, ignoring case, and lists matches newest first. `filterAgentHistory(items, query)` is the rule. Pass `onStartChat` and `labels.startChat` to add a start row above the list.
 - **Placement** defaults to `side="top"` and `align="end"`, for a bar at the bottom of the page.
 
@@ -212,7 +212,7 @@ With no items, the popup shows an empty state with `labels.emptyTitle`, an optio
 `AgentConversationMenu` is an icon button, named by `labels.menu`, with a menu for the open conversation. Pass the conversation’s `announcer`: it hears `labels.copied` or `labels.copyFailed` once after each copy, through the conversation’s one status region. Anything with an `announce` method works.
 
 - **Copy as Markdown** writes `markdown` to the clipboard. Without `markdown` there’s no copy item, and while it’s empty the item is disabled. The menu closes on copy, so add your own toast if sighted readers need to see the result.
-- **Delete** asks for confirmation in an alert dialog with `labels.deleteTitle` and `labels.deleteDescription`, then calls `onDelete`. Without `onDelete` there’s no delete item.
+- **Delete** asks for confirmation in an alert dialog with `labels.deleteTitle` and `labels.deleteDescription`, then calls `onDelete`. Without `onDelete` there’s no delete item, and without either item there’s no menu. Move focus somewhere sensible after deleting, such as the next conversation, since the menu’s trigger may be gone.
 
 Other props go to the trigger button.
 

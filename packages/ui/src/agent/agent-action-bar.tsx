@@ -65,7 +65,7 @@ export type AgentActionBarSessionProps = Omit<
 };
 
 /**
- * One open session. Props other than the ones below go to the session button, so it can be the
+ * One open session. `className` styles the chip; props other than the ones below go to the session button, so it can be the
  * `render` of a popover trigger. The close button shows on hover and focus, and always on touch.
  */
 export function AgentActionBarSession({
@@ -125,7 +125,8 @@ export function AgentActionBarSession({
           className={cn(
             "absolute inset-y-0 end-0 text-muted-foreground transition-opacity hover:bg-transparent hover:text-foreground motion-reduce:transition-none",
             // Fine pointers reveal close on hover or focus. Coarse pointers have no hover, so it stays.
-            "pointer-fine:in-[[data-slot=agent-action-bar-session]:not(:hover):not(:focus-within)]:opacity-0",
+            // Hidden, it lets taps through to the chip, so a touchscreen with a fine pointer can't close by accident.
+            "pointer-fine:in-[[data-slot=agent-action-bar-session]:not(:hover):not(:focus-within)]:pointer-events-none pointer-fine:in-[[data-slot=agent-action-bar-session]:not(:hover):not(:focus-within)]:opacity-0",
           )}
           data-slot="agent-action-bar-session-close"
           onClick={onClose}

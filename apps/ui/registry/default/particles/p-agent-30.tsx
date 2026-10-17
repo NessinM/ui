@@ -83,7 +83,7 @@ export default function Particle() {
         ))}
         <AgentActionBarLauncher
           active={activeId === null}
-          mark={<SparklesIcon />}
+          mark={<SparklesIcon aria-hidden="true" />}
           onClick={() => open(null)}
         >
           Ask

@@ -27,7 +27,7 @@ import {
 } from "@coss/ui/components/tooltip";
 import { cn } from "@coss/ui/lib/utils";
 import { MessageCircleIcon, PlusIcon, SearchIcon } from "lucide-react";
-import { type ReactElement, useState } from "react";
+import { type ReactElement, useEffect, useState } from "react";
 import { filterAgentHistory } from "./lib/filter-agent-history";
 
 export type AgentHistoryItem = {
@@ -77,7 +77,7 @@ export type AgentHistoryProps = {
 
 type Row =
   | { kind: "start"; id: string; title: string }
-  | ({ kind: "conversation" } & AgentHistoryItem);
+  | { kind: "conversation"; id: string; title: string; item: AgentHistoryItem };
 
 const START_ROW_ID = "agent-history-start-chat";
 
@@ -100,14 +100,20 @@ export function AgentHistory({
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
   const isOpen = open ?? uncontrolledOpen;
   const setOpen = (nextOpen: boolean): void => {
-    if (!nextOpen) setQuery("");
     setUncontrolledOpen(nextOpen);
     onOpenChange?.(nextOpen);
   };
-  const conversations: Row[] = filterAgentHistory(items, query).map((item) => ({
+  // A closed history starts its next search empty, however it was closed.
+  useEffect(() => {
+    if (!isOpen) setQuery("");
+  }, [isOpen]);
+  const toRow = (item: AgentHistoryItem): Row => ({
     kind: "conversation",
-    ...item,
-  }));
+    id: item.id,
+    title: item.title,
+    item,
+  });
+  const conversations = filterAgentHistory(items, query).map(toRow);
   const startRow: Row | null =
     onStartChat && labels.startChat
       ? { kind: "start", id: START_ROW_ID, title: labels.startChat }
@@ -115,7 +121,9 @@ export function AgentHistory({
   // While searching, the first match leads, so Enter opens it.
   const rows =
     startRow && !query.trim() ? [startRow, ...conversations] : conversations;
-  const active = conversations.find((row) => row.id === activeId) ?? null;
+  // Looked up in every item, so the selection holds while a search hides it.
+  const activeItem = items.find((item) => item.id === activeId);
+  const active = activeItem ? toRow(activeItem) : null;
 
   let content: ReactElement;
   if (items.length === 0 && loading) {
@@ -171,30 +179,38 @@ export function AgentHistory({
         <ComboboxList>
           {(row: Row) =>
             row.kind === "start" ? (
-              <AgentHistoryStartRow key={row.id} row={row} />
+              <AgentHistoryStartRow
+                key={row.id}
+                onStartChat={onStartChat}
+                row={row}
+              />
             ) : (
               <ComboboxItem
                 data-slot="agent-history-item"
-                data-unread={row.unread || undefined}
+                data-unread={row.item.unread || undefined}
                 key={row.id}
+                // Selection runs on click, which Enter also triggers, so choosing the open conversation still reaches the host.
+                onClick={() => onSelect(row.item)}
                 value={row}
               >
                 <span className="flex min-w-0 items-center justify-between gap-2">
-                  <span className="min-w-0 truncate">{row.title}</span>
+                  <span className="min-w-0 truncate">
+                    {row.title}
+                    {row.item.unread && (
+                      <span className="sr-only">, {labels.unread}</span>
+                    )}
+                  </span>
                   <span className="flex shrink-0 items-center gap-2 text-muted-foreground text-xs">
-                    {row.unread && (
+                    {row.item.unread && (
                       <span
                         aria-hidden="true"
                         className="size-1.5 rounded-full bg-primary"
                         data-slot="agent-history-item-unread"
                       />
                     )}
-                    {row.unread && (
-                      <span className="sr-only">{labels.unread}</span>
-                    )}
-                    {row.metadata && <span>{row.metadata}</span>}
-                    <time dateTime={row.updatedAt.toISOString()}>
-                      {labels.formatDate(row.updatedAt)}
+                    {row.item.metadata && <span>{row.item.metadata}</span>}
+                    <time dateTime={row.item.updatedAt.toISOString()}>
+                      {labels.formatDate(row.item.updatedAt)}
                     </time>
                   </span>
                 </span>
@@ -223,11 +239,6 @@ export function AgentHistory({
           setQuery(value);
       }}
       onOpenChange={setOpen}
-      onValueChange={(row) => {
-        if (!row) return;
-        if (row.kind === "start") onStartChat?.();
-        else onSelect(row);
-      }}
       open={isOpen}
       value={active}
     >
@@ -255,12 +266,18 @@ export function AgentHistory({
 
 function AgentHistoryStartRow({
   row,
+  onStartChat,
 }: {
   row: Extract<Row, { kind: "start" }>;
+  onStartChat?: () => void;
 }): ReactElement {
   return (
     <>
-      <ComboboxItem data-slot="agent-history-start-chat" value={row}>
+      <ComboboxItem
+        data-slot="agent-history-start-chat"
+        onClick={onStartChat}
+        value={row}
+      >
         <span className="flex min-w-0 items-center gap-2">
           <PlusIcon aria-hidden="true" />
           <span className="min-w-0 truncate">{row.title}</span>

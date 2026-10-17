@@ -64,13 +64,16 @@ export function AgentConversationMenu({
   onDelete,
   className,
   ...props
-}: AgentConversationMenuProps): ReactElement {
+}: AgentConversationMenuProps): ReactElement | null {
   const [confirming, setConfirming] = useState(false);
 
   const copy = async (): Promise<void> => {
     const copied = await copyAgentText(markdown ?? "", navigator.clipboard);
     announcer.announce(copied ? labels.copied : labels.copyFailed);
   };
+
+  // A menu with nothing in it isn't rendered.
+  if (markdown === undefined && !onDelete) return null;
 
   return (
     <>
