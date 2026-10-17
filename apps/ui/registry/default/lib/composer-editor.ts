@@ -35,14 +35,14 @@ const STACK_HYSTERESIS_PX = 12;
 
 export function shouldStackComposer(
   text: string,
-  lineWidth: number,
-  inlineWidth: number,
+  contentWidth: number,
+  availableWidth: number,
   isStacked: boolean,
 ): boolean {
   if (!text) return false;
   return (
     text.includes("\n") ||
-    lineWidth > inlineWidth - (isStacked ? STACK_HYSTERESIS_PX : 0)
+    contentWidth > availableWidth - (isStacked ? STACK_HYSTERESIS_PX : 0)
   );
 }
 
@@ -477,15 +477,16 @@ function useComposerInputLayout() {
       // This keeps the layout from oscillating when full-width text fits one line.
       const isStacked = frame.hasAttribute("data-multiline");
       frame.removeAttribute("data-multiline");
-      const whiteSpace = input.style.whiteSpace;
-      input.style.whiteSpace = "pre";
-      const lineWidth = input.scrollWidth;
-      input.style.whiteSpace = whiteSpace;
+      // Read the unwrapped width: scrollWidth never drops below the box width.
+      const width = input.style.width;
+      input.style.width = "max-content";
+      const contentWidth = input.offsetWidth;
+      input.style.width = width;
       frame.toggleAttribute(
         "data-multiline",
         shouldStackComposer(
           textRef.current,
-          lineWidth,
+          contentWidth,
           input.clientWidth,
           isStacked,
         ),
