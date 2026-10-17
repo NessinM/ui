@@ -24,7 +24,6 @@ import {
 import {
   type ComposerEditorController,
   type ComposerItemValue,
-  type ComposerQuery,
   type ComposerValue,
   type UseComposerEditorOptions,
   useComposerEditor,
@@ -56,8 +55,10 @@ function useComposerContext(): Pick<
   | "canSubmit"
   | "disabled"
   | "readOnly"
+  | "busy"
   | "status"
   | "submit"
+  | "stop"
   | "insertTrigger"
   | "reset"
 > {
@@ -70,8 +71,10 @@ function useComposerContext(): Pick<
     canSubmit,
     disabled,
     readOnly,
+    busy,
     status,
     submit,
+    stop,
     insertTrigger,
     reset,
   } = context;
@@ -81,8 +84,10 @@ function useComposerContext(): Pick<
     canSubmit,
     disabled,
     readOnly,
+    busy,
     status,
     submit,
+    stop,
     insertTrigger,
     reset,
   };

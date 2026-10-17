@@ -124,6 +124,38 @@ Set `submitDisabled` on `Composer` while sending or whenever your application ca
 
 `allowEmpty` lets you send an attachment without text. `ComposerSubmit` accepts a custom button through `render`; choose its label, icon, size, and variant. Its own `disabled` prop only controls that button. Use `Composer.submitDisabled` for a rule that must also apply to Enter.
 
+### Stop while busy
+
+Set `busy` on `Composer` while an assistant is replying. Busy blocks Enter and the submit button but keeps the draft editable, so the next message can be written while the reply finishes. Messages are not queued.
+
+Pass a second button through `stopRender` on `ComposerSubmit`. While busy, it replaces the send button and calls `onStop`. Use the same component type for both buttons so the element stays in place and keeps focus when it switches. Give each button its own accessible name, on the rendered element.
+
+<ComponentPreview name="p-composer-12" />
+
+```tsx
+<Composer busy={generating} onStop={stop} onSubmit={send}>
+  <ComposerInput aria-label="Message" />
+  <ComposerActions>
+    <ComposerActionGroup align="end">
+      <ComposerSubmit
+        render={
+          <Button aria-label="Send message" size="icon">
+            <ArrowUpIcon aria-hidden="true" />
+          </Button>
+        }
+        stopRender={
+          <Button aria-label="Stop generating" size="icon">
+            <SquareIcon aria-hidden="true" className="fill-current" />
+          </Button>
+        }
+      />
+    </ComposerActionGroup>
+  </ComposerActions>
+</Composer>
+```
+
+Without `stopRender`, a busy Composer only disables submission. Clear `busy` when the reply finishes, fails, or is stopped.
+
 ### Inside another form
 
 Render `Composer` as a div to avoid nested forms. `name` adds the canonical message text to the containing form's `FormData`, for either input.
@@ -257,6 +289,8 @@ The styled frame and state owner for one input. It renders a form by default and
 | `readOnly` | `boolean` | `false` | Allows selection and copying, but prevents editing and submission |
 | `submitDisabled` | `boolean` | `false` | Blocks all submission while allowing editing |
 | `allowEmpty` | `boolean` | `false` | Allows submission without text, for example with an attachment |
+| `busy` | `boolean` | `false` | Blocks submission while allowing editing, and switches `ComposerSubmit` to its `stopRender` button |
+| `onStop` | `() => void` | — | Called when the stop button is pressed while busy |
 | `name` | `string` | — | Adds the plain-text draft to the containing form's data |
 | `getSuggestionsAnnouncement` | `(count: number) => string` | English result count and navigation hint | Customizes or translates the suggestion announcement; return an empty string to silence it |
 | `render` | Base UI render prop | `form` | Replaces the frame; a div supports embedding in another form |
@@ -346,9 +380,10 @@ A submit control that renders a native button by default. Pass a coss `Button` t
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
 | `render` | Base UI render prop | Native button | Replaces the button element, for example with a coss `Button` |
+| `stopRender` | Base UI render prop | — | Replaces `render` while the Composer is busy; clicking calls `onStop` |
 | `nativeButton` | `boolean` | `true` | Set to `false` only when rendering a non-button element; Base UI supplies keyboard behavior |
 | `focusableWhenDisabled` | `boolean` | `false` | Keeps a disabled control focusable, using Base UI Button behavior |
-| `disabled` | `boolean` | `!canSubmit` | Overrides this button’s disabled state; use `submitDisabled` on Composer to block Enter too |
+| `disabled` | `boolean` | `!canSubmit`, or `false` while showing `stopRender` | Overrides this button’s disabled state; use `submitDisabled` on Composer to block Enter too |
 | `children` | `ReactNode` | — | Button content when using the native button |
 | `...props` | Button element props | — | Native button attributes, including `aria-label`; type is `"button"`; clicking requests submission through Composer |
 
@@ -481,8 +516,10 @@ function ClearMessage() {
 | `canSubmit` | Whether the shared submission policy permits sending |
 | `disabled` | Whether the Composer is disabled |
 | `readOnly` | Whether editing is read-only |
+| `busy` | Whether the Composer is busy |
 | `status` | Active trigger's loading state |
 | `submit()` | Requests submission, including native validation for a form frame |
+| `stop()` | Calls `onStop` while busy |
 | `insertTrigger(character)` | Inserts a configured trigger at the caret, separating it from surrounding text when needed, then opens its suggestions. Available with the contenteditable input. |
 | `reset()` | Restores the initial draft, or requests a reset from the controlled owner |
 
