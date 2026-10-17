@@ -260,7 +260,7 @@ import remarkGfm from "remark-gfm";
 </ChatMessage>
 ```
 
-If your parser returns an HTML string, sanitize it first, then pass it through `dangerouslySetInnerHTML`. Wide tables and code blocks scroll horizontally inside the message.
+If your parser returns an HTML string, sanitize it first, then pass it through `dangerouslySetInnerHTML`. Code blocks scroll horizontally. Tables keep their table semantics for screen readers, so they don’t scroll by themselves: wrap each table in an element through your renderer (for example a `table` component that returns `<div><table {...props} /></div>`) and that wrapper scrolls. An unwrapped wide table scrolls the whole Markdown block instead.
 
 ### Streaming replies
 

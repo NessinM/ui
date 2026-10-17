@@ -15,7 +15,7 @@ export function ChatMessageMarkdown({
         "[&_:is(ul,ol)]:ps-5 [&_li+li]:mt-1 [&_li>:is(ul,ol)]:mt-1 [&_li>:is(ul,ol)]:mb-0 [&_li>p]:my-0 [&_li]:marker:text-muted-foreground [&_ol>li]:marker:tabular-nums [&_ol]:list-decimal [&_ul]:list-disc",
         "[&_:not(pre)>code]:rounded-sm [&_:not(pre)>code]:bg-foreground/8 [&_:not(pre)>code]:px-1 [&_:not(pre)>code]:py-0.5 [&_code]:font-mono [&_code]:text-[.875em] [&_pre]:overflow-x-auto [&_pre]:rounded-lg [&_pre]:border [&_pre]:bg-foreground/4 [&_pre]:px-3 [&_pre]:py-2.5 [&_pre]:leading-normal",
         "[&_blockquote]:border-s-2 [&_blockquote]:ps-3 [&_blockquote]:text-muted-foreground",
-        "[&_:is(th,td):first-child]:ps-0 [&_:is(th,td):last-child]:pe-0 [&_:is(th,td)]:px-3 [&_:is(th,td)]:py-1.5 [&_table]:block [&_table]:max-w-full [&_table]:border-collapse [&_table]:overflow-x-auto [&_tbody_tr:last-child]:border-b-0 [&_td]:align-top [&_td]:tabular-nums [&_th]:text-start [&_th]:align-bottom [&_th]:font-medium [&_tr]:border-b",
+        "has-[>table]:overflow-x-auto [&_:has(>table)]:overflow-x-auto [&_:is(th,td):first-child]:ps-0 [&_:is(th,td):last-child]:pe-0 [&_:is(th,td)]:px-3 [&_:is(th,td)]:py-1.5 [&_table]:border-collapse [&_tbody_tr:last-child]:border-b-0 [&_td]:align-top [&_td]:tabular-nums [&_th]:text-start [&_th]:align-bottom [&_th]:font-medium [&_tr]:border-b",
         className,
       )}
       {...props}

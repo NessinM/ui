@@ -1,10 +1,9 @@
-import type { ComponentProps, ReactElement, ReactNode } from "react";
+import type { ComponentProps, ReactElement } from "react";
 import { cn } from "@/registry/default/lib/utils";
 
-export type ChatMessageTextProps = Omit<ComponentProps<"p">, "children"> & {
+export type ChatMessageTextProps = ComponentProps<"p"> & {
   text: string;
   mentions?: readonly string[];
-  children?: ReactNode;
 };
 
 export function ChatMessageText({

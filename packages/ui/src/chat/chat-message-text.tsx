@@ -1,10 +1,9 @@
 import { cn } from "@coss/ui/lib/utils";
-import type { ComponentProps, ReactElement, ReactNode } from "react";
+import type { ComponentProps, ReactElement } from "react";
 
-export type ChatMessageTextProps = Omit<ComponentProps<"p">, "children"> & {
+export type ChatMessageTextProps = ComponentProps<"p"> & {
   text: string;
   mentions?: readonly string[];
-  children?: ReactNode;
 };
 
 export function ChatMessageText({
