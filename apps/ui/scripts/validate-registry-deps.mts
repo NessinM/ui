@@ -282,7 +282,9 @@ async function filterDependenciesCoveredByRegistry(
 }
 
 // Check if a dependency matches (handles sub-paths like @base-ui/react/accordion matching @base-ui/react)
-function dependencyMatches(expected: string, actual: string): boolean {
+function dependencyMatches(expected: string, actualSpecifier: string): boolean {
+  // Registry dependencies may pin a version, including on scoped packages.
+  const actual = actualSpecifier.replace(/(?!^)@[^/]*$/, "");
   if (expected === actual) return true;
 
   // Check if expected is a sub-path of actual (e.g., @base-ui/react/accordion matches @base-ui/react)

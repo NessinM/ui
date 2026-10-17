@@ -1,0 +1,161 @@
+---
+title: Message Scroller
+description: Composable message scrolling with prompt anchoring, streaming follow, and Base UI scrollbars.
+
+links:
+  doc: https://ui.shadcn.com/docs/components/base/message-scroller
+---
+
+<ComponentPreview name="p-message-scroller-1" align="start" className="**:data-[align]:h-auto" />
+
+## Installation
+
+<CodeTabs>
+<TabsList>
+  <TabsTab value="cli">CLI</TabsTab>
+  <TabsTab value="manual">Manual</TabsTab>
+</TabsList>
+<TabsPanel value="cli">
+
+```bash
+npx shadcn@latest add @coss/message-scroller
+```
+
+</TabsPanel>
+<TabsPanel value="manual">
+<Steps>
+<Step>Install the dependencies and shared coss components.</Step>
+
+```bash
+npm install @shadcn/react@0.3.1 lucide-react
+npx shadcn@latest add @coss/button @coss/scroll-area
+```
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="message-scroller" title="components/ui/message-scroller.tsx" />
+
+<Step>Update the import paths to match your project setup.</Step>
+</Steps>
+</TabsPanel>
+</CodeTabs>
+
+## Usage
+
+The six parts and three hooks follow shadcn’s public composition. The provider owns scrolling state; the frame contains a Base UI ScrollArea; the viewport and content share their DOM elements with shadcn’s scrolling primitives. Buttons are optional and can scroll in either direction.
+
+```tsx
+import {
+  MessageScroller,
+  MessageScrollerButton,
+  MessageScrollerContent,
+  MessageScrollerItem,
+  MessageScrollerProvider,
+  MessageScrollerViewport,
+} from "@/components/ui/message-scroller"
+
+<MessageScrollerProvider key={conversation.id} autoScroll>
+  <MessageScroller>
+    <MessageScrollerViewport aria-label="Agent conversation">
+      <MessageScrollerContent>
+        {rows.map((row) => (
+          <MessageScrollerItem
+            key={row.id}
+            messageId={row.id}
+            scrollAnchor={row.startsTurn}
+          >
+            {row.content}
+          </MessageScrollerItem>
+        ))}
+      </MessageScrollerContent>
+    </MessageScrollerViewport>
+    <MessageScrollerButton aria-label="Jump to latest" />
+  </MessageScroller>
+</MessageScrollerProvider>
+```
+
+Give the frame a bounded height. Keep message items directly inside the content; put message presentation inside each item. Use unique, stable `key` and `messageId` values when loading history or replacing optimistic messages. `messageId` is optional for decorative rows, but required for message navigation and visibility tracking. Key the provider when switching conversations or starting a new chat.
+
+## Human chat
+
+For a conversation between people, enable `autoScroll`, open at `"end"`, and leave `scrollAnchor` off every item. New messages append at the bottom. The viewport follows while you are at the end; scrolling up lets you read history without incoming messages moving your position. The end button returns you to the latest messages.
+
+<ComponentPreview name="p-message-scroller-3" align="start" className="**:data-[align]:h-auto" />
+
+Use **Receive a message** to simulate an incoming message, or write your own message in the composer. Try receiving messages both at the bottom and while reading earlier messages. This example selects `scrollEdgeThreshold={0}` so even a small movement away from the end counts as reading history. It adds no prompt anchors to either incoming or outgoing messages.
+
+Unread counts and any explicit jump after sending are application decisions. This example uses the same scrolling component as the agent demo; existing human-chat components are unchanged.
+
+## Saved conversations and history
+
+This example exposes all three opening positions, loading older messages, buttons for both directions, and navigation to a particular message from outside the scroll frame.
+
+<ComponentPreview name="p-message-scroller-2" align="start" className="**:data-[align]:h-auto" />
+
+Use `defaultScrollPosition="last-anchor"` to open at the last prompt when its turn is longer than the viewport. Use `"start"` or `"end"` for those edges. Initial positioning also supports an initially empty transcript populated later. Load the initial page as a coherent snapshot.
+
+`preserveScrollOnPrepend` on the viewport defaults to `true`. Prepending older rows preserves the row being read; stable message identities are essential. This does not promise preservation for arbitrary earlier-card expansions, image loads, deletion, or virtualization.
+
+## Following and anchoring
+
+Provider defaults match shadcn: `autoScroll={false}` and `defaultScrollPosition="end"`. Enable `autoScroll` to follow a growing reply. A new `scrollAnchor` item places the prompt near the top; a short reply fills the space below it before following the live end.
+
+Mark saved turn starts when loading history and explicit local prompts when sending them. Ordinary remote arrivals and assistant updates should not request a new anchor. The application owns that decision, along with message data, streaming, unread state, and announcements.
+
+Wheel, touch movement, and scroll keys release following. The end button returns to the live end and permits following to resume. `scrollEdgeThreshold` controls the tolerance for being at an edge; use `0` when even a small move away should count. `scrollPreviousItemPeek` controls how much previous context appears above an anchored prompt.
+
+**`autoScroll` is not a complete pause.** Disabling it stops ordinary following but does not suspend prompt anchoring, initial positioning, explicit jumps, or prepend preservation. coss uses the public behavior of `@shadcn/react` 0.3.1 and does not patch its controller or expose a full `paused` prop.
+
+### Known limitation in 0.3.1
+
+Dragging the scrollbar away during a short anchored turn does not reliably release that anchor. Subsequent reply growth can pull the viewport back to the live turn. This is reproduced with the Base UI thumb and with the upstream viewport’s scroll-only path. The published package has no public interruption command to bridge this gap. Keep this limitation in mind before adopting the component for an agent UI; the browser suite retains it as an expected failing regression.
+
+## API Reference
+
+### MessageScrollerProvider
+
+Accepts the upstream provider props without overriding their defaults.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `autoScroll` | `boolean` | `false` | Follow growing content while following remains active. |
+| `defaultScrollPosition` | `"start" \| "end" \| "last-anchor"` | `"end"` | Initial transcript positioning. |
+| `scrollEdgeThreshold` | `number` | `8` | Distance in pixels that counts as an edge. |
+| `scrollPreviousItemPeek` | `number` | `64` | Previous context above an anchored prompt. |
+| `scrollMargin` | `number` | `0` | Additional offset for message navigation. |
+
+### MessageScroller
+
+The bounded frame, with Base UI scrollbars. Accepts the upstream root’s HTML props, including `className` and `style`.
+
+### MessageScrollerViewport
+
+The shared scrollable element. Accepts upstream viewport props, including `ref`, scroll and input handlers, `aria-label`, and `preserveScrollOnPrepend` (default `true`). The default accessible name is “Messages”.
+
+### MessageScrollerContent
+
+The measured transcript. Accepts upstream content props, including `ref`, `className`, and `spacerClassName`. Defaults to a vertical stack with a 24 px gap; add padding explicitly. coss sets `role="log"` and `aria-live="off"` so streamed tokens are not announced individually. These attributes can be overridden.
+
+### MessageScrollerItem
+
+Accepts upstream item and HTML props, including `ref`, optional `messageId`, and `scrollAnchor` (default `false`). The component does not impose a message bubble or role-specific styling.
+
+### MessageScrollerButton
+
+Accepts upstream button props, including `direction` (`"start"` or `"end"`), `behavior`, `render`, `ref`, event handlers, and children. Also accepts coss Button `variant` (default `"outline"`) and `size` (default `"icon-sm"`).
+
+The button uses smooth navigation by default and switches to immediate navigation when reduced motion is requested. The button remains mounted and becomes inert when its destination is reached. Provide `aria-label` for a custom icon-only control. Default arrow buttons are named “Scroll to start” or “Scroll to end”.
+
+### Hooks
+
+All hooks are available anywhere inside the provider, including controls outside the frame.
+
+| Hook | Returns |
+| --- | --- |
+| `useMessageScroller()` | `scrollToStart(options?)`, `scrollToEnd(options?)`, `scrollToMessage(id, options?)` |
+| `useMessageScrollerScrollable()` | `{ start, end }` indicating available scroll directions. |
+| `useMessageScrollerVisibility()` | `{ currentAnchorId, visibleMessageIds }` for navigation or outlines. |
+
+Navigation options support `align`, `behavior`, and `scrollMargin`. Import hooks from the same coss component module.
+
+This component is optional. Existing human-chat scrolling is unchanged. Registry installation opts into `@shadcn/react`; the workspace `@coss/ui` package includes that dependency.

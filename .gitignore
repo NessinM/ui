@@ -34,3 +34,7 @@ npm-debug.log*
 # Misc
 .DS_Store
 *.pem
+
+# Browser test artifacts
+playwright-report/
+test-results/

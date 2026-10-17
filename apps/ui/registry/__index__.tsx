@@ -565,6 +565,24 @@ export const Index: Record<string, any> = {
     categories: undefined,
     meta: undefined,
   },
+  "message-scroller": {
+    name: "message-scroller",
+    description: "",
+    type: "registry:ui",
+    registryDependencies: ["@coss/button","@coss/scroll-area"],
+    files: [{
+      path: "registry/default/ui/message-scroller.tsx",
+      type: "registry:ui",
+      target: ""
+    }],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/default/ui/message-scroller.tsx")
+      const exportName = Object.keys(mod).find(key => typeof mod[key] === 'function' || typeof mod[key] === 'object') || item.name
+      return { default: mod.default || mod[exportName] }
+    }),
+    categories: undefined,
+    meta: undefined,
+  },
   "meter": {
     name: "meter",
     description: "",
@@ -8006,6 +8024,60 @@ export const Index: Record<string, any> = {
     }),
     categories: ["radio group","tooltip"],
     meta: {"className":"**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-96"},
+  },
+  "p-message-scroller-1": {
+    name: "p-message-scroller-1",
+    description: "Prompt anchoring and streaming replies with a jump to latest control",
+    type: "registry:block",
+    registryDependencies: ["@coss/button","@coss/message-scroller","@coss/textarea"],
+    files: [{
+      path: "registry/default/particles/p-message-scroller-1.tsx",
+      type: "registry:block",
+      target: ""
+    }],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/default/particles/p-message-scroller-1.tsx")
+      const exportName = Object.keys(mod).find(key => typeof mod[key] === 'function' || typeof mod[key] === 'object') || item.name
+      return { default: mod.default || mod[exportName] }
+    }),
+    categories: ["message scroller"],
+    meta: {"className":"**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-lg"},
+  },
+  "p-message-scroller-2": {
+    name: "p-message-scroller-2",
+    description: "Saved conversation with opening positions, history loading, and message navigation",
+    type: "registry:block",
+    registryDependencies: ["@coss/button","@coss/message-scroller"],
+    files: [{
+      path: "registry/default/particles/p-message-scroller-2.tsx",
+      type: "registry:block",
+      target: ""
+    }],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/default/particles/p-message-scroller-2.tsx")
+      const exportName = Object.keys(mod).find(key => typeof mod[key] === 'function' || typeof mod[key] === 'object') || item.name
+      return { default: mod.default || mod[exportName] }
+    }),
+    categories: ["message scroller"],
+    meta: {"className":"**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-lg"},
+  },
+  "p-message-scroller-3": {
+    name: "p-message-scroller-3",
+    description: "Human chat with incoming messages and bottom following without prompt anchors",
+    type: "registry:block",
+    registryDependencies: ["@coss/button","@coss/input","@coss/message-scroller"],
+    files: [{
+      path: "registry/default/particles/p-message-scroller-3.tsx",
+      type: "registry:block",
+      target: ""
+    }],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/default/particles/p-message-scroller-3.tsx")
+      const exportName = Object.keys(mod).find(key => typeof mod[key] === 'function' || typeof mod[key] === 'object') || item.name
+      return { default: mod.default || mod[exportName] }
+    }),
+    categories: ["message scroller"],
+    meta: {"className":"**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-lg"},
   },
   "p-scroll-area-1": {
     name: "p-scroll-area-1",

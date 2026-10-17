@@ -4357,6 +4357,59 @@ export const particles: ParticleItem[] = [
     type: "registry:block",
   },
   {
+    categories: categories("message scroller"),
+    description:
+      "Prompt anchoring and streaming replies with a jump to latest control",
+    files: [
+      { path: "particles/p-message-scroller-1.tsx", type: "registry:block" },
+    ],
+    meta: {
+      className:
+        "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-lg",
+    },
+    name: "p-message-scroller-1",
+    registryDependencies: [
+      "@coss/button",
+      "@coss/message-scroller",
+      "@coss/textarea",
+    ],
+    type: "registry:block",
+  },
+  {
+    categories: categories("message scroller"),
+    description:
+      "Saved conversation with opening positions, history loading, and message navigation",
+    files: [
+      { path: "particles/p-message-scroller-2.tsx", type: "registry:block" },
+    ],
+    meta: {
+      className:
+        "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-lg",
+    },
+    name: "p-message-scroller-2",
+    registryDependencies: ["@coss/button", "@coss/message-scroller"],
+    type: "registry:block",
+  },
+  {
+    categories: categories("message scroller"),
+    description:
+      "Human chat with incoming messages and bottom following without prompt anchors",
+    files: [
+      { path: "particles/p-message-scroller-3.tsx", type: "registry:block" },
+    ],
+    meta: {
+      className:
+        "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-lg",
+    },
+    name: "p-message-scroller-3",
+    registryDependencies: [
+      "@coss/button",
+      "@coss/input",
+      "@coss/message-scroller",
+    ],
+    type: "registry:block",
+  },
+  {
     categories: categories("scroll area"),
     description: "Basic scroll area",
     files: [{ path: "particles/p-scroll-area-1.tsx", type: "registry:block" }],

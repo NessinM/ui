@@ -492,6 +492,13 @@ export const ui: Registry["items"] = [
     type: "registry:ui",
   },
   {
+    dependencies: ["@shadcn/react@0.3.1", "lucide-react"],
+    files: [{ path: "ui/message-scroller.tsx", type: "registry:ui" }],
+    name: "message-scroller",
+    registryDependencies: ["@coss/button", "@coss/scroll-area"],
+    type: "registry:ui",
+  },
+  {
     dependencies: ["@base-ui/react"],
     files: [
       {

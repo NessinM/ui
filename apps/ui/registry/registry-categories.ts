@@ -40,6 +40,7 @@ export const registryCategories = [
   "kbd",
   "label",
   "menu",
+  "message scroller",
   "meter",
   "navigation",
   "number field",

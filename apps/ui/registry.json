@@ -577,6 +577,24 @@
     },
     {
       "dependencies": [
+        "@shadcn/react@0.3.1",
+        "lucide-react"
+      ],
+      "files": [
+        {
+          "path": "registry/default/ui/message-scroller.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "name": "message-scroller",
+      "registryDependencies": [
+        "@coss/button",
+        "@coss/scroll-area"
+      ],
+      "type": "registry:ui"
+    },
+    {
+      "dependencies": [
         "@base-ui/react"
       ],
       "files": [
@@ -9368,6 +9386,71 @@
       "registryDependencies": [
         "@coss/radio-group",
         "@coss/tooltip"
+      ],
+      "type": "registry:block"
+    },
+    {
+      "categories": [
+        "message scroller"
+      ],
+      "description": "Prompt anchoring and streaming replies with a jump to latest control",
+      "files": [
+        {
+          "path": "registry/default/particles/p-message-scroller-1.tsx",
+          "type": "registry:block"
+        }
+      ],
+      "meta": {
+        "className": "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-lg"
+      },
+      "name": "p-message-scroller-1",
+      "registryDependencies": [
+        "@coss/button",
+        "@coss/message-scroller",
+        "@coss/textarea"
+      ],
+      "type": "registry:block"
+    },
+    {
+      "categories": [
+        "message scroller"
+      ],
+      "description": "Saved conversation with opening positions, history loading, and message navigation",
+      "files": [
+        {
+          "path": "registry/default/particles/p-message-scroller-2.tsx",
+          "type": "registry:block"
+        }
+      ],
+      "meta": {
+        "className": "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-lg"
+      },
+      "name": "p-message-scroller-2",
+      "registryDependencies": [
+        "@coss/button",
+        "@coss/message-scroller"
+      ],
+      "type": "registry:block"
+    },
+    {
+      "categories": [
+        "message scroller"
+      ],
+      "description": "Human chat with incoming messages and bottom following without prompt anchors",
+      "files": [
+        {
+          "path": "registry/default/particles/p-message-scroller-3.tsx",
+          "type": "registry:block"
+        }
+      ],
+      "meta": {
+        "className": "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-lg"
+      },
+      "name": "p-message-scroller-3",
+      "registryDependencies": [
+        "@coss/button",
+        "@coss/input",
+        "@coss/message-scroller"
       ],
       "type": "registry:block"
     },

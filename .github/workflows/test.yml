@@ -31,3 +31,10 @@ jobs:
 
       - name: Run tests
         run: bun run test
+
+      - name: Install browser engines
+        working-directory: apps/ui
+        run: bunx playwright install --with-deps chromium firefox webkit
+
+      - name: Test message scrolling in browsers
+        run: bun run --cwd apps/ui test:browser
