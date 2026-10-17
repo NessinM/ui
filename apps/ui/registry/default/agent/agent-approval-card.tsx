@@ -37,13 +37,13 @@ type AgentApprovalBaseProps = Omit<
   ComponentProps<typeof CardFrame>,
   "children"
 > & {
-  /** Called with the person’s answer. Return a promise to show the card responding until it settles; a rejection shows the error. */
+  /** Called with the person's answer. Return a promise to show the card responding until it settles; a rejection shows the error. */
   onRespond: (decision: AgentApprovalDecision) => void | Promise<void>;
   /** The answer your agent runtime recorded. Set it to show the resolved state. */
   decision?: AgentApprovalDecision | null;
-  /** An answer is on its way through your runtime. The card also responds while `onRespond`’s promise runs. */
+  /** An answer is on its way through your runtime. The card also responds while `onRespond`'s promise runs. */
   responding?: boolean;
-  /** The last answer didn’t land. The card also shows an error when `onRespond`’s promise rejects. */
+  /** The last answer didn't land. The card also shows an error when `onRespond`'s promise rejects. */
   error?: boolean;
   /** Blocks answering, for example while another turn is running. */
   disabled?: boolean;
@@ -95,10 +95,14 @@ function AgentApprovalPromptBody({
   showQuestion?: boolean;
 }): ReactElement {
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-3" data-slot="agent-approval-prompt">
       <div className="flex flex-col gap-1.5">
         {showQuestion && (
-          <p className="font-medium text-foreground text-sm" id={questionId}>
+          <p
+            className="font-medium text-foreground text-sm"
+            data-slot="agent-approval-question"
+            id={questionId}
+          >
             {prompt.question}
           </p>
         )}
@@ -188,11 +192,16 @@ function AgentApprovalFooter({
           tabIndex={-1}
         >
           {state === "approved" ? (
-            <CheckIcon aria-hidden="true" className="size-3.5 shrink-0" />
+            <>
+              <CheckIcon aria-hidden="true" className="size-3.5 shrink-0" />
+              {labels.approved}
+            </>
           ) : (
-            <XIcon aria-hidden="true" className="size-3.5 shrink-0" />
+            <>
+              <XIcon aria-hidden="true" className="size-3.5 shrink-0" />
+              {labels.denied}
+            </>
           )}
-          {state === "approved" ? labels.approved : labels.denied}
         </p>
       ) : (
         <>
@@ -209,7 +218,10 @@ function AgentApprovalFooter({
             </p>
           ) : (
             labels.hint && (
-              <p className="me-auto text-muted-foreground text-xs">
+              <p
+                className="me-auto text-muted-foreground text-xs"
+                data-slot="agent-approval-hint"
+              >
                 {labels.hint}
               </p>
             )
@@ -258,7 +270,7 @@ export type AgentApprovalCardLabels = {
   approved: string;
   /** The resolved line after denying, such as “Skipped”. */
   denied: string;
-  /** Shown beside the actions when the answer didn’t land. */
+  /** Shown beside the actions when the answer didn't land. */
   error: string;
   /** Optional line beside the actions, such as how to request changes. */
   hint?: string;
@@ -330,7 +342,7 @@ export type AgentApprovalGroupCardLabels = {
   approved: string;
   /** The resolved line after skipping all. */
   denied: string;
-  /** Shown beside the actions when the answer didn’t land. */
+  /** Shown beside the actions when the answer didn't land. */
   error: string;
   /** Optional line beside the actions, such as “Skip first to request changes”. */
   hint?: string;
@@ -375,13 +387,18 @@ export function AgentApprovalGroupCard({
       className={cn("w-full", className)}
       data-slot="agent-approval-group-card"
       data-state={approval.state}
-      role="group"
+      // Without a shared question there's no name for the group; each item names itself.
+      role={shared.question ? "group" : undefined}
       {...props}
     >
       <Card>
         <CardPanel className="flex flex-col gap-4 p-4">
           {shared.question && (
-            <p className="font-medium text-foreground text-sm" id={questionId}>
+            <p
+              className="font-medium text-foreground text-sm"
+              data-slot="agent-approval-question"
+              id={questionId}
+            >
               {shared.question}
             </p>
           )}

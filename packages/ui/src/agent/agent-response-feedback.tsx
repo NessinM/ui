@@ -97,7 +97,8 @@ export function AgentResponseFeedback({
   className,
   ...props
 }: AgentResponseFeedbackProps): ReactElement {
-  const { failed, pending, run } = useAgentPendingChoice<AgentFeedbackRating>();
+  const { clearFailure, failed, pending, run } =
+    useAgentPendingChoice<AgentFeedbackRating>();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedReasons, setSelectedReasons] = useState<string[]>([]);
   const [details, setDetails] = useState("");
@@ -119,9 +120,12 @@ export function AgentResponseFeedback({
   };
 
   const rate = (next: AgentFeedbackRating): void => {
+    if (pending) return;
     const action = getAgentFeedbackAction(value, next);
-    if (action.type === "describe") setDialogOpen(true);
-    else if (action.type === "clear") void save(next, null);
+    if (action.type === "ask-details") {
+      clearFailure();
+      setDialogOpen(true);
+    } else if (action.type === "clear") void save(next, null);
     else void save(next, action.feedback);
   };
 
@@ -152,7 +156,7 @@ export function AgentResponseFeedback({
           disabled={disabled}
           key={rating}
           label={label}
-          // Stays enabled while saving so focus isn’t dropped; repeat presses are ignored.
+          // Stays enabled while saving so focus isn't dropped; repeat presses are ignored.
           onClick={() => rate(rating)}
         >
           {pending === rating && !dialogOpen ? (
@@ -180,6 +184,8 @@ export function AgentResponseFeedback({
         }}
         onOpenChangeComplete={(open) => {
           if (open) return;
+          // Closing the form, saved or not, moves on from its failure.
+          clearFailure();
           setSelectedReasons([]);
           setDetails("");
         }}
@@ -269,7 +275,7 @@ export function AgentResponseFeedback({
               >
                 {labels.cancel}
               </DialogClose>
-              {/* Stays enabled while saving so focus isn’t dropped; repeat submits are ignored. */}
+              {/* Stays enabled while saving so focus isn't dropped; repeat submits are ignored. */}
               <Button disabled={!submission} type="submit">
                 {pending === "negative" && (
                   <Loader2Icon

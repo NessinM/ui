@@ -9,7 +9,7 @@ import { Switch } from "@/registry/default/ui/switch";
 export default function Particle() {
   const [mayHaveWritten, setMayHaveWritten] = useState(false);
   const [attempts, setAttempts] = useState(0);
-  const recover = () => setAttempts(attempts + 1);
+  const recover = () => setAttempts((count) => count + 1);
 
   return (
     <div className="flex w-full max-w-sm flex-col gap-6">

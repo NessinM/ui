@@ -9,9 +9,9 @@ export type AgentApprovalState =
 export type AgentApprovalStateInput = {
   /** The answer the agent runtime recorded. Once set, the question is resolved. */
   decision?: AgentApprovalDecision | null;
-  /** An answer is on its way and hasn’t landed yet. */
+  /** An answer is on its way and hasn't landed yet. */
   responding?: boolean;
-  /** The last answer didn’t land. The question can be answered again. */
+  /** The last answer didn't land. The question can be answered again. */
   error?: boolean;
 };
 
@@ -38,9 +38,9 @@ export type AgentApprovalPrompt = {
   details?: readonly string[];
   /** A short tag, such as the tool or the resource. */
   badge?: string;
-  /** The approve verb for this action, such as “Cancel booking”. Defaults to the card’s label. */
+  /** The approve verb for this action, such as “Cancel booking”. Defaults to the card's label. */
   approveLabel?: string;
-  /** The deny verb for this action. Defaults to the card’s label. */
+  /** The deny verb for this action. Defaults to the card's label. */
   denyLabel?: string;
 };
 

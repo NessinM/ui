@@ -188,10 +188,10 @@ The card renders its resolved states itself, so your transcript doesn’t need i
 | --- | --- |
 | `decision` is set, from your agent runtime | `approved` or `denied`, whatever else is true |
 | `responding`, or `onRespond`’s promise is running | `responding`: both actions are disabled |
-| `error`, or `onRespond`’s promise rejected | `error`: the error line shows, and the person can answer again |
+| `error`, or `onRespond` threw or its promise rejected | `error`: the error line shows, and the person can answer again |
 | None of these | `idle` |
 
-Return a promise from `onRespond` when your runtime confirms answers, or pass `responding` and `error` yourself. A rejection also announces the `error` label. Set `decision` once the runtime records the answer; the card keeps it even if a late response or a stale error arrives. Announce the question itself through the announcer’s `approval` phase, with the question as `detail`.
+Return a promise from `onRespond` when your runtime confirms answers, or pass `responding` and `error` yourself. A throw or a rejection also announces the `error` label. Set `decision` once the runtime records the answer; the card keeps it even if a late response or a stale error arrives. Announce the question itself through the announcer’s `approval` phase, with the question as `detail`.
 
 When answering removes the focused button, the card moves focus to the resolved line, or back to the button after an error, so keyboard users keep their place. Set `disabled` while the agent can’t take an answer, such as during another turn. `getAgentApprovalState` is the rule behind the card; use it to test your mapping from runtime states.
 
@@ -205,7 +205,7 @@ When every item asks the same `question`, the card asks it once, using the first
 
 ### Composing a crossfade
 
-Neither card animates into what comes next. To crossfade a card into a status line once it’s answered, wrap it in your own element and select on its stable attributes: `data-slot="agent-approval-card"` or `"agent-approval-group-card"` on the root, and `data-state` with the card’s state. Inside, the footer is `agent-approval-footer`, the resolved or error line is `agent-approval-status`, and the actions are `agent-approval-approve` and `agent-approval-deny`. Time any exit in JavaScript with `useAgentReducedMotion()`, and give CSS transitions a `motion-reduce:` variant.
+Neither card animates into what comes next. To crossfade a card into a status line once it’s answered, wrap it in your own element and select on its stable attributes: `data-slot="agent-approval-card"` or `"agent-approval-group-card"` on the root, and `data-state` with the card’s state. Inside, the question is `agent-approval-question`, each prompt is `agent-approval-prompt`, the footer is `agent-approval-footer`, the resolved or error line is `agent-approval-status`, and the actions are `agent-approval-approve` and `agent-approval-deny`. Time any exit in JavaScript with `useAgentReducedMotion()`, and give CSS transitions a `motion-reduce:` variant.
 
 ### Response feedback
 
@@ -217,7 +217,7 @@ Neither card animates into what comes next. To crossfade a card into a status li
 - **A thumbs down** opens a dialog first. With `reasons`, the person picks at least one; without them, the dialog asks only for details. `detailsMaxLength` caps the details field, and the submitted details are trimmed and capped to it.
 - **Pressing the shown rating again** calls `onFeedback(null)`. Keep the rating shown if your application can’t delete a stored one.
 
-While `onFeedback` runs, the pressed button shows a spinner and repeat presses are ignored. When it rejects, the `error` label shows beside the thumbs, or in the dialog, and is announced; a saved rating announces `submitted`. Retrying is up to your application, for example one delayed retry inside `onFeedback` before it rejects. Show feedback with the message’s `actionsAlwaysVisible` when the error must stay visible without hover.
+While `onFeedback` runs, the pressed button shows a spinner and repeat presses are ignored. When it throws or rejects, the `error` label shows beside the thumbs, or in the dialog, and is announced; a saved rating announces `submitted`. The error clears on the next attempt, or when the dialog closes. Retrying is up to your application, for example one delayed retry inside `onFeedback` before it rejects. Show feedback with the message’s `actionsAlwaysVisible` when the error must stay visible without hover.
 
 ### Error recovery
 

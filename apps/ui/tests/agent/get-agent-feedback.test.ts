@@ -14,10 +14,10 @@ describe("agent feedback action", () => {
 
   it("asks for details before submitting a thumbs down", () => {
     expect(getAgentFeedbackAction(null, "negative")).toEqual({
-      type: "describe",
+      type: "ask-details",
     });
     expect(getAgentFeedbackAction("positive", "negative")).toEqual({
-      type: "describe",
+      type: "ask-details",
     });
   });
 
