@@ -16,6 +16,29 @@ export type ChatScrollOptions = {
   onReachEnd?: () => void;
 };
 
+export type ChatScrollMetrics = {
+  scrollHeight: number;
+  scrollTop: number;
+  clientHeight: number;
+};
+
+export function isNearBottom({
+  scrollHeight,
+  scrollTop,
+  clientHeight,
+}: ChatScrollMetrics): boolean {
+  return scrollHeight - scrollTop - clientHeight < 64;
+}
+
+// A resize can bring the bottom into view without firing a scroll event.
+export function resolveResizeScroll(metrics: ChatScrollMetrics): {
+  atBottom: boolean;
+  showJump: boolean;
+} {
+  const atBottom = isNearBottom(metrics);
+  return { atBottom, showJump: !atBottom };
+}
+
 export function useChatScroll({
   active = true,
   paused = false,
@@ -26,6 +49,10 @@ export function useChatScroll({
   const viewportRef = useRef<HTMLDivElement>(null);
   const atBottomRef = useRef(true);
   const [showJump, setShowJump] = useState(false);
+  const onReachEndRef = useRef(onReachEnd);
+  useLayoutEffect(() => {
+    onReachEndRef.current = onReachEnd;
+  });
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: Follow content changes before scroll events can misinterpret the new height.
   useLayoutEffect(() => {
@@ -36,9 +63,7 @@ export function useChatScroll({
       viewport.scrollTop = viewport.scrollHeight;
       setShowJump(false);
     } else {
-      setShowJump(
-        viewport.scrollHeight - viewport.scrollTop - viewport.clientHeight > 64,
-      );
+      setShowJump(!isNearBottom(viewport));
     }
   }, [active, paused, itemCount, layoutKey]);
 
@@ -49,7 +74,14 @@ export function useChatScroll({
       const viewport = viewportRef.current;
       if (!viewport) return;
       observer = new ResizeObserver(() => {
-        if (atBottomRef.current) viewport.scrollTop = viewport.scrollHeight;
+        if (atBottomRef.current) {
+          viewport.scrollTop = viewport.scrollHeight;
+          return;
+        }
+        const next = resolveResizeScroll(viewport);
+        atBottomRef.current = next.atBottom;
+        setShowJump(next.showJump);
+        if (next.atBottom) onReachEndRef.current?.();
       });
       observer.observe(viewport);
       if (viewport.firstElementChild)
@@ -63,10 +95,7 @@ export function useChatScroll({
 
   const updatePosition = (): void => {
     const viewport = viewportRef.current;
-    atBottomRef.current = Boolean(
-      viewport &&
-        viewport.scrollHeight - viewport.scrollTop - viewport.clientHeight < 64,
-    );
+    atBottomRef.current = Boolean(viewport && isNearBottom(viewport));
   };
 
   const onScroll = (_event: UIEvent<HTMLDivElement>): void => {
