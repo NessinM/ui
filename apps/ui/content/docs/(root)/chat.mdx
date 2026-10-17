@@ -21,7 +21,7 @@ Configure coss ui using [Get started](/ui/docs/get-started), then install the fa
 npx shadcn@latest add @coss/chat
 ```
 
-This installs the chat source into your configured components directory under `chat/`, including its hooks and text helpers. It also installs the required coss components, Lucide icons, Base UI, and `motion@14.0.0`. The family uses React 19 and Tailwind CSS 4 in this repository. Keep Tailwind source scanning enabled for the installed directory.
+This installs the chat source into your configured components directory under `chat/`, including its hooks and text helpers. It also installs MessageScroller (`@shadcn/react@0.3.1` with Base UI ScrollArea), the required coss components, Lucide icons, Base UI, and `motion@14.0.0`. The family uses React 19 and Tailwind CSS 4 in this repository. Keep Tailwind source scanning enabled for the installed directory.
 
 To start from the complete drawer example, including synthetic data and simulated actions:
 
@@ -65,7 +65,7 @@ This complete client component demonstrates plain-text sending with local state.
 ```tsx
 "use client";
 
-import { ChatConversation } from "@/components/chat/chat-conversation";
+import { ChatConversation, ChatConversationItem } from "@/components/chat/chat-conversation";
 import { ChatMessage } from "@/components/chat/chat-message";
 import { useChatScroll } from "@/components/chat/hooks/use-chat-scroll";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -95,15 +95,14 @@ export function Conversation(): ReactElement {
       text: "The same chat components can live directly in a page. Try sending a message.",
     },
   ]);
-  const scroll = useChatScroll({ itemCount: messages.length });
+  const scroll = useChatScroll();
 
   return (
     <section aria-label="Inline chat example" className="flex h-96 flex-col rounded-xl border bg-popover">
       <ChatConversation scroll={scroll} label="Inline conversation" jumpLabel="Jump to latest">
-        <div className="space-y-4 pt-4">
-          {messages.map((message) => (
+        {messages.map((message) => (
+          <ChatConversationItem key={message.id} messageId={String(message.id)} className="pt-4">
             <ChatMessage
-              key={message.id}
               side={message.own ? "outgoing" : "incoming"}
               author="Casey"
               avatar={
@@ -114,8 +113,8 @@ export function Conversation(): ReactElement {
               animateEntrance={message.own}>
               {message.text}
             </ChatMessage>
-          ))}
-        </div>
+          </ChatConversationItem>
+        ))}
       </ChatConversation>
       <div className="flex shrink-0 flex-col gap-2.5 px-4 pb-4">
         <Composer
@@ -125,7 +124,7 @@ export function Conversation(): ReactElement {
           onSubmit={(value: ComposerValue) => {
             const text = getComposerText(value).trim();
             if (!text) return;
-            scroll.atBottomRef.current = true;
+            scroll.scrollToLatest();
             setMessages((current) => [...current, { id: current.length, own: true, text }]);
             setDraft([]);
           }}>
@@ -166,7 +165,7 @@ Import components directly from their files. There is no required global chat pr
 
 | Area | Components | Responsibility |
 | --- | --- | --- |
-| Conversation | `ChatConversation`, `useChatScroll` | Scroll viewport, end following, jump to latest, overlay slot |
+| Conversation | `ChatConversation`, `ChatConversationItem`, `useChatScroll` | Scroll viewport, end following, jump to latest, overlay slot |
 | Message | `ChatMessage` | Incoming/outgoing row, avatar, author, grouping, actions, reactions, footer |
 | Surfaces | `ChatMessageBubble`, `ChatBubble`, `ChatMessageLayout` | Standalone previews and custom row compositions |
 | Content | `ChatMessageText`, `ChatCollapsibleMessage`, `ChatReplyReference` | Mention emphasis, long text, quoted message navigation |
@@ -239,9 +238,11 @@ For mentions, pass an `@` trigger containing stable member IDs and handle labels
 
 ## Scrolling and replies
 
-Pass the same `useChatScroll` result to `ChatConversation`. Update `itemCount` when messages change and `layoutKey` for other size changes such as a typing row. Set `active` to the drawer's open state. Set `paused` while a nested drawer or focused reply owns the interaction.
+Pass the same `useChatScroll` result to `ChatConversation`. It composes [MessageScroller](/ui/docs/components/message-scroller) with Base UI ScrollArea and never anchors new messages to the top. Content and viewport changes are observed automatically; `itemCount` and `layoutKey` remain accepted for compatibility but are no longer needed. Set `active` to the drawer’s open state. Set `paused` while a nested drawer or focused reply owns the interaction: it disables ordinary following using shadcn’s `autoScroll` option. Initial positioning, explicit navigation, and prepend compensation are not a full dialog suspension mechanism.
 
-End following runs only while the reader is at the bottom. Set `scroll.atBottomRef.current = true` before appending a locally sent message. Incoming messages should preserve a reader's position when they are reviewing history. The hook does not fetch, paginate, virtualize, or compensate for prepended history; preserve the visible anchor in your data integration. Use `resetScroll` when changing rooms, not on every message update. `onReachEnd` reports scrolling near the bottom, not proof that a recipient read each message.
+Following stops when the reader leaves the end. Call `scroll.scrollToLatest()` when sending a local message; navigation runs after the updated messages commit, or after an active reply preview finishes closing. Incoming messages preserve the reader’s position in history. Treat `atBottomRef` as an observation for unread counts, not a navigation command. Use `resetScroll()` to open a different conversation at the end, or `resetScroll(false)` to open at the start. `onReachEnd` reports reaching the end, not proof that a recipient read each message.
+
+For prepend preservation, render stable `ChatConversationItem` elements directly inside `ChatConversation`, with unique `key` and `messageId` values. Put each message’s presentation inside its item. The full drawer keeps date groups as items so sticky dates remain bounded by their groups; inserting messages inside an existing date group is not covered by direct-item prepend preservation. A paginated application should use individual message items or explicitly preserve its within-group reading position. Fetching, pagination, and virtualization remain application responsibilities.
 
 `ChatConversation` supplies a labeled `role="log"`. Set `live="off"` if your application announces new arrivals separately, particularly when inserting older history.
 

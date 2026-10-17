@@ -6,12 +6,13 @@ export const chat: Registry["items"] = [
     type: "registry:ui",
     description:
       "Composable chat components with messages, reactions, replies, and delivery states.",
-    dependencies: ["motion@14.0.0", "lucide-react", "@base-ui/react@1.8.0"],
+    dependencies: ["motion@14.0.0", "lucide-react", "@base-ui/react@1.9.0"],
     registryDependencies: [
       "@coss/button",
       "@coss/collapsible",
       "@coss/empty",
       "@coss/menu",
+      "@coss/message-scroller",
       "@coss/popover",
       "@coss/scroll-area",
       "@coss/skeleton",

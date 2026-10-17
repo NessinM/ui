@@ -3,7 +3,10 @@
 import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import { ChatCollapsibleMessage } from "@/registry/default/chat/chat-collapsible-message";
-import { ChatConversation } from "@/registry/default/chat/chat-conversation";
+import {
+  ChatConversation,
+  ChatConversationItem,
+} from "@/registry/default/chat/chat-conversation";
 import { ChatDeliveryIndicator } from "@/registry/default/chat/chat-delivery-indicator";
 import { ChatMessage } from "@/registry/default/chat/chat-message";
 import { ChatMessageText } from "@/registry/default/chat/chat-message-text";
@@ -80,7 +83,7 @@ export function SampleConversation({
       inputRef.current?.focus({ preventScroll: true });
   }, [focusComposer, disabled]);
   const nextId = useRef(SAMPLE_MESSAGES.length + 1);
-  const scroll = useChatScroll({ itemCount: messages.length });
+  const scroll = useChatScroll();
 
   return (
     <>
@@ -102,34 +105,33 @@ export function SampleConversation({
             onJoin={() => {}}
           />
         )}
-        {messages.length > 0 && (
-          <div className="flex flex-col pt-4">
-            {messages.map((message, index) => {
-              const previous = messages[index - 1];
-              const grouped = previous?.author === message.author;
-              return (
-                <div
-                  key={message.id}
-                  className={cn(
-                    index > 0 &&
-                      (grouped
-                        ? previous.author === "you"
-                          ? "pt-3"
-                          : "pt-1"
-                        : "pt-5"),
-                  )}
-                >
-                  <SampleMessageRow
-                    message={message}
-                    grouped={grouped}
-                    groupEnd={messages[index + 1]?.author !== message.author}
-                    animateEntrance={message.id > SAMPLE_MESSAGES.length}
-                  />
-                </div>
-              );
-            })}
-          </div>
-        )}
+        {messages.length > 0 &&
+          messages.map((message, index) => {
+            const previous = messages[index - 1];
+            const grouped = previous?.author === message.author;
+            return (
+              <ChatConversationItem
+                messageId={String(message.id)}
+                key={message.id}
+                className={cn(
+                  index === 0 && "pt-4",
+                  index > 0 &&
+                    (grouped
+                      ? previous.author === "you"
+                        ? "pt-3"
+                        : "pt-1"
+                      : "pt-5"),
+                )}
+              >
+                <SampleMessageRow
+                  message={message}
+                  grouped={grouped}
+                  groupEnd={messages[index + 1]?.author !== message.author}
+                  animateEntrance={message.id > SAMPLE_MESSAGES.length}
+                />
+              </ChatConversationItem>
+            );
+          })}
       </ChatConversation>
       <ChatDemoComposer
         inputRef={inputRef}
@@ -142,7 +144,7 @@ export function SampleConversation({
           const text = getComposerText(draft).trim();
           if (!text || disabled) return;
           const id = nextId.current++;
-          scroll.atBottomRef.current = true;
+          scroll.scrollToLatest();
           setMessages((current) => [...current, { id, author: "you", text }]);
           setDraft([]);
         }}

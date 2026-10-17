@@ -1019,7 +1019,7 @@ export const Index: Record<string, any> = {
     name: "chat",
     description: "Composable chat components with messages, reactions, replies, and delivery states.",
     type: "registry:ui",
-    registryDependencies: ["@coss/button","@coss/collapsible","@coss/empty","@coss/menu","@coss/popover","@coss/scroll-area","@coss/skeleton","@coss/toggle","@coss/toolbar","@coss/tooltip","@coss/utils"],
+    registryDependencies: ["@coss/button","@coss/collapsible","@coss/empty","@coss/menu","@coss/message-scroller","@coss/popover","@coss/scroll-area","@coss/skeleton","@coss/toggle","@coss/toolbar","@coss/tooltip","@coss/utils"],
     files: [{
       path: "registry/default/chat/chat-bubble.tsx",
       type: "registry:component",

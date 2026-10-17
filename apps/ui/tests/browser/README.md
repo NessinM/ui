@@ -11,8 +11,8 @@ bun run test:browser
 
 CI installs browser system dependencies with `playwright install --with-deps`.
 The suite starts its own Next development server on port 4020 with Strict Mode
-enabled. The fixture route requires development mode and `COSS_BROWSER_TESTS=1`;
-it returns 404 otherwise. Specs use `.browser.ts` so Bun does not discover them.
+enabled. The fixture routes require development mode and `COSS_BROWSER_TESTS=1`;
+they return 404 otherwise. Specs use `.browser.ts` so Bun does not discover them.
 
 ## Public boundary
 
@@ -59,3 +59,26 @@ removing the annotation. Do not interpret a green suite as proof this bug is fix
 The package provides no public release-anchor command. coss does not dispatch
 synthetic wheel events, manipulate private controller state, patch the dependency,
 or maintain a competing scroll engine to hide the limitation.
+
+## Chat UI integration
+
+`chat-scroll.browser.ts` exercises ChatConversation and useChatScroll through
+visible messages and controls: incoming following, reading history, unread counts,
+explicit sends, jump-button focus, direct-item prepend preservation, ordinary
+pause/resume, resets, and manual return to the end. The chat adapter controls the
+public autoScroll option from reader movement. It never writes private shadcn
+state or installs a second resize/scroll engine. Upward input releases following
+before an in-flight automatic scroll can re-enable it; content growth and drawer
+resizing alone do not count as reader interruption.
+
+`chat-drawer.browser.ts` uses the actual ChatDemo with normal animations. It covers
+sending, a simulated incoming reply while reading history, unread navigation,
+message-info focus return, and sending through the focused reply overlay. The
+fixture tests retain reduced motion. All run in Chromium, Firefox, and WebKit.
+
+ChatConversationItem deliberately does not expose prompt anchoring. Prepend
+preservation needs direct items with stable IDs. The full drawer retains date
+groups as items to preserve sticky date boundaries; loading rows inside an
+existing group is not covered by this preservation contract. Full dialog
+suspension is still outside the upstream public API; paused controls ordinary
+following and queues explicit chat sends until the interaction resumes.

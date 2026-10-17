@@ -3,7 +3,10 @@
 import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import { ChatCollapsibleMessage } from "@/registry/default/chat/chat-collapsible-message";
-import { ChatConversation } from "@/registry/default/chat/chat-conversation";
+import {
+  ChatConversation,
+  ChatConversationItem,
+} from "@/registry/default/chat/chat-conversation";
 import { ChatDatePill } from "@/registry/default/chat/chat-date-pill";
 import { ChatDeliveryIndicator } from "@/registry/default/chat/chat-delivery-indicator";
 import { ChatMessage } from "@/registry/default/chat/chat-message";
@@ -375,7 +378,7 @@ const TIMELINE: {
 ];
 
 function TimelineDemo() {
-  const scroll = useChatScroll({ itemCount: 7 });
+  const scroll = useChatScroll();
   return (
     <div className="-m-5 flex h-82 flex-col">
       <ChatConversation
@@ -384,7 +387,8 @@ function TimelineDemo() {
         jumpLabel="Jump to latest"
       >
         {TIMELINE.map((group) => (
-          <div
+          <ChatConversationItem
+            messageId={group.date}
             key={group.date}
             className="not-first:mt-4 flex flex-col gap-4 first:pt-4"
           >
@@ -406,7 +410,7 @@ function TimelineDemo() {
                 </ChatMessage>
               ))}
             </div>
-          </div>
+          </ChatConversationItem>
         ))}
       </ChatConversation>
     </div>

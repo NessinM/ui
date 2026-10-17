@@ -22,7 +22,10 @@ import { ChatPreview } from "./chat-preview";
 import { ChatStatesSection } from "./chat-states-section";
 
 const COMPONENT_MAP = [
-  { area: "Conversation", components: ["ChatConversation", "useChatScroll"] },
+  {
+    area: "Conversation",
+    components: ["ChatConversation", "ChatConversationItem", "useChatScroll"],
+  },
   {
     area: "Messages",
     components: ["ChatMessage", "ChatMessageText", "ChatCollapsibleMessage"],

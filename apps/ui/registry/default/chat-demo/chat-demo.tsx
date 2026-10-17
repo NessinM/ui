@@ -51,7 +51,10 @@ import {
   MenuTrigger,
 } from "@/registry/default/ui/menu";
 import { TooltipProvider } from "@/registry/default/ui/tooltip";
-import { ChatConversation } from "../chat/chat-conversation";
+import {
+  ChatConversation,
+  ChatConversationItem,
+} from "../chat/chat-conversation";
 import { ChatDatePill } from "../chat/chat-date-pill";
 import { ChatMemberSection } from "../chat/chat-members";
 import { ChatStatusBar } from "../chat/chat-states";
@@ -447,8 +450,6 @@ export function ChatDemo({
   const scroll = useChatScroll({
     active: open,
     paused: infoOpen || membersOpen || deleteOpen || replyFocus !== null,
-    itemCount: messages.length,
-    layoutKey: `${typingMembers.length}-${scenario}`,
     onReachEnd: () => setUnreadCount(0),
   });
   const { viewportRef: timelineRef, atBottomRef } = scroll;
@@ -618,7 +619,7 @@ export function ChatDemo({
       replyTo: replyTo ?? undefined,
       reactions: [],
     };
-    atBottomRef.current = true;
+    scroll.scrollToLatest();
     setEnteringMessageIds((current) => [...current, message.id]);
     setMessages((current) => [...current, message]);
     setDraftValue([]);
@@ -987,90 +988,85 @@ export function ChatDemo({
                 joined={joinedChat}
                 onJoin={() => setJoinedChat(true)}
               />
-              <div>
-                {dateGroups.map((group) => (
-                  <div
-                    key={group.entries[0]?.message.id}
-                    className="not-first:mt-4 flex flex-col gap-4 first:pt-4"
-                  >
-                    {group.dateLabel && (
-                      <ChatDatePill>{group.dateLabel}</ChatDatePill>
-                    )}
-                    <div className="flex flex-col">
-                      {group.entries.map(({ message, index }, entryIndex) => {
-                        const previousMessage = messages[index - 1];
-                        const grouped =
-                          previousMessage?.author === message.author &&
-                          previousMessage.dateLabel === message.dateLabel &&
-                          !message.deletedReason &&
-                          !previousMessage.deletedReason;
-                        const followsSeparator =
-                          entryIndex === 0 || message.id === unreadFrom;
-                        return (
-                          <Fragment key={message.id}>
-                            {message.id === unreadFrom && (
-                              <ChatUnreadDivider className="first:mt-0">
-                                New messages
-                              </ChatUnreadDivider>
+              {dateGroups.map((group) => (
+                <ChatConversationItem
+                  messageId={`date-${group.dateLabel}`}
+                  key={group.dateLabel}
+                  className="not-first:mt-4 flex flex-col gap-4 first:pt-4"
+                >
+                  {group.dateLabel && (
+                    <ChatDatePill>{group.dateLabel}</ChatDatePill>
+                  )}
+                  <div className="flex flex-col">
+                    {group.entries.map(({ message, index }, entryIndex) => {
+                      const previousMessage = messages[index - 1];
+                      const grouped =
+                        previousMessage?.author === message.author &&
+                        previousMessage.dateLabel === message.dateLabel &&
+                        !message.deletedReason &&
+                        !previousMessage.deletedReason;
+                      const followsSeparator =
+                        entryIndex === 0 || message.id === unreadFrom;
+                      return (
+                        <Fragment key={message.id}>
+                          {message.id === unreadFrom && (
+                            <ChatUnreadDivider className="first:mt-0">
+                              New messages
+                            </ChatUnreadDivider>
+                          )}
+                          <div
+                            className={cn(
+                              !followsSeparator &&
+                                (grouped
+                                  ? previousMessage.delivery
+                                    ? "pt-3"
+                                    : "pt-1"
+                                  : "pt-5"),
                             )}
-                            <div
-                              className={cn(
-                                !followsSeparator &&
-                                  (grouped
-                                    ? previousMessage.delivery
-                                      ? "pt-3"
-                                      : "pt-1"
-                                    : "pt-5"),
+                          >
+                            <ChatDemoMessage
+                              message={message}
+                              recipients={activeOtherMembers}
+                              entering={enteringMessageIds.includes(message.id)}
+                              onEntranceEnd={() =>
+                                setEnteringMessageIds((current) =>
+                                  current.filter((id) => id !== message.id),
+                                )
+                              }
+                              replyMessage={messagesById.get(
+                                message.replyTo ?? -1,
                               )}
-                            >
-                              <ChatDemoMessage
-                                message={message}
-                                recipients={activeOtherMembers}
-                                entering={enteringMessageIds.includes(
-                                  message.id,
-                                )}
-                                onEntranceEnd={() =>
-                                  setEnteringMessageIds((current) =>
-                                    current.filter((id) => id !== message.id),
-                                  )
-                                }
-                                replyMessage={messagesById.get(
-                                  message.replyTo ?? -1,
-                                )}
-                                grouped={grouped}
-                                groupEnd={
-                                  messages[index + 1]?.author !==
-                                    message.author ||
-                                  messages[index + 1]?.dateLabel !==
-                                    message.dateLabel ||
-                                  Boolean(
-                                    message.deletedReason ||
-                                      messages[index + 1]?.deletedReason,
-                                  )
-                                }
-                                pinned={pinnedId === message.id}
-                                highlighted={highlightedId === message.id}
-                                replyLifted={
-                                  replyFocus?.messageId === message.id
-                                }
-                                domId={`${id}-message-${message.id}`}
-                                onReply={onReply}
-                                onReact={onReact}
-                                onPin={onPin}
-                                onDelete={requestDelete}
-                                onCopy={onCopy}
-                                onJump={onJump}
-                                onRetry={retryMessage}
-                                onInfo={openMessageInfo}
-                              />
-                            </div>
-                          </Fragment>
-                        );
-                      })}
-                    </div>
+                              grouped={grouped}
+                              groupEnd={
+                                messages[index + 1]?.author !==
+                                  message.author ||
+                                messages[index + 1]?.dateLabel !==
+                                  message.dateLabel ||
+                                Boolean(
+                                  message.deletedReason ||
+                                    messages[index + 1]?.deletedReason,
+                                )
+                              }
+                              pinned={pinnedId === message.id}
+                              highlighted={highlightedId === message.id}
+                              replyLifted={replyFocus?.messageId === message.id}
+                              domId={`${id}-message-${message.id}`}
+                              onReply={onReply}
+                              onReact={onReact}
+                              onPin={onPin}
+                              onDelete={requestDelete}
+                              onCopy={onCopy}
+                              onJump={onJump}
+                              onRetry={retryMessage}
+                              onInfo={openMessageInfo}
+                            />
+                          </div>
+                        </Fragment>
+                      );
+                    })}
                   </div>
-                ))}
-              </div>
+                </ChatConversationItem>
+              ))}
               <ChatTypingIndicator
                 visible={typingMembers.length > 0}
                 label={getTypingLabel(typingMembers)}
