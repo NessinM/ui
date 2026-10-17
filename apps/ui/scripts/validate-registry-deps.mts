@@ -84,6 +84,12 @@ function parseImports(content: string): {
       continue;
     }
 
+    // Check if it's a chat family import (@/registry/default/chat/*)
+    if (/^@\/registry\/default\/chat\//.test(importPath)) {
+      registryDeps.add(getRegistryPackageName("chat"));
+      continue;
+    }
+
     // Check if it's already a @coss import
     if (importPath.startsWith("@coss/")) {
       // Skip @coss/utils as it's a common utility that shouldn't be treated as a dependency

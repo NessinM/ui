@@ -1039,6 +1039,10 @@ export const Index: Record<string, any> = {
       type: "registry:component",
       target: "@components/chat/chat-message-bubble.tsx"
     },{
+      path: "registry/default/chat/chat-message-caret.tsx",
+      type: "registry:component",
+      target: "@components/chat/chat-message-caret.tsx"
+    },{
       path: "registry/default/chat/chat-message-info.tsx",
       type: "registry:component",
       target: "@components/chat/chat-message-info.tsx"
@@ -1047,9 +1051,17 @@ export const Index: Record<string, any> = {
       type: "registry:component",
       target: "@components/chat/chat-message-layout.tsx"
     },{
+      path: "registry/default/chat/chat-message-markdown.tsx",
+      type: "registry:component",
+      target: "@components/chat/chat-message-markdown.tsx"
+    },{
       path: "registry/default/chat/chat-message-text.tsx",
       type: "registry:component",
       target: "@components/chat/chat-message-text.tsx"
+    },{
+      path: "registry/default/chat/chat-message-timestamp.tsx",
+      type: "registry:component",
+      target: "@components/chat/chat-message-timestamp.tsx"
     },{
       path: "registry/default/chat/chat-message.tsx",
       type: "registry:component",
@@ -1090,6 +1102,10 @@ export const Index: Record<string, any> = {
       path: "registry/default/chat/hooks/use-chat-scroll.ts",
       type: "registry:component",
       target: "@components/chat/hooks/use-chat-scroll.ts"
+    },{
+      path: "registry/default/chat/lib/get-chat-date-time.ts",
+      type: "registry:component",
+      target: "@components/chat/lib/get-chat-date-time.ts"
     },{
       path: "registry/default/chat/lib/split-chat-message-preview.ts",
       type: "registry:component",
@@ -3938,6 +3954,60 @@ export const Index: Record<string, any> = {
     }),
     categories: ["card","frame"],
     meta: {"className":"**:data-[slot=preview]:w-full **:data-[slot=preview]:flex **:data-[slot=preview]:justify-center"},
+  },
+  "p-chat-1": {
+    name: "p-chat-1",
+    description: "Chat messages with machine-readable timestamps in the footer",
+    type: "registry:block",
+    registryDependencies: ["@coss/chat"],
+    files: [{
+      path: "registry/default/particles/p-chat-1.tsx",
+      type: "registry:block",
+      target: ""
+    }],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/default/particles/p-chat-1.tsx")
+      const exportName = Object.keys(mod).find(key => typeof mod[key] === 'function' || typeof mod[key] === 'object') || item.name
+      return { default: mod.default || mod[exportName] }
+    }),
+    categories: ["chat","time"],
+    meta: {"className":"**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm"},
+  },
+  "p-chat-2": {
+    name: "p-chat-2",
+    description: "Assistant reply with styled Markdown headings, lists, tables, and code",
+    type: "registry:block",
+    registryDependencies: ["@coss/chat"],
+    files: [{
+      path: "registry/default/particles/p-chat-2.tsx",
+      type: "registry:block",
+      target: ""
+    }],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/default/particles/p-chat-2.tsx")
+      const exportName = Object.keys(mod).find(key => typeof mod[key] === 'function' || typeof mod[key] === 'object') || item.name
+      return { default: mod.default || mod[exportName] }
+    }),
+    categories: ["chat","text editor"],
+    meta: {"className":"**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-md"},
+  },
+  "p-chat-3": {
+    name: "p-chat-3",
+    description: "Streaming reply with a trailing caret that never shifts layout",
+    type: "registry:block",
+    registryDependencies: ["@coss/button","@coss/chat"],
+    files: [{
+      path: "registry/default/particles/p-chat-3.tsx",
+      type: "registry:block",
+      target: ""
+    }],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/default/particles/p-chat-3.tsx")
+      const exportName = Object.keys(mod).find(key => typeof mod[key] === 'function' || typeof mod[key] === 'object') || item.name
+      return { default: mod.default || mod[exportName] }
+    }),
+    categories: ["chat","loading"],
+    meta: {"className":"**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm"},
   },
   "p-checkbox-1": {
     name: "p-checkbox-1",

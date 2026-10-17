@@ -1,0 +1,23 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "p-chat-2",
+  "description": "Assistant reply with styled Markdown headings, lists, tables, and code",
+  "registryDependencies": [
+    "@coss/chat"
+  ],
+  "files": [
+    {
+      "path": "registry/default/particles/p-chat-2.tsx",
+      "content": "import { ChatMessage } from \"@/registry/default/chat/chat-message\";\nimport { ChatMessageMarkdown } from \"@/registry/default/chat/chat-message-markdown\";\n\nexport default function Particle() {\n  return (\n    <ChatMessage\n      side=\"incoming\"\n      author=\"Assistant\"\n      bubble={false}\n      className=\"w-full max-w-md\"\n    >\n      <ChatMessageMarkdown className=\"px-1\">\n        <h3>Interview schedule</h3>\n        <p>\n          The earliest window that works for every interviewer is{\" \"}\n          <strong>Tuesday at 10:30</strong>. Check the{\" \"}\n          <a href=\"#availability\">shared availability</a> before you send\n          invites.\n        </p>\n        <ol>\n          <li>Confirm each interviewer’s calendar</li>\n          <li>\n            Send booking links with a <code>15m</code> buffer\n          </li>\n          <li>Hold a short debrief after each call</li>\n        </ol>\n        <table>\n          <thead>\n            <tr>\n              <th>Team</th>\n              <th>Open slots</th>\n            </tr>\n          </thead>\n          <tbody>\n            <tr>\n              <td>Design</td>\n              <td>4</td>\n            </tr>\n            <tr>\n              <td>Engineering</td>\n              <td>7</td>\n            </tr>\n          </tbody>\n        </table>\n        <pre>\n          <code>{\"buffer: 15\\nminimumNotice: 24h\"}</code>\n        </pre>\n        <blockquote>\n          <p>Keep Tuesday morning free for focus time.</p>\n        </blockquote>\n      </ChatMessageMarkdown>\n    </ChatMessage>\n  );\n}\n",
+      "type": "registry:block"
+    }
+  ],
+  "meta": {
+    "className": "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-md"
+  },
+  "categories": [
+    "chat",
+    "text editor"
+  ],
+  "type": "registry:block"
+}
