@@ -89,6 +89,7 @@ Import components directly from their files. There is no provider.
 | Message | `AgentMessage` | User bubble or full-width reply on the chat message shell, avatar, actions and footer slots, streaming state |
 | Content | `ChatMessageText`, `ChatMessageMarkdown`, `ChatMessageCaret`, `ChatMessageTimestamp` | Chat parts for text, Markdown, the streaming caret and timestamps |
 | Actions | `AgentMessageActions`, `AgentMessageAction`, `AgentMessageCopyAction`, `AgentMessageEditAction` | Toolbar revealed on hover and focus, generic icon action, copy and edit |
+| Turn content | `AgentTurn`, `AgentStatusIndicator`, `AgentReasoning`, `AgentToolActivity`, `AgentResultList`, `AgentDisclosureTrigger` | Host parts in order with grouped tool calls, status lines with a themeable shimmer, reasoning, tool activity, result lists, and their shared disclosure trigger |
 | Announcer | `AgentAnnouncer`, `useAgentAnnouncer`, `getAgentAnnouncement` | One status region per conversation and the rule for what it says |
 | Motion | `useAgentReducedMotion` | Reduced-motion check for motion timed in JavaScript |
 
@@ -102,6 +103,9 @@ Paths below are relative to your configured components directory after installat
 | `agent/hooks/use-agent-announcer.ts` | Announcer options, labels and the `announce` method |
 | `agent/lib/get-agent-announcement.ts` | Agent phases and which transitions are announced |
 | `agent/lib/get-agent-scroll-offset.ts` | Why the conversation records its scroll offset |
+| `agent/lib/get-agent-reasoning-state.ts` | When reasoning opens and closes |
+| `agent/lib/get-agent-tool-summary.ts`, `agent/lib/group-agent-tool-runs.ts` | Tool call shape, summary labels and how runs of tool calls group |
+| `agent/lib/split-agent-result-items.ts` | Where a result list splits behind its toggle |
 | `chat/chat-conversation.tsx`, `chat/hooks/use-chat-scroll.ts` | The chat scroll container and controller the conversation builds on |
 
 ## Conversation
@@ -158,6 +162,90 @@ Each conversation has one status region. `useAgentAnnouncer` decides what it say
 A phase without a label is never announced. Pass the error message or the approval question as `detail`. For results that aren’t phases, such as a copied message or a copied conversation, call `announcer.announce(text)`. Repeating the same text is read again.
 
 `getAgentAnnouncement(previous, next)` is the pure rule behind the hook. Use it to test your own mapping from your agent runtime to phases.
+
+## Turn content
+
+A turn is what one assistant reply contains: the status, reasoning, tool calls, results and text the agent produced. These parts are presentational. Map your agent runtime’s state onto their props, then put them inside an `AgentMessage`. None of them announces anything on its own; route phase changes through the [announcer](#announcer).
+
+### Status indicator
+
+<ComponentPreview name="p-agent-10" />
+
+`AgentStatusIndicator` is a status line: a glyph, then its label as children. Its `status` is one of the agent phases `thinking`, `working`, `done`, `stopped` or `failed`, and it sets `data-status`. Reasoning and tool activity use it for their summary lines, and you can use it on its own, for example for a turn that’s waiting on the agent or one that stopped.
+
+While `thinking` or `working`, the glyph is a neutral spinner and the label shimmers from purple to rose. Pass your own busy mark, such as a brand loader, to `indicator`; it replaces the spinner only while busy. The shimmer is one CSS variable, `--agent-shimmer`, holding the gradient image that sweeps across the text. Set it on any ancestor to retheme every indicator inside:
+
+```tsx
+<div className="[--agent-shimmer:linear-gradient(105deg,transparent_30%,var(--color-foreground)_50%,transparent_70%)]">
+  {children}
+</div>
+```
+
+Under reduced motion the spinner and the shimmer stop, and the label stays in the muted text color.
+
+### Reasoning
+
+<ComponentPreview name="p-agent-11" />
+
+`AgentReasoning` puts the agent’s reasoning behind a disclosure. Set `streaming` while it arrives: the disclosure opens and shows `streamingLabel`. When streaming ends, it shows `completedLabel` and closes one second later. If the user opens or closes it in the meantime, it stays as they left it. Set `defaultOpen` to start it open or closed; `defaultOpen={false}` also stops it opening when streaming starts. Plain text keeps its line breaks.
+
+`getAgentReasoningState` is the pure rule behind the disclosure, with `AGENT_REASONING_CLOSE_DELAY` as the delay.
+
+### Tool activity
+
+<ComponentPreview name="p-agent-12" />
+
+`AgentToolActivity` puts a run of tool calls behind one summary line, closed until the reader opens it. Pass the calls as `AgentToolCall` objects, each with an `id`, a tool `name` and a `state` of `running`, `done`, `failed` or `denied`, plus its `output` or `error`.
+
+The summary comes from `labels`, localized functions that take a count. Failures win, then running calls, then declined calls, then the completed count. A single running call shows its tool’s own label instead of a count, such as “Checking availability”.
+
+`renderers` is the tool-renderer registry: an object from tool name to how that tool’s calls look.
+
+| Field | Purpose |
+| --- | --- |
+| `label` | What the tool does. Labels each row and names a single running call in the summary. A call with no renderer shows its tool name |
+| `icon` | The row’s icon. Defaults to a wrench |
+| `render(call)` | The row’s content for a call, such as a summary of its output. Return nothing to keep the label |
+
+By default a running row pulses, a failed row shows its `error` after the label, and a declined row strikes its label through. `getAgentToolSummary` is the pure rule behind the summary line.
+
+### Result list
+
+<ComponentPreview name="p-agent-13" />
+
+`AgentResultList` is a card of result rows, each with a `title`, an optional `description` and `trailing` content such as badges. A row with an `href` is a link, named by its `label` or its title. The first five rows show up front and the rest sit behind a toggle labeled by `showMoreLabel(count)` and `showLessLabel`. A leftover of one row is shown instead of hidden. Change the cut with `previewCount`. An empty list renders nothing.
+
+`splitAgentResultItems` is the pure split behind the toggle.
+
+### Rendering your own parts
+
+<ComponentPreview name="p-agent-14" />
+
+Agent runtimes model a reply as a list of parts, and only your application knows what each part means. `AgentTurn` renders that list in order without knowing its shape:
+
+- **`renderPart(part, index)`** renders each part that isn’t a tool call: your text, Markdown, reasoning, result lists or any domain card. Return `null` to hide a part, such as a step marker. A hidden part doesn’t split a run of tool calls.
+- **`tools.getCall(part, index)`** returns the `AgentToolCall` a part stands for, or `undefined` for any other part. Each run of consecutive tool calls becomes one `AgentToolActivity`, with `tools.labels` and the `tools.renderers` registry.
+
+```tsx
+<AgentMessage from="assistant" footer={<ResponseFeedback />}>
+  <AgentTurn
+    parts={message.parts}
+    renderPart={(part) => {
+      if (part.type === "text") return <ChatMessageText text={part.text} />;
+      if (part.type === "bookings")
+        return <AgentResultList items={part.items} {...resultLabels} />;
+      return null;
+    }}
+    tools={{
+      getCall: (part) => (part.type === "tool" ? toToolCall(part) : undefined),
+      labels: toolLabels,
+      renderers: toolRenderers,
+    }}
+  />
+</AgentMessage>
+```
+
+Map your runtime’s parts before they reach the turn, as `toToolCall` does above; coss doesn’t read any agent SDK. For anything under the reply, such as rating controls, sources or a timestamp, use the message’s `footer` slot. `groupAgentToolRuns` is the pure grouping behind the turn.
 
 ## Reduced motion
 

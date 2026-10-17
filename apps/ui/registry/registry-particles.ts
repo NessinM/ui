@@ -156,6 +156,72 @@ export const particles: ParticleItem[] = [
     type: "registry:block",
   },
   {
+    categories: categories("agent", "loading"),
+    description: "Agent status phases with a themeable shimmer while busy",
+    files: [{ path: "particles/p-agent-10.tsx", type: "registry:block" }],
+    meta: {
+      className:
+        "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm",
+    },
+    name: "p-agent-10",
+    registryDependencies: ["@coss/agent", "@coss/label", "@coss/switch"],
+    type: "registry:block",
+  },
+  {
+    categories: categories("agent", "collapsible", "loading"),
+    dependencies: ["lucide-react"],
+    description:
+      "Reasoning that opens while streaming and closes after it finishes",
+    files: [{ path: "particles/p-agent-11.tsx", type: "registry:block" }],
+    meta: {
+      className:
+        "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm",
+    },
+    name: "p-agent-11",
+    registryDependencies: ["@coss/agent", "@coss/button"],
+    type: "registry:block",
+  },
+  {
+    categories: categories("agent", "collapsible", "error"),
+    dependencies: ["lucide-react"],
+    description:
+      "Tool calls grouped behind one summary line, running, done, and failed",
+    files: [{ path: "particles/p-agent-12.tsx", type: "registry:block" }],
+    meta: {
+      className:
+        "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm",
+    },
+    name: "p-agent-12",
+    registryDependencies: ["@coss/agent", "@coss/button"],
+    type: "registry:block",
+  },
+  {
+    categories: categories("agent", "card", "badge"),
+    description: "Result list showing the first rows with a show-more toggle",
+    files: [{ path: "particles/p-agent-13.tsx", type: "registry:block" }],
+    meta: {
+      className:
+        "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm",
+    },
+    name: "p-agent-13",
+    registryDependencies: ["@coss/agent", "@coss/badge"],
+    type: "registry:block",
+  },
+  {
+    categories: categories("agent", "loading"),
+    dependencies: ["lucide-react"],
+    description:
+      "An agent turn rendering host parts with grouped tool calls and results",
+    files: [{ path: "particles/p-agent-14.tsx", type: "registry:block" }],
+    meta: {
+      className:
+        "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm",
+    },
+    name: "p-agent-14",
+    registryDependencies: ["@coss/agent", "@coss/button", "@coss/chat"],
+    type: "registry:block",
+  },
+  {
     categories: categories("alert", "info"),
     dependencies: ["lucide-react"],
     description: "Info alert",
