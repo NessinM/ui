@@ -89,6 +89,33 @@ type ComposerEditorController = {
   };
 };
 
+export function canSubmitComposer({
+  isComposing,
+  disabled,
+  readOnly,
+  submitDisabled,
+  busy,
+  allowEmpty,
+  text,
+}: {
+  isComposing: boolean;
+  disabled: boolean;
+  readOnly: boolean;
+  submitDisabled: boolean;
+  busy: boolean;
+  allowEmpty: boolean;
+  text: string;
+}): boolean {
+  return (
+    !isComposing &&
+    !disabled &&
+    !readOnly &&
+    !submitDisabled &&
+    !busy &&
+    (allowEmpty || Boolean(text.trim()))
+  );
+}
+
 export function useComposerEditor({
   value,
   onValueChange,
@@ -152,13 +179,15 @@ export function useComposerEditor({
     Boolean(query) &&
     hasVisibleItems(trigger, options);
   const isEmpty = !getComposerText(value);
-  const canSubmit =
-    !isComposing &&
-    !disabled &&
-    !readOnly &&
-    !submitDisabled &&
-    !busy &&
-    (allowEmpty || Boolean(getComposerText(value).trim()));
+  const canSubmit = canSubmitComposer({
+    isComposing,
+    disabled,
+    readOnly,
+    submitDisabled,
+    busy,
+    allowEmpty,
+    text: getComposerText(value),
+  });
   const onQueryChangeRef = useRef(onQueryChange);
   onQueryChangeRef.current = onQueryChange;
   const queryCharacter = query?.character;
