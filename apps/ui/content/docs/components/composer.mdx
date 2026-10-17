@@ -128,7 +128,7 @@ Set `submitDisabled` on `Composer` while sending or whenever your application ca
 
 Set `busy` on `Composer` while an assistant is replying. Busy blocks Enter and the submit button but keeps the draft editable, so the next message can be written while the reply finishes. Messages are not queued.
 
-Pass a second button through `stopRender` on `ComposerSubmit`. While busy, it replaces the send button and calls `onStop`. Use the same component type for both buttons so the element stays in place and keeps focus when it switches. Give each button its own accessible name, on the rendered element.
+Pass a second button through `stopRender` on `ComposerSubmit`. While busy, it replaces the send button and calls `onStop`. Use the same component type and size for both buttons so the element stays in place and keeps focus when it switches. The default native send button uses the same footprint as a coss icon Button, so a native send with a Button stop does not shift either. Give each button its own accessible name, on the rendered element.
 
 <ComponentPreview name="p-composer-12" />
 
@@ -190,7 +190,7 @@ Here the input shows two to three rows below `md` and three to six rows from `md
 
 ### Controls beside a short message
 
-Set `layout="adaptive"` to place controls beside a one-line draft. When text wraps or you add a line break, the input takes the full width and the controls move below it. Both layouts use the same composition: `ComposerInput` followed by `ComposerActions`, with action groups aligned to `start` and `end`. Only the `layout` prop changes.
+Set `layout="adaptive"` to place controls beside a one-line draft. When text wraps or you add a line break, the input takes the full width and the controls move below it. The draft returns beside the controls only once it fits on one line with a 12px margin, so small width changes do not flip the layout back and forth. Both layouts use the same composition: `ComposerInput` followed by `ComposerActions`, with action groups aligned to `start` and `end`. Only the `layout` prop changes.
 
 The adaptive layout starts at one visible row; setting `--composer-min-rows` above one keeps the controls below. Keyboard focus follows the same order in both layouts: input, leading actions, then trailing actions.
 
@@ -235,7 +235,7 @@ Omit `triggers` and the popup parts for plain contenteditable text. Use `value` 
 
 ### Token appearance
 
-By default, selected mentions and actions appear as `text-primary font-medium` text with their trigger (`@Sam Rivera` or `/Summarize`). To change their appearance, render each selected token from `ComposerInput`. This example uses the same people, teams, and actions as the one above, but gives them rounded chips with different icons.
+By default, selected mentions and actions appear as `font-medium` text in the current text colour, with their trigger (`@Sam Rivera` or `/Summarize`). To change their appearance, render each selected token from `ComposerInput`. This example uses the same people, teams, and actions as the one above, but gives them rounded chips with different icons.
 
 <ComponentPreview name="p-composer-6" />
 
@@ -345,7 +345,7 @@ import { ComposerInput, ComposerToken } from "@/components/ui/composer"
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
-| `variant` | `"default" \| "chip"` | `"default"` | Text with trigger, or rounded chip without a visible trigger |
+| `variant` | `"default" \| "chip"` | `"default"` | Text with trigger, or a small muted chip with a hairline border and no visible trigger |
 | `token` | `ComposerTokenPart` | required | Selected token, including its trigger, label, and optional kind |
 | `icon` | `ReactNode` | — | Optional icon in the chip variant |
 | `children` | `ReactNode` | token label | Overrides the visible label |
@@ -395,6 +395,7 @@ A styled Base UI Popover popup with its portal and positioner included. `Compose
 | --- | --- | --- | --- |
 | `anchor` | Positioner anchor | — | Element or ref used to position and size the popup |
 | `side` | Positioner side | `"top"` | Preferred side of the anchor |
+| `collisionAvoidance` | Positioner collision avoidance | `{ side: "none", align: "shift", fallbackAxisSide: "none" }` | Keeps the popup on its side and shifts it along the edge instead of flipping; stays above the iOS keyboard |
 | `align` | Positioner align | `"start"` | Alignment along the anchor |
 | `sideOffset` | `number` | `4` | Space between popup and anchor |
 | `alignOffset` | `number` | — | Alignment adjustment |
@@ -407,7 +408,7 @@ The popup anchors to the Composer frame and preserves editor focus automatically
 
 ### ComposerList
 
-A scrollable result surface. It supplies listbox semantics and maps its items through a render function.
+A scrollable result surface. It supplies listbox semantics and maps its items through a render function. A scrollbar appears only while the list overflows, and never for an empty result.
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
