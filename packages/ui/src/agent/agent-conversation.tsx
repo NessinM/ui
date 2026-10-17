@@ -34,6 +34,7 @@ export function AgentConversation({
       live={live}
       contentClassName={cn(
         // Inside a popover crossfade snapshot ([data-previous]), keep the reader's place.
+        // The variable is AGENT_SCROLL_OFFSET_VAR; Tailwind needs it spelled out here.
         "flex in-data-previous:-translate-y-(--agent-conversation-scroll-top) flex-col gap-6 pt-4",
         contentClassName,
       )}

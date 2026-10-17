@@ -1,7 +1,7 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "p-agent-2",
-  "description": "User prompt and a streaming agent reply on the chat message shell",
+  "description": "User prompt and a streaming agent reply with a caret and timestamps",
   "dependencies": [
     "lucide-react"
   ],

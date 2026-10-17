@@ -113,7 +113,7 @@ export const particles: ParticleItem[] = [
     categories: categories("agent", "loading"),
     dependencies: ["lucide-react"],
     description:
-      "User prompt and a streaming agent reply on the chat message shell",
+      "User prompt and a streaming agent reply with a caret and timestamps",
     files: [{ path: "particles/p-agent-2.tsx", type: "registry:block" }],
     meta: {
       className:

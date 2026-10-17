@@ -132,11 +132,11 @@ The root is the chat message layout with `data-slot="agent-message"` and `data-f
 
 Pass an `AgentMessageActions` toolbar to the message’s `actions` slot. It needs a `label`, and arrow keys move between its actions. Every action is a toolbar part, so place actions inside it. Inside a message, the actions stay hidden on fine pointers until the message is hovered or focused, or one of their popups is open. They’re always shown on coarse pointers, where there’s no hover. Set `actionsAlwaysVisible` on the message to keep them shown, for example on the latest reply. Hidden actions keep their space, so revealing them never moves the conversation.
 
-- **`AgentMessageCopyAction`** copies `text`. While the text is copied, it shows a check and its `copiedLabel`. Use `onCopy` to announce the result through the announcer.
+- **`AgentMessageCopyAction`** copies `text`. While the text is copied, it shows a check and its `copiedLabel` as the tooltip. Its accessible name stays `label`, so screen readers hear the result once: announce `copiedLabel` from `onCopy` through the [announcer](#announcer).
 - **`AgentMessageEditAction`** calls `onEdit`. Your application decides what editing means, such as moving the prompt back into the composer.
-- **`AgentMessageAction`** is the generic icon action for anything else, such as retry. Pass the icon as children and a `label`, which names the button and fills its tooltip.
+- **`AgentMessageAction`** is the generic icon action for anything else, such as retry. Pass the icon as children and a `label`, which names the button and fills its tooltip unless you pass `tooltip`.
 
-An action with nothing to do is a disabled button, never one that only says so: an `AgentMessageAction` without `onClick` or `render` is disabled, and so is a copy action with empty `text`. Don’t render actions your application can’t perform.
+An action with nothing to do is a disabled button, never one that only says so: an `AgentMessageAction` without `onClick` or `render` is disabled, even with `disabled={false}`, and so is a copy action with empty `text`. Don’t render actions your application can’t perform.
 
 ## Announcer
 
@@ -159,7 +159,7 @@ A phase without a label is never announced. Pass the error message or the approv
 
 ## Reduced motion
 
-Every transition in the family has a reduced-motion path: CSS transitions use `motion-reduce:transition-none`, and loops such as the streaming caret run only under `motion-safe`. For motion timed in JavaScript, such as an exit delay before a crossfade, read `useAgentReducedMotion()` and skip the delay when it returns `true`. Follow the same policy in your compositions.
+Every transition the agent parts add has a reduced-motion path: CSS transitions use `motion-reduce:transition-none`, and loops such as the streaming caret run only under `motion-safe`. Parts the family composes, such as chat’s jump to latest and coss tooltips, follow their own primitives. For motion timed in JavaScript, such as an exit delay before a crossfade, read `useAgentReducedMotion()` and skip the delay when it returns `true`. Follow the same policy in your compositions.
 
 ## Before shipping
 

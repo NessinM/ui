@@ -47,11 +47,14 @@ export type AgentMessageActionProps = Omit<
 > & {
   label: string;
   children: ReactNode;
+  /** Tooltip content. Defaults to `label`. */
+  tooltip?: ReactNode;
 };
 
 export function AgentMessageAction({
   label,
   children,
+  tooltip = label,
   onClick,
   render,
   disabled,
@@ -59,7 +62,7 @@ export function AgentMessageAction({
   ...props
 }: AgentMessageActionProps): ReactElement {
   // An action that can't do anything is a real disabled button, never aria-disabled alone.
-  const inactive = disabled ?? (!onClick && !render);
+  const inactive = disabled || (!onClick && !render);
   return (
     <Tooltip>
       <TooltipTrigger
@@ -88,18 +91,18 @@ export function AgentMessageAction({
       >
         {children}
       </TooltipTrigger>
-      <TooltipPopup>{label}</TooltipPopup>
+      <TooltipPopup>{tooltip}</TooltipPopup>
     </Tooltip>
   );
 }
 
 export type AgentMessageCopyActionProps = Omit<
   AgentMessageActionProps,
-  "children" | "onClick" | "render"
+  "children" | "onClick" | "render" | "tooltip"
 > & {
   text: string;
   copiedLabel: string;
-  /** Called after the text reaches the clipboard, e.g. to announce `copiedLabel`. */
+  /** Called after the text reaches the clipboard. Announce `copiedLabel` here; the button's name stays `label`. */
   onCopy?: () => void;
 };
 
@@ -116,7 +119,8 @@ export function AgentMessageCopyAction({
     <AgentMessageAction
       data-copied={isCopied || undefined}
       disabled={disabled || !text}
-      label={isCopied ? copiedLabel : label}
+      label={label}
+      tooltip={isCopied ? copiedLabel : label}
       onClick={() => copyToClipboard(text)}
       {...props}
     >

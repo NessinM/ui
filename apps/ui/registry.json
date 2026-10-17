@@ -1457,7 +1457,7 @@
       "dependencies": [
         "lucide-react"
       ],
-      "description": "User prompt and a streaming agent reply on the chat message shell",
+      "description": "User prompt and a streaming agent reply with a caret and timestamps",
       "files": [
         {
           "path": "registry/default/particles/p-agent-2.tsx",

@@ -1357,7 +1357,7 @@ export const Index: Record<string, any> = {
   },
   "p-agent-2": {
     name: "p-agent-2",
-    description: "User prompt and a streaming agent reply on the chat message shell",
+    description: "User prompt and a streaming agent reply with a caret and timestamps",
     type: "registry:block",
     registryDependencies: ["@coss/agent","@coss/button","@coss/chat"],
     files: [{
