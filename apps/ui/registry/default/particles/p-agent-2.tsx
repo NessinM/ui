@@ -1,12 +1,11 @@
 "use client";
 
-import { BotIcon, RotateCcwIcon } from "lucide-react";
+import { RotateCcwIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { AgentMessage } from "@/registry/default/agent/agent-message";
 import { ChatMessageCaret } from "@/registry/default/chat/chat-message-caret";
 import { ChatMessageText } from "@/registry/default/chat/chat-message-text";
 import { ChatMessageTimestamp } from "@/registry/default/chat/chat-message-timestamp";
-import { Avatar, AvatarFallback } from "@/registry/default/ui/avatar";
 import { Button } from "@/registry/default/ui/button";
 
 const reply =
@@ -37,13 +36,6 @@ export default function Particle() {
       </AgentMessage>
       <AgentMessage
         from="assistant"
-        avatar={
-          <Avatar aria-hidden="true" className="size-7">
-            <AvatarFallback>
-              <BotIcon className="size-4" />
-            </AvatarFallback>
-          </Avatar>
-        }
         streaming={streaming}
         footer={
           streaming ? (

@@ -36,7 +36,6 @@ export type ChatMessageProps = Omit<
     actions?: ReactNode;
     reactions?: ReactNode;
     footer?: ReactNode;
-    streaming?: boolean;
     bubble?: boolean;
     bubbleProps?: Omit<
       ChatMessageBubbleProps,
@@ -54,7 +53,6 @@ export function ChatMessage({
   actions,
   reactions,
   footer,
-  streaming,
   bubble = true,
   bubbleProps,
   animateEntrance,
@@ -75,7 +73,7 @@ export function ChatMessage({
           {!grouped && avatar}
         </ChatMessageAvatar>
       )}
-      <ChatMessageContent streaming={streaming}>
+      <ChatMessageContent>
         {bubble ? (
           <div
             className={cn(

@@ -67,11 +67,6 @@ export const chat: Registry["items"] = [
         target: "@components/chat/chat-message-bubble.tsx",
       },
       {
-        path: "chat/chat-message-caret.tsx",
-        type: "registry:component",
-        target: "@components/chat/chat-message-caret.tsx",
-      },
-      {
         path: "chat/chat-message-info.tsx",
         type: "registry:component",
         target: "@components/chat/chat-message-info.tsx",
@@ -82,19 +77,9 @@ export const chat: Registry["items"] = [
         target: "@components/chat/chat-message-layout.tsx",
       },
       {
-        path: "chat/chat-message-markdown.tsx",
-        type: "registry:component",
-        target: "@components/chat/chat-message-markdown.tsx",
-      },
-      {
         path: "chat/chat-message-text.tsx",
         type: "registry:component",
         target: "@components/chat/chat-message-text.tsx",
-      },
-      {
-        path: "chat/chat-message-timestamp.tsx",
-        type: "registry:component",
-        target: "@components/chat/chat-message-timestamp.tsx",
       },
       {
         path: "chat/chat-message.tsx",
@@ -145,11 +130,6 @@ export const chat: Registry["items"] = [
         path: "chat/hooks/use-chat-scroll.ts",
         type: "registry:component",
         target: "@components/chat/hooks/use-chat-scroll.ts",
-      },
-      {
-        path: "chat/lib/get-chat-date-time.ts",
-        type: "registry:component",
-        target: "@components/chat/lib/get-chat-date-time.ts",
       },
       {
         path: "chat/lib/split-chat-message-preview.ts",

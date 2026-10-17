@@ -1,7 +1,7 @@
 import { cn } from "@coss/ui/lib/utils";
 import type { ComponentProps, ReactElement } from "react";
 
-export type ChatMessageTextProps = ComponentProps<"p"> & {
+export type ChatMessageTextProps = Omit<ComponentProps<"p">, "children"> & {
   text: string;
   mentions?: readonly string[];
 };
@@ -9,7 +9,6 @@ export type ChatMessageTextProps = ComponentProps<"p"> & {
 export function ChatMessageText({
   text,
   mentions = [],
-  children,
   className,
   ...props
 }: ChatMessageTextProps): ReactElement {
@@ -17,7 +16,6 @@ export function ChatMessageText({
   const parts = text.split(/(@[\p{L}\p{N}_.-]+)/u);
   return (
     <p
-      data-slot="chat-message-text"
       className={cn(
         "m-0 whitespace-pre-wrap break-words text-sm leading-[1.55]",
         className,
@@ -35,7 +33,6 @@ export function ChatMessageText({
           </span>
         );
       })}
-      {children}
     </p>
   );
 }

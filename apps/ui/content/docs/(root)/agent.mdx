@@ -86,7 +86,7 @@ Import components directly from their files. There is no provider.
 | Area | Components | Responsibility |
 | --- | --- | --- |
 | Conversation | `AgentConversation`, `useChatScroll` | Chat scroll viewport and end following, quiet by default, keeps its place in popover crossfades |
-| Message | `AgentMessage` | User bubble or full-width reply on the chat message shell, avatar, actions and footer slots, streaming state |
+| Message | `AgentMessage` | User bubble or full-width reply on the chat message shell, actions and footer slots, streaming state |
 | Content | `ChatMessageText`, `ChatMessageMarkdown`, `ChatMessageCaret`, `ChatMessageTimestamp` | Chat parts for text, Markdown, the streaming caret and timestamps |
 | Actions | `AgentMessageActions`, `AgentMessageAction`, `AgentMessageCopyAction`, `AgentMessageEditAction` | Toolbar revealed on hover and focus, generic icon action, copy and edit |
 | Announcer | `AgentAnnouncer`, `useAgentAnnouncer`, `getAgentAnnouncement` | One status region per conversation and the rule for what it says |
@@ -121,8 +121,6 @@ It differs from `ChatConversation` in three ways:
 <ComponentPreview name="p-agent-2" />
 
 `AgentMessage` requires `from`, either `"user"` or `"assistant"`. User messages render in the chat bubble at the end of the row. Assistant replies render full width with no bubble, so Markdown, tables and code have room. String children render through `ChatMessageText`; pass `ChatMessageMarkdown` or your own content for anything richer.
-
-Pass the agent’s identity mark, such as an avatar or a logo, to `avatar` on assistant replies; user messages ignore it. It sits in the chat avatar column, at the top of the reply. Mark it `aria-hidden` when it’s decorative, as it is when the conversation’s label already names the agent.
 
 Set `streaming` while the reply is still arriving. It sets `data-streaming` on the content, as in chat. Put `ChatMessageCaret` inside the last text block and remove it when the stream ends. Render the `footer` from the start, for example with a “Writing…” label that becomes a `ChatMessageTimestamp`, so the row doesn’t jump when the reply finishes.
 

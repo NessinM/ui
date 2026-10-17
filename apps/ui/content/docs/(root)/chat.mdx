@@ -167,14 +167,14 @@ Import components directly from their files. There is no required global chat pr
 | Area | Components | Responsibility |
 | --- | --- | --- |
 | Conversation | `ChatConversation`, `useChatScroll` | Scroll viewport, end following, jump to latest, overlay slot |
-| Message | `ChatMessage`, `ChatMessageTimestamp` | Incoming/outgoing row, avatar, author, grouping, actions, reactions, footer, timestamp |
+| Message | `ChatMessage` | Incoming/outgoing row, avatar, author, grouping, actions, reactions, footer |
 | Surfaces | `ChatMessageBubble`, `ChatBubble`, `ChatMessageLayout` | Standalone previews and custom row compositions |
-| Content | `ChatMessageText`, `ChatMessageMarkdown`, `ChatCollapsibleMessage`, `ChatReplyReference` | Mention emphasis, Markdown prose, long text, quoted message navigation |
+| Content | `ChatMessageText`, `ChatCollapsibleMessage`, `ChatReplyReference` | Mention emphasis, long text, quoted message navigation |
 | Composer | `Composer`, `ComposerInput`, `ComposerPopup`, `ComposerList`, `ComposerItem`, `ComposerSubmit` | Shared coss Composer: structured draft, send, adaptive layout, and mentions |
 | Actions | `ChatMessageActionToolbar`, `ChatReactionPicker`, `ChatReactionChip` | Reply/menu controls, emoji selection, reactor list |
 | Focused reply | `ChatReplyPreview` | Move the selected message above the composer, dim the timeline, cancel/exit |
 | Timeline | `ChatDatePill`, `ChatUnreadDivider`, `ChatJumpToLatestButton` | Sticky date markers, unread boundary, latest navigation |
-| Activity | `ChatTypingIndicator`, `ChatDeliveryIndicator`, `ChatMessageCaret` | Typing, delivery, and streaming presentation |
+| Activity | `ChatTypingIndicator`, `ChatDeliveryIndicator` | Typing and delivery presentation |
 | People | `ChatMemberList`, `ChatMemberSection`, `ChatMessageInfo` | Member rows and receipt groups with supplied actions |
 | States | `ChatEmptyState`, `ChatLoadingState`, `ChatStatusBar` | Joining, unavailable history, loading, connection feedback |
 
@@ -219,66 +219,6 @@ The toolbar reserves its width beside the bubble and appears on hover, keyboard 
 | Reactor popup anchored to its chip | `popupAlign="start"` | `popupAlign="end"` |
 
 `ChatReactionChip` is controlled through `selected`, `count`, and `onClick`; it does not update your reaction data. Supply `emoji` and an accessible `label` describing the action and count. Clicking or pressing Enter/Space toggles the reaction. With `reactorContent`, delayed hover, keyboard focus, or a long touch opens the list; also provide `reactorLabel`. The caller renders names, avatars, and a “You” marker, with a bounded scroll area for long lists. Set `animateEntrance` only for newly added chips.
-
-## Timestamps, Markdown, and streaming
-
-These parts cover replies written by an assistant or agent as well as by people. They render what you pass them: your application formats dates, parses Markdown, and owns the stream.
-
-### Timestamps
-
-<ComponentPreview name="p-chat-1" />
-
-`ChatMessageTimestamp` renders a `<time>` element. Pass the machine value as `dateTime`, either a `Date` (serialized to an ISO 8601 instant) or a string you already hold, and the visible label as children. It doesn’t format or localize the label; format it with `Intl.DateTimeFormat` or your date library. Place it in the `footer` slot, where it takes the footer’s size and color, or in a header. Add a `title` with the full date if the label is relative or short.
-
-```tsx
-<ChatMessage
-  side="incoming"
-  footer={
-    <ChatMessageTimestamp dateTime={message.createdAt}>
-      {timeFormatter.format(message.createdAt)}
-    </ChatMessageTimestamp>
-  }
->
-  {message.text}
-</ChatMessage>
-```
-
-### Markdown
-
-<ComponentPreview name="p-chat-2" />
-
-`ChatMessageMarkdown` styles the elements your Markdown parser renders: headings, paragraphs, lists, links, inline code, code blocks, tables, block quotes, and rules. Its text uses the same size and line height as `ChatMessageText`. Chat doesn’t include a parser. Pass the parser’s React output as children, for example with `react-markdown` and `remark-gfm` for tables:
-
-```tsx
-import Markdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-
-<ChatMessage side="incoming" bubble={false}>
-  <ChatMessageMarkdown>
-    <Markdown remarkPlugins={[remarkGfm]}>{reply.text}</Markdown>
-  </ChatMessageMarkdown>
-</ChatMessage>
-```
-
-If your parser returns an HTML string, sanitize it first, then pass it through `dangerouslySetInnerHTML`. Code blocks scroll horizontally. Tables keep their table semantics for screen readers, so they don’t scroll by themselves: wrap each table in an element through your renderer (for example a `table` component that returns `<div><table {...props} /></div>`) and that wrapper scrolls. An unwrapped wide table scrolls the whole Markdown block instead.
-
-### Streaming replies
-
-<ComponentPreview name="p-chat-3" />
-
-Set `streaming` on `ChatMessage` (or `ChatMessageContent`) while text is still arriving. It adds `data-streaming` to the content so you can style the in-progress state. Append text to the same message rather than replacing it, and keep a stable key so the row isn’t remounted.
-
-`ChatMessageCaret` is an optional end-of-text caret. Place it inside the last text block: as `ChatMessageText` children, or inside the final element your Markdown renderer produces. If it sits after a block, it lands on a line of its own, so leave it out when your renderer can’t place it. The caret takes no inline space, so showing or removing it never rewraps the text. It pulses unless the reader prefers reduced motion. Remove it when the stream ends.
-
-```tsx
-<ChatMessage side="incoming" streaming={streaming}>
-  <ChatMessageText text={reply.text}>
-    {streaming && <ChatMessageCaret />}
-  </ChatMessageText>
-</ChatMessage>
-```
-
-To keep the row from jumping when the stream finishes, render the footer from the start, for example with a “Writing…” label that becomes the timestamp. These parts don’t announce anything. `ChatConversation` uses `live="polite"` by default, which can read every appended chunk, so set `live="off"` for streamed replies and announce phase changes, such as a finished or failed reply, from one application-owned status region.
 
 ## Composer and mentions
 

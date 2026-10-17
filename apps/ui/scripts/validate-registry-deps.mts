@@ -84,12 +84,6 @@ function parseImports(content: string): {
       continue;
     }
 
-    // Check if it's a chat family import (@/registry/default/chat/*)
-    if (/^@\/registry\/default\/chat\//.test(importPath)) {
-      registryDeps.add(getRegistryPackageName("chat"));
-      continue;
-    }
-
     // Check if it's an agent family import (@/registry/default/agent/*)
     if (/^@\/registry\/default\/agent\//.test(importPath)) {
       registryDeps.add(getRegistryPackageName("agent"));

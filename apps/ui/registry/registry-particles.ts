@@ -113,19 +113,14 @@ export const particles: ParticleItem[] = [
     categories: categories("agent", "loading"),
     dependencies: ["lucide-react"],
     description:
-      "User prompt and a streaming agent reply with an avatar, caret, and timestamps",
+      "User prompt and a streaming agent reply with a caret and timestamps",
     files: [{ path: "particles/p-agent-2.tsx", type: "registry:block" }],
     meta: {
       className:
         "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm",
     },
     name: "p-agent-2",
-    registryDependencies: [
-      "@coss/agent",
-      "@coss/avatar",
-      "@coss/button",
-      "@coss/chat",
-    ],
+    registryDependencies: ["@coss/agent", "@coss/button", "@coss/chat"],
     type: "registry:block",
   },
   {
@@ -1737,45 +1732,6 @@ export const particles: ParticleItem[] = [
     },
     name: "p-card-11",
     registryDependencies: ["@coss/button", "@coss/card", "@coss/empty"],
-    type: "registry:block",
-  },
-  {
-    categories: categories("chat", "time"),
-    description: "Chat messages with machine-readable timestamps in the footer",
-    files: [{ path: "particles/p-chat-1.tsx", type: "registry:block" }],
-    meta: {
-      className:
-        "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm",
-    },
-    name: "p-chat-1",
-    registryDependencies: ["@coss/chat"],
-    type: "registry:block",
-  },
-  {
-    categories: categories("chat", "text editor"),
-    description:
-      "Assistant reply with styled Markdown headings, lists, tables, and code",
-    files: [{ path: "particles/p-chat-2.tsx", type: "registry:block" }],
-    meta: {
-      className:
-        "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-md",
-    },
-    name: "p-chat-2",
-    registryDependencies: ["@coss/chat"],
-    type: "registry:block",
-  },
-  {
-    categories: categories("chat", "loading"),
-    dependencies: ["lucide-react"],
-    description:
-      "Streaming reply with a trailing caret that never shifts layout",
-    files: [{ path: "particles/p-chat-3.tsx", type: "registry:block" }],
-    meta: {
-      className:
-        "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm",
-    },
-    name: "p-chat-3",
-    registryDependencies: ["@coss/button", "@coss/chat"],
     type: "registry:block",
   },
   {
