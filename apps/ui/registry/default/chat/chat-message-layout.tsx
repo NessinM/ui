@@ -52,7 +52,7 @@ export function ChatMessageHeader({
     <div
       data-slot="chat-message-header"
       className={cn(
-        "col-start-1 in-[[data-slot=chat-message]:has(>[data-slot=chat-message-avatar])]:col-start-2 row-start-1 px-1 font-medium text-muted-foreground text-xs group-data-[align=end]/message:justify-self-end",
+        "col-start-1 row-start-1 px-1 font-medium text-muted-foreground text-xs group-has-[>[data-slot=chat-message-avatar]]/message:col-start-2 group-data-[align=end]/message:justify-self-end",
         className,
       )}
       {...props}
@@ -74,7 +74,7 @@ export function ChatMessageContent({
       data-slot="chat-message-content"
       data-streaming={streaming || undefined}
       className={cn(
-        "col-start-1 in-[[data-slot=chat-message]:has(>[data-slot=chat-message-avatar])]:col-start-2 row-start-2 flex min-w-0 flex-col gap-1 group-data-[align=end]/message:items-end",
+        "col-start-1 row-start-2 flex min-w-0 flex-col gap-1 group-has-[>[data-slot=chat-message-avatar]]/message:col-start-2 group-data-[align=end]/message:items-end",
         className,
       )}
       {...props}
