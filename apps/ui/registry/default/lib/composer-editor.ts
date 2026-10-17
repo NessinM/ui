@@ -33,17 +33,25 @@ import {
 // Keep a small return margin so measuring the alternate layout cannot make the composer flicker.
 const STACK_HYSTERESIS_PX = 12;
 
-export function shouldStackComposer(
-  text: string,
-  contentWidth: number,
-  availableWidth: number,
+export function shouldStackComposer({
+  hasNewline,
+  isEmpty,
+  fitsOneLine,
+}: {
+  hasNewline: boolean;
+  isEmpty: boolean;
+  fitsOneLine: boolean;
+}): boolean {
+  if (isEmpty) return false;
+  return hasNewline || !fitsOneLine;
+}
+
+// While stacked, measure the one-line fit at a narrower width so the draft must fit with a margin.
+export function stackingMeasureWidth(
+  inlineWidth: number,
   isStacked: boolean,
-): boolean {
-  if (!text) return false;
-  return (
-    text.includes("\n") ||
-    contentWidth > availableWidth - (isStacked ? STACK_HYSTERESIS_PX : 0)
-  );
+): number {
+  return inlineWidth - (isStacked ? STACK_HYSTERESIS_PX : 0);
 }
 
 type ComposerEditorOptions = Omit<
@@ -477,19 +485,27 @@ function useComposerInputLayout() {
       // This keeps the layout from oscillating when full-width text fits one line.
       const isStacked = frame.hasAttribute("data-multiline");
       frame.removeAttribute("data-multiline");
-      // Read the unwrapped width: scrollWidth never drops below the box width.
+      const text = textRef.current;
+      const inlineWidth = input.clientWidth;
       const width = input.style.width;
-      input.style.width = "max-content";
-      const contentWidth = input.offsetWidth;
+      const minHeight = input.style.getPropertyValue("min-height");
+      const minHeightPriority = input.style.getPropertyPriority("min-height");
+      input.style.setProperty("min-height", "0px", "important");
+      input.style.width = `${stackingMeasureWidth(inlineWidth, isStacked)}px`;
+      const fitsOneLine = input.scrollHeight <= lineHeight * 1.5 + padding;
       input.style.width = width;
+      if (minHeight) {
+        input.style.setProperty("min-height", minHeight, minHeightPriority);
+      } else {
+        input.style.removeProperty("min-height");
+      }
       frame.toggleAttribute(
         "data-multiline",
-        shouldStackComposer(
-          textRef.current,
-          contentWidth,
-          input.clientWidth,
-          isStacked,
-        ),
+        shouldStackComposer({
+          hasNewline: text.includes("\n"),
+          isEmpty: !text,
+          fitsOneLine,
+        }),
       );
     }
     scheduleMeasureRef.current = scheduleMeasure;
