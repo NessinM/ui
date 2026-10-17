@@ -39,7 +39,10 @@
     "./shared/*": "./src/shared/*.tsx",
     "./chat/*": "./src/chat/*.tsx",
     "./chat/hooks/*": "./src/chat/hooks/*.ts",
-    "./chat/lib/*": "./src/chat/lib/*.ts"
+    "./chat/lib/*": "./src/chat/lib/*.ts",
+    "./agent/*": "./src/agent/*.tsx",
+    "./agent/hooks/*": "./src/agent/hooks/*.ts",
+    "./agent/lib/*": "./src/agent/lib/*.ts"
   },
   "license": "AGPL-3.0-or-later",
   "name": "@coss/ui",

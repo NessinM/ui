@@ -55,7 +55,7 @@
     "start": "next start --port 4000",
     "typecheck": "tsc --noEmit && tsc --noEmit --project tsconfig.tests.json",
     "ui:sync": "tsx --tsconfig ./tsconfig.scripts.json ./scripts/sync-ui.mts && bun run ui:sync:imports",
-    "ui:sync:imports": "cd ../.. && bunx biome check --write --assist-enabled=true --linter-enabled=false --formatter-enabled=false --indent-style=space --indent-width=2 --config-path .biome-packages-sync/packages-sync.json packages/ui/src/hooks packages/ui/src/lib packages/ui/src/components packages/ui/src/chat > /dev/null 2>&1 || true"
+    "ui:sync:imports": "cd ../.. && bunx biome check --write --assist-enabled=true --linter-enabled=false --formatter-enabled=false --indent-style=space --indent-width=2 --config-path .biome-packages-sync/packages-sync.json packages/ui/src/hooks packages/ui/src/lib packages/ui/src/components packages/ui/src/chat packages/ui/src/agent > /dev/null 2>&1 || true"
   },
   "version": "0.1.0"
 }

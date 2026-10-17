@@ -5,6 +5,7 @@ async function resolvePaths() {
   const cwd = process.cwd();
   const sourceRoot = path.join(cwd, "registry/default");
   const sourceDirs = {
+    agent: path.join(sourceRoot, "agent"),
     baseUi: path.join(sourceRoot, "base-ui"),
     chat: path.join(sourceRoot, "chat"),
     hooks: path.join(sourceRoot, "hooks"),
@@ -14,6 +15,7 @@ async function resolvePaths() {
   // From apps/ui → ../../packages/ui/src/*
   const targetRoot = path.resolve(cwd, "../../packages/ui/src");
   const targetDirs = {
+    agent: path.join(targetRoot, "agent"),
     baseUi: path.join(targetRoot, "base-ui"),
     chat: path.join(targetRoot, "chat"),
     hooks: path.join(targetRoot, "hooks"),

@@ -1,0 +1,70 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "agent",
+  "description": "Agent conversation, messages, message actions, and a screen reader announcer built on chat.",
+  "dependencies": [
+    "lucide-react",
+    "@base-ui/react"
+  ],
+  "registryDependencies": [
+    "@coss/button",
+    "@coss/chat",
+    "@coss/composer",
+    "@coss/toolbar",
+    "@coss/tooltip",
+    "@coss/use-copy-to-clipboard",
+    "@coss/use-media-query",
+    "@coss/utils"
+  ],
+  "files": [
+    {
+      "path": "registry/default/agent/agent-announcer.tsx",
+      "content": "import type { ComponentProps, ReactElement } from \"react\";\nimport { cn } from \"@/registry/default/lib/utils\";\nimport type { AgentAnnouncerController } from \"./hooks/use-agent-announcer\";\n\nexport type AgentAnnouncerProps = Omit<\n  ComponentProps<\"span\">,\n  \"children\" | \"role\"\n> & {\n  announcer: AgentAnnouncerController;\n};\n\n/** The conversation's one status region. Render it once, outside the scrolling log. */\nexport function AgentAnnouncer({\n  announcer,\n  className,\n  ...props\n}: AgentAnnouncerProps): ReactElement {\n  return (\n    <span\n      aria-atomic=\"true\"\n      aria-live=\"polite\"\n      data-slot=\"agent-announcer\"\n      role=\"status\"\n      className={cn(\"sr-only\", className)}\n      {...props}\n    >\n      {announcer.message}\n    </span>\n  );\n}\n",
+      "type": "registry:component",
+      "target": "@components/agent/agent-announcer.tsx"
+    },
+    {
+      "path": "registry/default/agent/agent-conversation.tsx",
+      "content": "\"use client\";\n\nimport type { ReactElement, UIEvent } from \"react\";\nimport { cn } from \"@/registry/default/lib/utils\";\nimport {\n  ChatConversation,\n  type ChatConversationProps,\n} from \"../chat/chat-conversation\";\nimport {\n  AGENT_SCROLL_OFFSET_VAR,\n  getAgentScrollOffset,\n} from \"./lib/get-agent-scroll-offset\";\n\nexport type AgentConversationProps = ChatConversationProps;\n\nexport function AgentConversation({\n  scroll,\n  live = \"off\",\n  contentClassName,\n  ...props\n}: AgentConversationProps): ReactElement {\n  const onScroll = (event: UIEvent<HTMLDivElement>): void => {\n    event.currentTarget.style.setProperty(\n      AGENT_SCROLL_OFFSET_VAR,\n      getAgentScrollOffset(event.currentTarget.scrollTop),\n    );\n    scroll.onScroll(event);\n  };\n\n  return (\n    <ChatConversation\n      data-slot=\"agent-conversation\"\n      scroll={{ ...scroll, onScroll }}\n      live={live}\n      contentClassName={cn(\n        // Inside a popover crossfade snapshot ([data-previous]), keep the reader's place.\n        \"flex in-data-previous:-translate-y-(--agent-conversation-scroll-top) flex-col gap-6 pt-4\",\n        contentClassName,\n      )}\n      {...props}\n    />\n  );\n}\n",
+      "type": "registry:component",
+      "target": "@components/agent/agent-conversation.tsx"
+    },
+    {
+      "path": "registry/default/agent/agent-message-actions.tsx",
+      "content": "\"use client\";\n\nimport type { Toolbar as ToolbarPrimitive } from \"@base-ui/react/toolbar\";\nimport { CheckIcon, CopyIcon, PencilIcon } from \"lucide-react\";\nimport type { ReactElement, ReactNode } from \"react\";\nimport { useCopyToClipboard } from \"@/registry/default/hooks/use-copy-to-clipboard\";\nimport { cn } from \"@/registry/default/lib/utils\";\nimport { Button, type ButtonProps } from \"@/registry/default/ui/button\";\nimport { Toolbar, ToolbarButton } from \"@/registry/default/ui/toolbar\";\nimport {\n  Tooltip,\n  TooltipPopup,\n  TooltipTrigger,\n} from \"@/registry/default/ui/tooltip\";\n\nexport type AgentMessageActionsProps = Omit<\n  ToolbarPrimitive.Root.Props,\n  \"aria-label\"\n> & {\n  label: string;\n};\n\nexport function AgentMessageActions({\n  label,\n  className,\n  ...props\n}: AgentMessageActionsProps): ReactElement {\n  return (\n    <Toolbar\n      aria-label={label}\n      data-slot=\"agent-message-actions\"\n      className={cn(\n        \"w-fit gap-0.5 rounded-none border-0 bg-transparent p-0 transition-opacity motion-reduce:transition-none\",\n        // Inside a message on a fine pointer, hide until the message is hovered or focused,\n        // or a popup from an action is open. Coarse pointers always show the actions.\n        \"pointer-fine:in-[[data-slot=agent-message]:not(:hover):not(:focus-within):not([data-actions-visible]):not(:has([data-popup-open]))]:opacity-0\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nexport type AgentMessageActionProps = Omit<\n  ButtonProps,\n  \"aria-label\" | \"children\" | \"size\" | \"variant\"\n> & {\n  label: string;\n  children: ReactNode;\n};\n\nexport function AgentMessageAction({\n  label,\n  children,\n  onClick,\n  render,\n  disabled,\n  className,\n  ...props\n}: AgentMessageActionProps): ReactElement {\n  // An action that can't do anything is a real disabled button, never aria-disabled alone.\n  const inactive = disabled ?? (!onClick && !render);\n  return (\n    <Tooltip>\n      <TooltipTrigger\n        render={\n          <ToolbarButton\n            disabled={inactive}\n            focusableWhenDisabled={false}\n            render={\n              <Button\n                aria-label={label}\n                className={cn(\n                  \"text-muted-foreground hover:text-foreground\",\n                  className,\n                )}\n                data-slot=\"agent-message-action\"\n                disabled={inactive}\n                onClick={onClick}\n                render={render}\n                size=\"icon-xs\"\n                variant=\"ghost\"\n                {...props}\n              />\n            }\n          />\n        }\n      >\n        {children}\n      </TooltipTrigger>\n      <TooltipPopup>{label}</TooltipPopup>\n    </Tooltip>\n  );\n}\n\nexport type AgentMessageCopyActionProps = Omit<\n  AgentMessageActionProps,\n  \"children\" | \"onClick\" | \"render\"\n> & {\n  text: string;\n  copiedLabel: string;\n  /** Called after the text reaches the clipboard, e.g. to announce `copiedLabel`. */\n  onCopy?: () => void;\n};\n\nexport function AgentMessageCopyAction({\n  text,\n  label,\n  copiedLabel,\n  onCopy,\n  disabled,\n  ...props\n}: AgentMessageCopyActionProps): ReactElement {\n  const { copyToClipboard, isCopied } = useCopyToClipboard({ onCopy });\n  return (\n    <AgentMessageAction\n      data-copied={isCopied || undefined}\n      disabled={disabled || !text}\n      label={isCopied ? copiedLabel : label}\n      onClick={() => copyToClipboard(text)}\n      {...props}\n    >\n      {isCopied ? (\n        <CheckIcon aria-hidden=\"true\" />\n      ) : (\n        <CopyIcon aria-hidden=\"true\" />\n      )}\n    </AgentMessageAction>\n  );\n}\n\nexport type AgentMessageEditActionProps = Omit<\n  AgentMessageActionProps,\n  \"children\" | \"onClick\" | \"render\"\n> & {\n  onEdit: () => void;\n};\n\nexport function AgentMessageEditAction({\n  onEdit,\n  ...props\n}: AgentMessageEditActionProps): ReactElement {\n  return (\n    <AgentMessageAction onClick={onEdit} {...props}>\n      <PencilIcon aria-hidden=\"true\" />\n    </AgentMessageAction>\n  );\n}\n",
+      "type": "registry:component",
+      "target": "@components/agent/agent-message-actions.tsx"
+    },
+    {
+      "path": "registry/default/agent/agent-message.tsx",
+      "content": "\"use client\";\n\nimport type { ReactElement, ReactNode } from \"react\";\nimport { ChatBubble } from \"../chat/chat-bubble\";\nimport {\n  ChatMessageContent,\n  ChatMessageFooter,\n  ChatMessageLayout,\n  type ChatMessageLayoutProps,\n} from \"../chat/chat-message-layout\";\nimport { ChatMessageText } from \"../chat/chat-message-text\";\n\nexport type AgentMessageProps = Omit<ChatMessageLayoutProps, \"align\"> & {\n  from: \"user\" | \"assistant\";\n  actions?: ReactNode;\n  /** Keep actions shown instead of revealing them on hover and focus. */\n  actionsAlwaysVisible?: boolean;\n  footer?: ReactNode;\n  streaming?: boolean;\n};\n\nexport function AgentMessage({\n  from,\n  actions,\n  actionsAlwaysVisible = false,\n  footer,\n  streaming,\n  children,\n  ...props\n}: AgentMessageProps): ReactElement {\n  const user = from === \"user\";\n  const content =\n    typeof children === \"string\" ? (\n      <ChatMessageText text={children} />\n    ) : (\n      children\n    );\n\n  return (\n    <ChatMessageLayout\n      align={user ? \"end\" : \"start\"}\n      data-slot=\"agent-message\"\n      data-from={from}\n      data-actions-visible={actionsAlwaysVisible || undefined}\n      {...props}\n    >\n      <ChatMessageContent streaming={streaming}>\n        {user ? (\n          <ChatBubble align=\"end\" className=\"max-w-[83%]\">\n            {content}\n          </ChatBubble>\n        ) : (\n          content\n        )}\n        {actions}\n        {footer && <ChatMessageFooter>{footer}</ChatMessageFooter>}\n      </ChatMessageContent>\n    </ChatMessageLayout>\n  );\n}\n",
+      "type": "registry:component",
+      "target": "@components/agent/agent-message.tsx"
+    },
+    {
+      "path": "registry/default/agent/hooks/use-agent-announcer.ts",
+      "content": "\"use client\";\n\nimport { useCallback, useEffect, useRef, useState } from \"react\";\nimport {\n  type AgentAnnouncementState,\n  type AgentPhase,\n  getAgentAnnouncement,\n  getAgentAnnouncerMessage,\n} from \"../lib/get-agent-announcement\";\n\nexport type AgentAnnouncerLabels = Partial<\n  Record<Exclude<AgentPhase, \"idle\">, string>\n>;\n\nexport type AgentAnnouncerOptions = {\n  phase: AgentPhase;\n  /** Localized text for each phase. A phase without a label is never announced. */\n  labels: AgentAnnouncerLabels;\n  /** Replaces the phase label, such as the error or the approval question. */\n  detail?: string;\n  /** Changing it starts a new baseline, so a switched conversation isn't replayed. */\n  conversationId?: string;\n};\n\nexport function useAgentAnnouncer({\n  phase,\n  labels,\n  detail,\n  conversationId,\n}: AgentAnnouncerOptions) {\n  const [message, setMessage] = useState(\"\");\n  const previousRef = useRef<AgentAnnouncementState | null>(null);\n  const text = phase === \"idle\" ? \"\" : (detail ?? labels[phase] ?? \"\");\n\n  useEffect(() => {\n    const next = { conversationId, phase, text };\n    const announcement = getAgentAnnouncement(previousRef.current, next);\n    previousRef.current = next;\n    if (announcement)\n      setMessage((current) => getAgentAnnouncerMessage(current, announcement));\n  }, [conversationId, phase, text]);\n\n  /** Announce a one-off result, such as a copied message. */\n  const announce = useCallback((value: string): void => {\n    if (value)\n      setMessage((current) => getAgentAnnouncerMessage(current, value));\n  }, []);\n\n  return { announce, message };\n}\n\nexport type AgentAnnouncerController = ReturnType<typeof useAgentAnnouncer>;\n",
+      "type": "registry:component",
+      "target": "@components/agent/hooks/use-agent-announcer.ts"
+    },
+    {
+      "path": "registry/default/agent/hooks/use-agent-reduced-motion.ts",
+      "content": "\"use client\";\n\nimport { useMediaQuery } from \"@/registry/default/hooks/use-media-query\";\n\n/**\n * The agent family's reduced-motion check for motion timed in JavaScript, such as an\n * exit delay or an animation loop. CSS transitions use `motion-reduce:` variants instead.\n */\nexport function useAgentReducedMotion(): boolean {\n  return useMediaQuery(\"(prefers-reduced-motion: reduce)\");\n}\n",
+      "type": "registry:component",
+      "target": "@components/agent/hooks/use-agent-reduced-motion.ts"
+    },
+    {
+      "path": "registry/default/agent/lib/get-agent-announcement.ts",
+      "content": "export type AgentPhase =\n  | \"idle\"\n  | \"thinking\"\n  | \"working\"\n  | \"approval\"\n  | \"done\"\n  | \"stopped\"\n  | \"failed\";\n\nexport type AgentAnnouncementState = {\n  phase: AgentPhase;\n  /** What this phase would say: a phase label, or a detail such as the error. */\n  text: string;\n  conversationId?: string;\n};\n\nfunction isBusy(phase: AgentPhase): boolean {\n  return phase === \"thinking\" || phase === \"working\";\n}\n\nexport function getAgentAnnouncement(\n  previous: AgentAnnouncementState | null,\n  next: AgentAnnouncementState,\n): string {\n  // A new mount or conversation only records a baseline; its state isn't replayed.\n  if (previous === null || previous.conversationId !== next.conversationId)\n    return \"\";\n  if (next.phase !== previous.phase) {\n    if (isBusy(next.phase) && isBusy(previous.phase)) return \"\";\n    return next.text;\n  }\n  // Busy text is progress, streamed or not: only settled phases re-announce new text.\n  if (isBusy(next.phase) || next.text === previous.text) return \"\";\n  return next.text;\n}\n\nconst REPEAT_MARK = \" \";\n\n/** Live regions skip unchanged content, so a repeat toggles a trailing no-break space. */\nexport function getAgentAnnouncerMessage(\n  current: string,\n  text: string,\n): string {\n  if (current === text) return `${text}${REPEAT_MARK}`;\n  return text;\n}\n",
+      "type": "registry:component",
+      "target": "@components/agent/lib/get-agent-announcement.ts"
+    },
+    {
+      "path": "registry/default/agent/lib/get-agent-scroll-offset.ts",
+      "content": "export const AGENT_SCROLL_OFFSET_VAR = \"--agent-conversation-scroll-top\";\n\n/**\n * Base UI popover viewports crossfade a cloned snapshot of the outgoing content,\n * and a clone keeps attributes but not scroll position. Written to the viewport's\n * inline style, this offset travels with the clone so the transcript can be\n * translated back to where the reader was.\n */\nexport function getAgentScrollOffset(scrollTop: number): string {\n  return `${Math.max(0, scrollTop)}px`;\n}\n",
+      "type": "registry:component",
+      "target": "@components/agent/lib/get-agent-scroll-offset.ts"
+    }
+  ],
+  "type": "registry:ui"
+}

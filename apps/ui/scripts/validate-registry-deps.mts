@@ -90,6 +90,12 @@ function parseImports(content: string): {
       continue;
     }
 
+    // Check if it's an agent family import (@/registry/default/agent/*)
+    if (/^@\/registry\/default\/agent\//.test(importPath)) {
+      registryDeps.add(getRegistryPackageName("agent"));
+      continue;
+    }
+
     // Check if it's already a @coss import
     if (importPath.startsWith("@coss/")) {
       // Skip @coss/utils as it's a common utility that shouldn't be treated as a dependency
