@@ -60,13 +60,19 @@ export function ChatMessageHeader({
   );
 }
 
+export type ChatMessageContentProps = ComponentProps<"div"> & {
+  streaming?: boolean;
+};
+
 export function ChatMessageContent({
+  streaming = false,
   className,
   ...props
-}: ComponentProps<"div">): ReactElement {
+}: ChatMessageContentProps): ReactElement {
   return (
     <div
       data-slot="chat-message-content"
+      data-streaming={streaming || undefined}
       className={cn(
         "col-start-1 in-[[data-slot=chat-message]:has(>[data-slot=chat-message-avatar])]:col-start-2 row-start-2 flex min-w-0 flex-col gap-1 group-data-[align=end]/message:items-end",
         className,

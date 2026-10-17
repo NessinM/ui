@@ -1,14 +1,16 @@
-import type { ComponentProps, ReactElement } from "react";
+import type { ComponentProps, ReactElement, ReactNode } from "react";
 import { cn } from "@/registry/default/lib/utils";
 
 export type ChatMessageTextProps = Omit<ComponentProps<"p">, "children"> & {
   text: string;
   mentions?: readonly string[];
+  children?: ReactNode;
 };
 
 export function ChatMessageText({
   text,
   mentions = [],
+  children,
   className,
   ...props
 }: ChatMessageTextProps): ReactElement {
@@ -16,6 +18,7 @@ export function ChatMessageText({
   const parts = text.split(/(@[\p{L}\p{N}_.-]+)/u);
   return (
     <p
+      data-slot="chat-message-text"
       className={cn(
         "m-0 whitespace-pre-wrap break-words text-sm leading-[1.55]",
         className,
@@ -33,6 +36,7 @@ export function ChatMessageText({
           </span>
         );
       })}
+      {children}
     </p>
   );
 }
