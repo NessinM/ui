@@ -1151,9 +1151,9 @@ export const Index: Record<string, any> = {
   },
   "agent": {
     name: "agent",
-    description: "Agent conversation, messages, message actions, and a screen reader announcer built on chat.",
+    description: "Agent conversation, messages, message actions, and a screen reader announcer.",
     type: "registry:ui",
-    registryDependencies: ["@coss/button","@coss/chat","@coss/composer","@coss/toolbar","@coss/tooltip","@coss/use-copy-to-clipboard","@coss/use-media-query","@coss/utils"],
+    registryDependencies: ["@coss/button","@coss/composer","@coss/scroll-area","@coss/toolbar","@coss/tooltip","@coss/use-copy-to-clipboard","@coss/use-media-query","@coss/utils"],
     files: [{
       path: "registry/default/agent/agent-announcer.tsx",
       type: "registry:component",
@@ -1183,9 +1183,9 @@ export const Index: Record<string, any> = {
       type: "registry:component",
       target: "@components/agent/lib/get-agent-announcement.ts"
     },{
-      path: "registry/default/agent/lib/get-agent-scroll-offset.ts",
+      path: "registry/default/agent/lib/agent-scroll.ts",
       type: "registry:component",
-      target: "@components/agent/lib/get-agent-scroll-offset.ts"
+      target: "@components/agent/lib/agent-scroll.ts"
     }],
     component: React.lazy(async () => {
       const mod = await import("@/registry/default/agent/agent-announcer.tsx")
@@ -1325,7 +1325,7 @@ export const Index: Record<string, any> = {
     name: "p-agent-1",
     description: "Agent conversation that follows new replies and offers a jump to latest",
     type: "registry:block",
-    registryDependencies: ["@coss/agent","@coss/button","@coss/chat"],
+    registryDependencies: ["@coss/agent","@coss/button"],
     files: [{
       path: "registry/default/particles/p-agent-1.tsx",
       type: "registry:block",
@@ -1341,9 +1341,9 @@ export const Index: Record<string, any> = {
   },
   "p-agent-2": {
     name: "p-agent-2",
-    description: "User prompt and a streaming agent reply with a caret and timestamps",
+    description: "User prompt in a bubble and a full-width agent reply",
     type: "registry:block",
-    registryDependencies: ["@coss/agent","@coss/button","@coss/chat"],
+    registryDependencies: ["@coss/agent"],
     files: [{
       path: "registry/default/particles/p-agent-2.tsx",
       type: "registry:block",
@@ -1354,7 +1354,7 @@ export const Index: Record<string, any> = {
       const exportName = Object.keys(mod).find(key => typeof mod[key] === 'function' || typeof mod[key] === 'object') || item.name
       return { default: mod.default || mod[exportName] }
     }),
-    categories: ["agent","loading"],
+    categories: ["agent"],
     meta: {"className":"**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm"},
   },
   "p-agent-3": {

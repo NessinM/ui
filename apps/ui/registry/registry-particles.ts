@@ -106,21 +106,19 @@ export const particles: ParticleItem[] = [
         "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-md",
     },
     name: "p-agent-1",
-    registryDependencies: ["@coss/agent", "@coss/button", "@coss/chat"],
+    registryDependencies: ["@coss/agent", "@coss/button"],
     type: "registry:block",
   },
   {
-    categories: categories("agent", "loading"),
-    dependencies: ["lucide-react"],
-    description:
-      "User prompt and a streaming agent reply with a caret and timestamps",
+    categories: categories("agent"),
+    description: "User prompt in a bubble and a full-width agent reply",
     files: [{ path: "particles/p-agent-2.tsx", type: "registry:block" }],
     meta: {
       className:
         "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm",
     },
     name: "p-agent-2",
-    registryDependencies: ["@coss/agent", "@coss/button", "@coss/chat"],
+    registryDependencies: ["@coss/agent"],
     type: "registry:block",
   },
   {

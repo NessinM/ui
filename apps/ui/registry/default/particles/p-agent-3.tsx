@@ -2,7 +2,10 @@
 
 import { RotateCcwIcon } from "lucide-react";
 import { useState } from "react";
-import { AgentMessage } from "@/registry/default/agent/agent-message";
+import {
+  AgentMessage,
+  AgentMessageText,
+} from "@/registry/default/agent/agent-message";
 import {
   AgentMessageAction,
   AgentMessageActions,
@@ -18,20 +21,18 @@ const answer =
 
 export default function Particle() {
   const [alwaysVisible, setAlwaysVisible] = useState(false);
-  const [editing, setEditing] = useState(false);
-  const [retries, setRetries] = useState(0);
+  const [status, setStatus] = useState("");
 
   return (
-    <div className="flex w-full max-w-sm flex-col gap-6">
+    <div className="flex w-full max-w-sm flex-col gap-10">
       <AgentMessage
         from="user"
         actionsAlwaysVisible={alwaysVisible}
-        footer={editing ? "Editing…" : undefined}
         actions={
           <AgentMessageActions label="Message actions">
             <AgentMessageEditAction
-              label={editing ? "Stop editing" : "Edit"}
-              onEdit={() => setEditing(!editing)}
+              label="Edit"
+              onEdit={() => setStatus("Editing the prompt")}
             />
             <AgentMessageCopyAction
               copiedLabel="Copied"
@@ -41,12 +42,11 @@ export default function Particle() {
           </AgentMessageActions>
         }
       >
-        {prompt}
+        <AgentMessageText>{prompt}</AgentMessageText>
       </AgentMessage>
       <AgentMessage
         from="assistant"
         actionsAlwaysVisible={alwaysVisible}
-        footer={retries > 0 ? `Retried ${retries}×` : undefined}
         actions={
           <AgentMessageActions label="Response actions">
             <AgentMessageCopyAction
@@ -56,19 +56,22 @@ export default function Particle() {
             />
             <AgentMessageAction
               label="Retry"
-              onClick={() => setRetries(retries + 1)}
+              onClick={() => setStatus("Retrying the reply")}
             >
               <RotateCcwIcon aria-hidden="true" />
             </AgentMessageAction>
           </AgentMessageActions>
         }
       >
-        {answer}
+        <AgentMessageText>{answer}</AgentMessageText>
       </AgentMessage>
-      <Label>
-        <Switch checked={alwaysVisible} onCheckedChange={setAlwaysVisible} />
-        Always show actions
-      </Label>
+      <div className="flex items-center justify-between gap-4">
+        <Label>
+          <Switch checked={alwaysVisible} onCheckedChange={setAlwaysVisible} />
+          Always show actions
+        </Label>
+        <p className="text-muted-foreground text-xs">{status}</p>
+      </div>
     </div>
   );
 }

@@ -3,8 +3,10 @@
 import { PlusIcon } from "lucide-react";
 import { useState } from "react";
 import { AgentConversation } from "@/registry/default/agent/agent-conversation";
-import { AgentMessage } from "@/registry/default/agent/agent-message";
-import { useChatScroll } from "@/registry/default/chat/hooks/use-chat-scroll";
+import {
+  AgentMessage,
+  AgentMessageText,
+} from "@/registry/default/agent/agent-message";
 import { Button } from "@/registry/default/ui/button";
 
 type Message = { id: number; from: "user" | "assistant"; text: string };
@@ -38,7 +40,6 @@ const replies = [
 
 export default function Particle() {
   const [messages, setMessages] = useState(initialMessages);
-  const scroll = useChatScroll({ itemCount: messages.length });
   const added = messages.length - initialMessages.length;
 
   const addReply = () => {
@@ -54,15 +55,14 @@ export default function Particle() {
 
   return (
     <div className="flex w-full max-w-md flex-col gap-3">
-      <div className="flex h-80 flex-col overflow-hidden rounded-xl border bg-popover">
+      <div className="h-80 overflow-hidden rounded-xl border">
         <AgentConversation
-          scroll={scroll}
-          label="Conversation with the assistant"
-          jumpLabel="Latest"
+          contentClassName="p-4"
+          scrollToLatestLabel="Scroll to latest"
         >
           {messages.map((message) => (
             <AgentMessage key={message.id} from={message.from}>
-              {message.text}
+              <AgentMessageText>{message.text}</AgentMessageText>
             </AgentMessage>
           ))}
         </AgentConversation>

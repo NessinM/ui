@@ -5,12 +5,12 @@ export const agent: Registry["items"] = [
     name: "agent",
     type: "registry:ui",
     description:
-      "Agent conversation, messages, message actions, and a screen reader announcer built on chat.",
+      "Agent conversation, messages, message actions, and a screen reader announcer.",
     dependencies: ["lucide-react", "@base-ui/react"],
     registryDependencies: [
       "@coss/button",
-      "@coss/chat",
       "@coss/composer",
+      "@coss/scroll-area",
       "@coss/toolbar",
       "@coss/tooltip",
       "@coss/use-copy-to-clipboard",
@@ -54,9 +54,9 @@ export const agent: Registry["items"] = [
         target: "@components/agent/lib/get-agent-announcement.ts",
       },
       {
-        path: "agent/lib/get-agent-scroll-offset.ts",
+        path: "agent/lib/agent-scroll.ts",
         type: "registry:component",
-        target: "@components/agent/lib/get-agent-scroll-offset.ts",
+        target: "@components/agent/lib/agent-scroll.ts",
       },
     ],
   },

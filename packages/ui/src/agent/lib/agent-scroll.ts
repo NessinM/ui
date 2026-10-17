@@ -9,3 +9,19 @@ export const AGENT_SCROLL_OFFSET_VAR = "--agent-conversation-scroll-top";
 export function getAgentScrollOffset(scrollTop: number): string {
   return `${Math.max(0, scrollTop)}px`;
 }
+
+export type AgentScrollMetrics = {
+  scrollHeight: number;
+  scrollTop: number;
+  clientHeight: number;
+};
+
+const BOTTOM_THRESHOLD_PX = 24;
+
+export function isAgentScrollAtBottom({
+  scrollHeight,
+  scrollTop,
+  clientHeight,
+}: AgentScrollMetrics): boolean {
+  return scrollHeight - scrollTop - clientHeight <= BOTTOM_THRESHOLD_PX;
+}

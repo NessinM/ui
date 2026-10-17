@@ -1197,15 +1197,15 @@
     {
       "name": "agent",
       "type": "registry:ui",
-      "description": "Agent conversation, messages, message actions, and a screen reader announcer built on chat.",
+      "description": "Agent conversation, messages, message actions, and a screen reader announcer.",
       "dependencies": [
         "lucide-react",
         "@base-ui/react"
       ],
       "registryDependencies": [
         "@coss/button",
-        "@coss/chat",
         "@coss/composer",
+        "@coss/scroll-area",
         "@coss/toolbar",
         "@coss/tooltip",
         "@coss/use-copy-to-clipboard",
@@ -1249,9 +1249,9 @@
           "target": "@components/agent/lib/get-agent-announcement.ts"
         },
         {
-          "path": "registry/default/agent/lib/get-agent-scroll-offset.ts",
+          "path": "registry/default/agent/lib/agent-scroll.ts",
           "type": "registry:component",
-          "target": "@components/agent/lib/get-agent-scroll-offset.ts"
+          "target": "@components/agent/lib/agent-scroll.ts"
         }
       ]
     },
@@ -1424,20 +1424,15 @@
       "name": "p-agent-1",
       "registryDependencies": [
         "@coss/agent",
-        "@coss/button",
-        "@coss/chat"
+        "@coss/button"
       ],
       "type": "registry:block"
     },
     {
       "categories": [
-        "agent",
-        "loading"
+        "agent"
       ],
-      "dependencies": [
-        "lucide-react"
-      ],
-      "description": "User prompt and a streaming agent reply with a caret and timestamps",
+      "description": "User prompt in a bubble and a full-width agent reply",
       "files": [
         {
           "path": "registry/default/particles/p-agent-2.tsx",
@@ -1449,9 +1444,7 @@
       },
       "name": "p-agent-2",
       "registryDependencies": [
-        "@coss/agent",
-        "@coss/button",
-        "@coss/chat"
+        "@coss/agent"
       ],
       "type": "registry:block"
     },

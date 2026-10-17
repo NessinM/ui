@@ -6,6 +6,7 @@ import { Toolbar, ToolbarButton } from "@coss/ui/components/toolbar";
 import {
   Tooltip,
   TooltipPopup,
+  TooltipProvider,
   TooltipTrigger,
 } from "@coss/ui/components/tooltip";
 import { useCopyToClipboard } from "@coss/ui/hooks/use-copy-to-clipboard";
@@ -26,18 +27,17 @@ export function AgentMessageActions({
   ...props
 }: AgentMessageActionsProps): ReactElement {
   return (
-    <Toolbar
-      aria-label={label}
-      data-slot="agent-message-actions"
-      className={cn(
-        "w-fit gap-0.5 rounded-none border-0 bg-transparent p-0 transition-opacity motion-reduce:transition-none",
-        // Inside a message on a fine pointer, hide until the message is hovered or focused,
-        // or a popup from an action is open. Coarse pointers always show the actions.
-        "pointer-fine:in-[[data-slot=agent-message]:not(:hover):not(:focus-within):not([data-actions-visible]):not(:has([data-popup-open]))]:opacity-0",
-        className,
-      )}
-      {...props}
-    />
+    <TooltipProvider>
+      <Toolbar
+        aria-label={label}
+        data-slot="agent-message-actions"
+        className={cn(
+          "w-fit items-center gap-0.5 rounded-none border-0 bg-transparent p-0",
+          className,
+        )}
+        {...props}
+      />
+    </TooltipProvider>
   );
 }
 
@@ -64,7 +64,7 @@ export function AgentMessageAction({
   // An action that can't do anything is a real disabled button, never aria-disabled alone.
   const inactive = disabled || (!onClick && !render);
   return (
-    <Tooltip>
+    <Tooltip disableHoverablePopup>
       <TooltipTrigger
         render={
           <ToolbarButton
@@ -91,7 +91,7 @@ export function AgentMessageAction({
       >
         {children}
       </TooltipTrigger>
-      <TooltipPopup>{tooltip}</TooltipPopup>
+      <TooltipPopup side="bottom">{tooltip}</TooltipPopup>
     </Tooltip>
   );
 }
