@@ -1165,6 +1165,52 @@ export const Index: Record<string, any> = {
     categories: undefined,
     meta: undefined,
   },
+  "agent": {
+    name: "agent",
+    description: "Agent conversation, messages, message actions, and a screen reader announcer built on chat.",
+    type: "registry:ui",
+    registryDependencies: ["@coss/button","@coss/chat","@coss/composer","@coss/toolbar","@coss/tooltip","@coss/use-copy-to-clipboard","@coss/use-media-query","@coss/utils"],
+    files: [{
+      path: "registry/default/agent/agent-announcer.tsx",
+      type: "registry:component",
+      target: "@components/agent/agent-announcer.tsx"
+    },{
+      path: "registry/default/agent/agent-conversation.tsx",
+      type: "registry:component",
+      target: "@components/agent/agent-conversation.tsx"
+    },{
+      path: "registry/default/agent/agent-message-actions.tsx",
+      type: "registry:component",
+      target: "@components/agent/agent-message-actions.tsx"
+    },{
+      path: "registry/default/agent/agent-message.tsx",
+      type: "registry:component",
+      target: "@components/agent/agent-message.tsx"
+    },{
+      path: "registry/default/agent/hooks/use-agent-announcer.ts",
+      type: "registry:component",
+      target: "@components/agent/hooks/use-agent-announcer.ts"
+    },{
+      path: "registry/default/agent/hooks/use-agent-reduced-motion.ts",
+      type: "registry:component",
+      target: "@components/agent/hooks/use-agent-reduced-motion.ts"
+    },{
+      path: "registry/default/agent/lib/get-agent-announcement.ts",
+      type: "registry:component",
+      target: "@components/agent/lib/get-agent-announcement.ts"
+    },{
+      path: "registry/default/agent/lib/get-agent-scroll-offset.ts",
+      type: "registry:component",
+      target: "@components/agent/lib/get-agent-scroll-offset.ts"
+    }],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/default/agent/agent-announcer.tsx")
+      const exportName = Object.keys(mod).find(key => typeof mod[key] === 'function' || typeof mod[key] === 'object') || item.name
+      return { default: mod.default || mod[exportName] }
+    }),
+    categories: undefined,
+    meta: undefined,
+  },
   "p-accordion-1": {
     name: "p-accordion-1",
     description: "Basic accordion",
@@ -1290,6 +1336,78 @@ export const Index: Record<string, any> = {
     }),
     categories: ["alert"],
     meta: {"className":"**:data-[slot=preview]:w-full"},
+  },
+  "p-agent-1": {
+    name: "p-agent-1",
+    description: "Agent conversation that follows new replies and offers a jump to latest",
+    type: "registry:block",
+    registryDependencies: ["@coss/agent","@coss/button","@coss/chat"],
+    files: [{
+      path: "registry/default/particles/p-agent-1.tsx",
+      type: "registry:block",
+      target: ""
+    }],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/default/particles/p-agent-1.tsx")
+      const exportName = Object.keys(mod).find(key => typeof mod[key] === 'function' || typeof mod[key] === 'object') || item.name
+      return { default: mod.default || mod[exportName] }
+    }),
+    categories: ["agent","scroll area"],
+    meta: {"className":"**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-md"},
+  },
+  "p-agent-2": {
+    name: "p-agent-2",
+    description: "User prompt and a streaming agent reply on the chat message shell",
+    type: "registry:block",
+    registryDependencies: ["@coss/agent","@coss/button","@coss/chat"],
+    files: [{
+      path: "registry/default/particles/p-agent-2.tsx",
+      type: "registry:block",
+      target: ""
+    }],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/default/particles/p-agent-2.tsx")
+      const exportName = Object.keys(mod).find(key => typeof mod[key] === 'function' || typeof mod[key] === 'object') || item.name
+      return { default: mod.default || mod[exportName] }
+    }),
+    categories: ["agent","loading"],
+    meta: {"className":"**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm"},
+  },
+  "p-agent-3": {
+    name: "p-agent-3",
+    description: "Copy, edit, and custom message actions revealed on hover and focus",
+    type: "registry:block",
+    registryDependencies: ["@coss/agent","@coss/label","@coss/switch"],
+    files: [{
+      path: "registry/default/particles/p-agent-3.tsx",
+      type: "registry:block",
+      target: ""
+    }],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/default/particles/p-agent-3.tsx")
+      const exportName = Object.keys(mod).find(key => typeof mod[key] === 'function' || typeof mod[key] === 'object') || item.name
+      return { default: mod.default || mod[exportName] }
+    }),
+    categories: ["agent","copy","toolbar"],
+    meta: {"className":"**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm"},
+  },
+  "p-agent-4": {
+    name: "p-agent-4",
+    description: "One status region announcing agent phase changes and copy results",
+    type: "registry:block",
+    registryDependencies: ["@coss/agent","@coss/button"],
+    files: [{
+      path: "registry/default/particles/p-agent-4.tsx",
+      type: "registry:block",
+      target: ""
+    }],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/default/particles/p-agent-4.tsx")
+      const exportName = Object.keys(mod).find(key => typeof mod[key] === 'function' || typeof mod[key] === 'object') || item.name
+      return { default: mod.default || mod[exportName] }
+    }),
+    categories: ["agent","info"],
+    meta: {"className":"**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm"},
   },
   "p-alert-4": {
     name: "p-alert-4",

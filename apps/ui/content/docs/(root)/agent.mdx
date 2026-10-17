@@ -1,0 +1,166 @@
+---
+title: Agent UI
+description: Install and compose Agent UI, a family for AI agent conversations built on Chat UI and Composer.
+---
+
+Agent UI is a family of components for conversations with an AI agent, in a panel or a page. It builds on [Chat UI](/ui/docs/chat) and the shared [Composer](/ui/docs/components/composer): where an agent and a chat mean the same thing, such as the scroll container, the message shell, timestamps, Markdown and streaming text, Agent UI uses the chat part. The components handle presentation, local interaction and screen reader announcements. Your application owns the agent runtime, messages, persistence and authorization.
+
+The family is new. This page covers the conversation, messages, message actions, the announcer and the motion policy. Composer, turn content and chrome parts follow.
+
+## Start here
+
+- **Build a conversation:** install `@coss/agent`, then use the [minimal example](#minimal-conversation).
+- **Working as an agent:** read [this page as Markdown](/ui/docs/agent.md). The [agent registry source](/ui/r/agent.json) includes file contents and dependencies. Use the exported TypeScript props as the API contract.
+
+## Install
+
+Configure coss ui using [Get started](/ui/docs/get-started), then install the family:
+
+```bash
+npx shadcn@latest add @coss/agent
+```
+
+This installs the agent source into your configured components directory under `agent/`, including its hooks and helpers. It also installs `@coss/chat` and `@coss/composer`, which the family builds on, and the coss components they need.
+
+## Minimal conversation
+
+A conversation needs a bounded height, a chat scroll controller, messages and one announcer. Render the announcer once per conversation, outside the scrolling log.
+
+```tsx
+"use client";
+
+import { AgentAnnouncer } from "@/components/agent/agent-announcer";
+import { AgentConversation } from "@/components/agent/agent-conversation";
+import { AgentMessage } from "@/components/agent/agent-message";
+import { useAgentAnnouncer } from "@/components/agent/hooks/use-agent-announcer";
+import type { AgentPhase } from "@/components/agent/lib/get-agent-announcement";
+import { useChatScroll } from "@/components/chat/hooks/use-chat-scroll";
+
+type Message = { id: string; from: "user" | "assistant"; text: string };
+
+const labels = {
+  done: "Response ready",
+  failed: "Something went wrong",
+  stopped: "Response stopped",
+  thinking: "Thinking",
+  working: "Working",
+};
+
+export function AgentChat({
+  messages,
+  phase,
+}: {
+  messages: Message[];
+  phase: AgentPhase;
+}) {
+  const scroll = useChatScroll({ itemCount: messages.length });
+  const announcer = useAgentAnnouncer({ labels, phase });
+
+  return (
+    <div className="flex h-[32rem] flex-col">
+      <AgentConversation
+        scroll={scroll}
+        label="Conversation with the assistant"
+        jumpLabel="Latest"
+      >
+        {messages.map((message) => (
+          <AgentMessage
+            key={message.id}
+            from={message.from}
+            streaming={phase === "working" && message === messages.at(-1)}
+          >
+            {message.text}
+          </AgentMessage>
+        ))}
+      </AgentConversation>
+      <AgentAnnouncer announcer={announcer} />
+    </div>
+  );
+}
+```
+
+## Component map
+
+Import components directly from their files. There is no provider.
+
+| Area | Components | Responsibility |
+| --- | --- | --- |
+| Conversation | `AgentConversation`, `useChatScroll` | Chat scroll viewport and end following, quiet by default, keeps its place in popover crossfades |
+| Message | `AgentMessage` | User bubble or full-width reply on the chat message shell, actions and footer slots, streaming state |
+| Content | `ChatMessageText`, `ChatMessageMarkdown`, `ChatMessageCaret`, `ChatMessageTimestamp` | Chat parts for text, Markdown, the streaming caret and timestamps |
+| Actions | `AgentMessageActions`, `AgentMessageAction`, `AgentMessageCopyAction`, `AgentMessageEditAction` | Toolbar revealed on hover and focus, generic icon action, copy and edit |
+| Announcer | `AgentAnnouncer`, `useAgentAnnouncer`, `getAgentAnnouncement` | One status region per conversation and the rule for what it says |
+| Motion | `useAgentReducedMotion` | Reduced-motion check for motion timed in JavaScript |
+
+## Source map
+
+Paths below are relative to your configured components directory after installation. In the coss repository, the canonical sources live under `apps/ui/registry/default/`.
+
+| File | Read it for |
+| --- | --- |
+| `agent/agent-*.tsx` | Exported component props, required labels, slots and defaults |
+| `agent/hooks/use-agent-announcer.ts` | Announcer options, labels and the `announce` method |
+| `agent/lib/get-agent-announcement.ts` | Agent phases and which transitions are announced |
+| `agent/lib/get-agent-scroll-offset.ts` | Why the conversation records its scroll offset |
+| `chat/chat-conversation.tsx`, `chat/hooks/use-chat-scroll.ts` | The chat scroll container and controller the conversation builds on |
+
+## Conversation
+
+<ComponentPreview name="p-agent-1" />
+
+`AgentConversation` is `ChatConversation` with agent defaults, so it takes the same props: a `scroll` controller from `useChatScroll`, a `label` for the log and a `jumpLabel` for the jump-to-latest button. It follows new content while the reader is at the bottom and shows the jump button once they scroll up. Update `itemCount` when messages change, and `layoutKey` for other size changes such as a growing streamed reply. Set `scroll.atBottomRef.current = true` before appending the user’s own prompt so the conversation follows it. See [Scrolling and replies](/ui/docs/chat#scrolling-and-replies) for the rest of the controller.
+
+It differs from `ChatConversation` in three ways:
+
+- **`live` defaults to `"off"`.** A polite log would read every streamed chunk. Announce phase changes through the [announcer](#announcer) instead.
+- **Messages are spaced** in a column with a `gap-6` and top padding. Override it with `contentClassName`.
+- **It keeps its place in popover crossfades.** A coss popover crossfades a cloned snapshot of its old content when it switches between triggers, for example when a floating panel moves from one conversation to another. A DOM clone keeps attributes but not scroll position, so the outgoing transcript would jump to its top. The conversation writes its scroll offset to `--agent-conversation-scroll-top` on the viewport, which the clone inherits, and translates the snapshot’s content back by that offset. Outside a popover this does nothing.
+
+## Messages
+
+<ComponentPreview name="p-agent-2" />
+
+`AgentMessage` requires `from`, either `"user"` or `"assistant"`. User messages render in the chat bubble at the end of the row. Assistant replies render full width with no bubble, so Markdown, tables and code have room. String children render through `ChatMessageText`; pass `ChatMessageMarkdown` or your own content for anything richer.
+
+Set `streaming` while the reply is still arriving. It sets `data-streaming` on the content, as in chat. Put `ChatMessageCaret` inside the last text block and remove it when the stream ends. Render the `footer` from the start, for example with a “Writing…” label that becomes a `ChatMessageTimestamp`, so the row doesn’t jump when the reply finishes.
+
+The root is the chat message layout with `data-slot="agent-message"` and `data-from`. Use `render` to change its element.
+
+## Message actions
+
+<ComponentPreview name="p-agent-3" />
+
+Pass an `AgentMessageActions` toolbar to the message’s `actions` slot. It needs a `label`, and arrow keys move between its actions. Every action is a toolbar part, so place actions inside it. Inside a message, the actions stay hidden on fine pointers until the message is hovered or focused, or one of their popups is open. They’re always shown on coarse pointers, where there’s no hover. Set `actionsAlwaysVisible` on the message to keep them shown, for example on the latest reply. Hidden actions keep their space, so revealing them never moves the conversation.
+
+- **`AgentMessageCopyAction`** copies `text`. While the text is copied, it shows a check and its `copiedLabel`. Use `onCopy` to announce the result through the announcer.
+- **`AgentMessageEditAction`** calls `onEdit`. Your application decides what editing means, such as moving the prompt back into the composer.
+- **`AgentMessageAction`** is the generic icon action for anything else, such as retry. Pass the icon as children and a `label`, which names the button and fills its tooltip.
+
+An action with nothing to do is a disabled button, never one that only says so: an `AgentMessageAction` without `onClick` or `render` is disabled, and so is a copy action with empty `text`. Don’t render actions your application can’t perform.
+
+## Announcer
+
+<ComponentPreview name="p-agent-4" />
+
+Each conversation has one status region. `useAgentAnnouncer` decides what it says, and `AgentAnnouncer` renders it. Feed the hook the agent’s current `phase` and localized `labels`. It announces transitions, never streamed text:
+
+| Transition | Announced |
+| --- | --- |
+| First render, or a new `conversationId` | Nothing; the current state is the baseline |
+| Into `thinking` or `working` from a settled phase | That phase’s label |
+| Between `thinking` and `working` | Nothing |
+| Into `approval`, `done`, `stopped` or `failed` | That phase’s label, or `detail` when given |
+| A new `detail` within `approval` or `failed` | The new detail, such as a second error |
+| Into `idle` | Nothing |
+
+A phase without a label is never announced. Pass the error message or the approval question as `detail`. For results that aren’t phases, such as a copied message or a copied conversation, call `announcer.announce(text)`. Repeating the same text is read again.
+
+`getAgentAnnouncement(previous, next)` is the pure rule behind the hook. Use it to test your own mapping from your agent runtime to phases.
+
+## Reduced motion
+
+Every transition in the family has a reduced-motion path: CSS transitions use `motion-reduce:transition-none`, and loops such as the streaming caret run only under `motion-safe`. For motion timed in JavaScript, such as an exit delay before a crossfade, read `useAgentReducedMotion()` and skip the delay when it returns `true`. Follow the same policy in your compositions.
+
+## Before shipping
+
+Check keyboard-only operation of message actions, a screen reader with streamed replies, a touch device and reduced motion. Test long replies, stopped and failed turns, and switching conversations, with your own agent runtime.

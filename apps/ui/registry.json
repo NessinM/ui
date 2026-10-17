@@ -1215,6 +1215,67 @@
       ]
     },
     {
+      "name": "agent",
+      "type": "registry:ui",
+      "description": "Agent conversation, messages, message actions, and a screen reader announcer built on chat.",
+      "dependencies": [
+        "lucide-react",
+        "@base-ui/react"
+      ],
+      "registryDependencies": [
+        "@coss/button",
+        "@coss/chat",
+        "@coss/composer",
+        "@coss/toolbar",
+        "@coss/tooltip",
+        "@coss/use-copy-to-clipboard",
+        "@coss/use-media-query",
+        "@coss/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/default/agent/agent-announcer.tsx",
+          "type": "registry:component",
+          "target": "@components/agent/agent-announcer.tsx"
+        },
+        {
+          "path": "registry/default/agent/agent-conversation.tsx",
+          "type": "registry:component",
+          "target": "@components/agent/agent-conversation.tsx"
+        },
+        {
+          "path": "registry/default/agent/agent-message-actions.tsx",
+          "type": "registry:component",
+          "target": "@components/agent/agent-message-actions.tsx"
+        },
+        {
+          "path": "registry/default/agent/agent-message.tsx",
+          "type": "registry:component",
+          "target": "@components/agent/agent-message.tsx"
+        },
+        {
+          "path": "registry/default/agent/hooks/use-agent-announcer.ts",
+          "type": "registry:component",
+          "target": "@components/agent/hooks/use-agent-announcer.ts"
+        },
+        {
+          "path": "registry/default/agent/hooks/use-agent-reduced-motion.ts",
+          "type": "registry:component",
+          "target": "@components/agent/hooks/use-agent-reduced-motion.ts"
+        },
+        {
+          "path": "registry/default/agent/lib/get-agent-announcement.ts",
+          "type": "registry:component",
+          "target": "@components/agent/lib/get-agent-announcement.ts"
+        },
+        {
+          "path": "registry/default/agent/lib/get-agent-scroll-offset.ts",
+          "type": "registry:component",
+          "target": "@components/agent/lib/get-agent-scroll-offset.ts"
+        }
+      ]
+    },
+    {
       "categories": [
         "accordion"
       ],
@@ -1358,6 +1419,107 @@
       "name": "p-alert-3",
       "registryDependencies": [
         "@coss/alert",
+        "@coss/button"
+      ],
+      "type": "registry:block"
+    },
+    {
+      "categories": [
+        "agent",
+        "scroll area"
+      ],
+      "dependencies": [
+        "lucide-react"
+      ],
+      "description": "Agent conversation that follows new replies and offers a jump to latest",
+      "files": [
+        {
+          "path": "registry/default/particles/p-agent-1.tsx",
+          "type": "registry:block"
+        }
+      ],
+      "meta": {
+        "className": "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-md"
+      },
+      "name": "p-agent-1",
+      "registryDependencies": [
+        "@coss/agent",
+        "@coss/button",
+        "@coss/chat"
+      ],
+      "type": "registry:block"
+    },
+    {
+      "categories": [
+        "agent",
+        "loading"
+      ],
+      "dependencies": [
+        "lucide-react"
+      ],
+      "description": "User prompt and a streaming agent reply on the chat message shell",
+      "files": [
+        {
+          "path": "registry/default/particles/p-agent-2.tsx",
+          "type": "registry:block"
+        }
+      ],
+      "meta": {
+        "className": "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm"
+      },
+      "name": "p-agent-2",
+      "registryDependencies": [
+        "@coss/agent",
+        "@coss/button",
+        "@coss/chat"
+      ],
+      "type": "registry:block"
+    },
+    {
+      "categories": [
+        "agent",
+        "copy",
+        "toolbar"
+      ],
+      "dependencies": [
+        "lucide-react"
+      ],
+      "description": "Copy, edit, and custom message actions revealed on hover and focus",
+      "files": [
+        {
+          "path": "registry/default/particles/p-agent-3.tsx",
+          "type": "registry:block"
+        }
+      ],
+      "meta": {
+        "className": "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm"
+      },
+      "name": "p-agent-3",
+      "registryDependencies": [
+        "@coss/agent",
+        "@coss/label",
+        "@coss/switch"
+      ],
+      "type": "registry:block"
+    },
+    {
+      "categories": [
+        "agent",
+        "info"
+      ],
+      "description": "One status region announcing agent phase changes and copy results",
+      "files": [
+        {
+          "path": "registry/default/particles/p-agent-4.tsx",
+          "type": "registry:block"
+        }
+      ],
+      "meta": {
+        "className": "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm"
+      },
+      "name": "p-agent-4",
+      "registryDependencies": [
+        "@coss/agent",
         "@coss/button"
       ],
       "type": "registry:block"

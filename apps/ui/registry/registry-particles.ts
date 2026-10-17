@@ -96,6 +96,61 @@ export const particles: ParticleItem[] = [
     type: "registry:block",
   },
   {
+    categories: categories("agent", "scroll area"),
+    dependencies: ["lucide-react"],
+    description:
+      "Agent conversation that follows new replies and offers a jump to latest",
+    files: [{ path: "particles/p-agent-1.tsx", type: "registry:block" }],
+    meta: {
+      className:
+        "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-md",
+    },
+    name: "p-agent-1",
+    registryDependencies: ["@coss/agent", "@coss/button", "@coss/chat"],
+    type: "registry:block",
+  },
+  {
+    categories: categories("agent", "loading"),
+    dependencies: ["lucide-react"],
+    description:
+      "User prompt and a streaming agent reply on the chat message shell",
+    files: [{ path: "particles/p-agent-2.tsx", type: "registry:block" }],
+    meta: {
+      className:
+        "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm",
+    },
+    name: "p-agent-2",
+    registryDependencies: ["@coss/agent", "@coss/button", "@coss/chat"],
+    type: "registry:block",
+  },
+  {
+    categories: categories("agent", "copy", "toolbar"),
+    dependencies: ["lucide-react"],
+    description:
+      "Copy, edit, and custom message actions revealed on hover and focus",
+    files: [{ path: "particles/p-agent-3.tsx", type: "registry:block" }],
+    meta: {
+      className:
+        "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm",
+    },
+    name: "p-agent-3",
+    registryDependencies: ["@coss/agent", "@coss/label", "@coss/switch"],
+    type: "registry:block",
+  },
+  {
+    categories: categories("agent", "info"),
+    description:
+      "One status region announcing agent phase changes and copy results",
+    files: [{ path: "particles/p-agent-4.tsx", type: "registry:block" }],
+    meta: {
+      className:
+        "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm",
+    },
+    name: "p-agent-4",
+    registryDependencies: ["@coss/agent", "@coss/button"],
+    type: "registry:block",
+  },
+  {
     categories: categories("alert", "info"),
     dependencies: ["lucide-react"],
     description: "Info alert",

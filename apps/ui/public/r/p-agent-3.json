@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "p-agent-3",
+  "description": "Copy, edit, and custom message actions revealed on hover and focus",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "@coss/agent",
+    "@coss/label",
+    "@coss/switch"
+  ],
+  "files": [
+    {
+      "path": "registry/default/particles/p-agent-3.tsx",
+      "content": "\"use client\";\n\nimport { RotateCcwIcon } from \"lucide-react\";\nimport { useState } from \"react\";\nimport { AgentMessage } from \"@/registry/default/agent/agent-message\";\nimport {\n  AgentMessageAction,\n  AgentMessageActions,\n  AgentMessageCopyAction,\n  AgentMessageEditAction,\n} from \"@/registry/default/agent/agent-message-actions\";\nimport { Label } from \"@/registry/default/ui/label\";\nimport { Switch } from \"@/registry/default/ui/switch\";\n\nconst prompt = \"Draft a reply declining Friday’s offsite.\";\nconst answer =\n  \"Thanks for the invite. I can’t make Friday’s offsite, but I’d love to hear how it goes and help with any follow-ups.\";\n\nexport default function Particle() {\n  const [alwaysVisible, setAlwaysVisible] = useState(false);\n  const [editing, setEditing] = useState(false);\n  const [retries, setRetries] = useState(0);\n\n  return (\n    <div className=\"flex w-full max-w-sm flex-col gap-6\">\n      <AgentMessage\n        from=\"user\"\n        actionsAlwaysVisible={alwaysVisible}\n        footer={editing ? \"Editing…\" : undefined}\n        actions={\n          <AgentMessageActions label=\"Message actions\">\n            <AgentMessageEditAction\n              label={editing ? \"Stop editing\" : \"Edit\"}\n              onEdit={() => setEditing(!editing)}\n            />\n            <AgentMessageCopyAction\n              copiedLabel=\"Copied\"\n              label=\"Copy\"\n              text={prompt}\n            />\n          </AgentMessageActions>\n        }\n      >\n        {prompt}\n      </AgentMessage>\n      <AgentMessage\n        from=\"assistant\"\n        actionsAlwaysVisible={alwaysVisible}\n        footer={retries > 0 ? `Retried ${retries}×` : undefined}\n        actions={\n          <AgentMessageActions label=\"Response actions\">\n            <AgentMessageCopyAction\n              copiedLabel=\"Copied\"\n              label=\"Copy\"\n              text={answer}\n            />\n            <AgentMessageAction\n              label=\"Retry\"\n              onClick={() => setRetries(retries + 1)}\n            >\n              <RotateCcwIcon aria-hidden=\"true\" />\n            </AgentMessageAction>\n          </AgentMessageActions>\n        }\n      >\n        {answer}\n      </AgentMessage>\n      <Label>\n        <Switch checked={alwaysVisible} onCheckedChange={setAlwaysVisible} />\n        Always show actions\n      </Label>\n    </div>\n  );\n}\n",
+      "type": "registry:block"
+    }
+  ],
+  "meta": {
+    "className": "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm"
+  },
+  "categories": [
+    "agent",
+    "copy",
+    "toolbar"
+  ],
+  "type": "registry:block"
+}

@@ -1,4 +1,4 @@
 {
-  "pages": ["[Chat UI](/docs/chat)"],
+  "pages": ["[Chat UI](/docs/chat)", "[Agent UI](/docs/agent)"],
   "title": "Interfaces"
 }

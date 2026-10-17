@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "p-agent-1",
+  "description": "Agent conversation that follows new replies and offers a jump to latest",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "@coss/agent",
+    "@coss/button",
+    "@coss/chat"
+  ],
+  "files": [
+    {
+      "path": "registry/default/particles/p-agent-1.tsx",
+      "content": "\"use client\";\n\nimport { PlusIcon } from \"lucide-react\";\nimport { useState } from \"react\";\nimport { AgentConversation } from \"@/registry/default/agent/agent-conversation\";\nimport { AgentMessage } from \"@/registry/default/agent/agent-message\";\nimport { useChatScroll } from \"@/registry/default/chat/hooks/use-chat-scroll\";\nimport { Button } from \"@/registry/default/ui/button\";\n\ntype Message = { id: number; from: \"user\" | \"assistant\"; text: string };\n\nconst initialMessages: Message[] = [\n  { from: \"user\", id: 1, text: \"Find a time for the design review.\" },\n  {\n    from: \"assistant\",\n    id: 2,\n    text: \"Everyone is free on Thursday from 10:00 to 11:30, and on Friday after 14:00.\",\n  },\n  { from: \"user\", id: 3, text: \"Thursday, please. Keep it to an hour.\" },\n  {\n    from: \"assistant\",\n    id: 4,\n    text: \"I’ve held Thursday 10:00–11:00 and invited the four reviewers.\",\n  },\n  { from: \"user\", id: 5, text: \"Add the brief to the invite.\" },\n  {\n    from: \"assistant\",\n    id: 6,\n    text: \"Done. The brief is attached, and everyone can edit the agenda.\",\n  },\n];\n\nconst replies = [\n  \"Two reviewers accepted. I’ll remind the others an hour before.\",\n  \"Priya asked to join remotely, so I added a video link.\",\n  \"All four reviewers accepted. You’re set for Thursday.\",\n];\n\nexport default function Particle() {\n  const [messages, setMessages] = useState(initialMessages);\n  const scroll = useChatScroll({ itemCount: messages.length });\n  const added = messages.length - initialMessages.length;\n\n  const addReply = () => {\n    setMessages((current) => [\n      ...current,\n      {\n        from: \"assistant\",\n        id: current.length + 1,\n        text: replies[added % replies.length] ?? \"\",\n      },\n    ]);\n  };\n\n  return (\n    <div className=\"flex w-full max-w-md flex-col gap-3\">\n      <div className=\"flex h-80 flex-col overflow-hidden rounded-xl border bg-popover\">\n        <AgentConversation\n          scroll={scroll}\n          label=\"Conversation with the assistant\"\n          jumpLabel=\"Latest\"\n        >\n          {messages.map((message) => (\n            <AgentMessage key={message.id} from={message.from}>\n              {message.text}\n            </AgentMessage>\n          ))}\n        </AgentConversation>\n      </div>\n      <Button\n        className=\"self-start\"\n        size=\"sm\"\n        variant=\"outline\"\n        onClick={addReply}\n      >\n        <PlusIcon aria-hidden=\"true\" />\n        Add a reply\n      </Button>\n    </div>\n  );\n}\n",
+      "type": "registry:block"
+    }
+  ],
+  "meta": {
+    "className": "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-md"
+  },
+  "categories": [
+    "agent",
+    "scroll area"
+  ],
+  "type": "registry:block"
+}

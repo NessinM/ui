@@ -1,0 +1,24 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "p-agent-4",
+  "description": "One status region announcing agent phase changes and copy results",
+  "registryDependencies": [
+    "@coss/agent",
+    "@coss/button"
+  ],
+  "files": [
+    {
+      "path": "registry/default/particles/p-agent-4.tsx",
+      "content": "\"use client\";\n\nimport { useEffect, useState } from \"react\";\nimport { AgentAnnouncer } from \"@/registry/default/agent/agent-announcer\";\nimport {\n  AgentMessageActions,\n  AgentMessageCopyAction,\n} from \"@/registry/default/agent/agent-message-actions\";\nimport { useAgentAnnouncer } from \"@/registry/default/agent/hooks/use-agent-announcer\";\nimport type { AgentPhase } from \"@/registry/default/agent/lib/get-agent-announcement\";\nimport { Button } from \"@/registry/default/ui/button\";\n\nconst labels = {\n  approval: \"Approval needed\",\n  done: \"Response ready\",\n  failed: \"Something went wrong\",\n  stopped: \"Response stopped\",\n  thinking: \"Thinking\",\n  working: \"Working\",\n};\n\nexport default function Particle() {\n  const [phase, setPhase] = useState<AgentPhase>(\"idle\");\n  const announcer = useAgentAnnouncer({ labels, phase });\n  const busy = phase === \"thinking\" || phase === \"working\";\n\n  useEffect(() => {\n    if (!busy) return;\n    const timeout = window.setTimeout(\n      () => setPhase(phase === \"thinking\" ? \"working\" : \"done\"),\n      1500,\n    );\n    return () => window.clearTimeout(timeout);\n  }, [busy, phase]);\n\n  return (\n    <div className=\"flex w-full max-w-sm flex-col gap-4\">\n      <div className=\"flex flex-wrap items-center gap-2\">\n        <Button\n          disabled={busy}\n          size=\"sm\"\n          variant=\"outline\"\n          onClick={() => setPhase(\"thinking\")}\n        >\n          Send\n        </Button>\n        <Button\n          disabled={!busy}\n          size=\"sm\"\n          variant=\"outline\"\n          onClick={() => setPhase(\"stopped\")}\n        >\n          Stop\n        </Button>\n        <Button\n          disabled={phase === \"failed\"}\n          size=\"sm\"\n          variant=\"outline\"\n          onClick={() => setPhase(\"failed\")}\n        >\n          Fail\n        </Button>\n        <AgentMessageActions label=\"Response actions\">\n          <AgentMessageCopyAction\n            copiedLabel=\"Copied\"\n            label=\"Copy\"\n            text=\"Response ready\"\n            onCopy={() => announcer.announce(\"Copied\")}\n          />\n        </AgentMessageActions>\n      </div>\n      <p aria-hidden=\"true\" className=\"text-muted-foreground text-sm\">\n        Screen readers hear:{\" \"}\n        <span className=\"font-medium text-foreground\">\n          {announcer.message || \"nothing yet\"}\n        </span>\n      </p>\n      <AgentAnnouncer announcer={announcer} />\n    </div>\n  );\n}\n",
+      "type": "registry:block"
+    }
+  ],
+  "meta": {
+    "className": "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm"
+  },
+  "categories": [
+    "agent",
+    "info"
+  ],
+  "type": "registry:block"
+}
