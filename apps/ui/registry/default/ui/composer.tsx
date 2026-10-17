@@ -37,6 +37,9 @@ type ComposerPopupProps = ComponentProps<typeof PopoverPrimitive.Popup> & {
     typeof PopoverPrimitive.Positioner
   >["alignOffset"];
   positionerClassName?: string;
+  collisionAvoidance?: ComponentProps<
+    typeof PopoverPrimitive.Positioner
+  >["collisionAvoidance"];
   portalProps?: ComponentProps<typeof PopoverPrimitive.Portal>;
 };
 
@@ -44,7 +47,13 @@ type ComposerFormProps = useRender.ComponentProps<"form">;
 type ComposerLayout = "stacked" | "adaptive";
 type ComposerTokenVariant = "default" | "chip";
 const composerTokenClassName =
-  "wrap-break-word inline cursor-default align-baseline font-normal text-primary data-[variant=default]:font-medium data-[variant=chip]:box-decoration-clone data-[variant=chip]:rounded-md data-[variant=chip]:bg-accent data-[variant=chip]:px-1.5 data-[variant=chip]:py-px data-[variant=chip]:text-accent-foreground [&_[data-slot=composer-token-icon]:empty]:hidden [&_[data-slot=composer-token-icon]>svg]:size-3.5";
+  "wrap-break-word inline cursor-default align-baseline font-normal data-[variant=default]:font-medium data-[variant=chip]:box-decoration-clone data-[variant=chip]:rounded-sm data-[variant=chip]:border data-[variant=chip]:bg-muted data-[variant=chip]:px-1 data-[variant=chip]:py-px [&_[data-slot=composer-token-icon]:empty]:hidden [&_[data-slot=composer-token-icon]>svg]:size-3.5";
+// Stay above the iOS keyboard: never flip below, and shift along the edge instead.
+const composerPopupCollisionAvoidance = {
+  side: "none",
+  align: "shift",
+  fallbackAxisSide: "none",
+} as const;
 
 function ComposerFrame({
   className,
@@ -288,6 +297,7 @@ export function ComposerPopup({
   sideOffset = 4,
   alignOffset,
   positionerClassName,
+  collisionAvoidance = composerPopupCollisionAvoidance,
   portalProps,
   ...props
 }: ComposerPopupProps): ReactElement {
@@ -301,6 +311,7 @@ export function ComposerPopup({
         align={align}
         sideOffset={sideOffset}
         alignOffset={alignOffset}
+        collisionAvoidance={collisionAvoidance}
         className={cn("z-50 w-(--anchor-width)", positionerClassName)}
         data-slot="composer-positioner"
       >
@@ -356,7 +367,7 @@ export function ComposerList({
   });
   return (
     <ScrollArea
-      className="h-auto! **:data-[slot=scroll-area-viewport]:h-auto! **:data-[slot=scroll-area-viewport]:max-h-[min(var(--available-height),16rem)]"
+      className="h-auto! **:data-[slot=scroll-area-viewport]:h-auto! **:data-[slot=scroll-area-viewport]:max-h-[min(var(--available-height),16rem)] [&:not(:has([data-has-overflow-y]))_[data-slot=scroll-area-scrollbar]]:hidden"
       overscrollContain
       scrollbarGutter
       scrollFade
@@ -499,10 +510,13 @@ export function ComposerSubmit({
       else editor?.submit();
     },
   };
+  // Match the coss icon Button so a stopRender of the same size keeps the box.
+  const nativeFootprint =
+    render === undefined && !showingStop ? "size-9 shrink-0 sm:size-8" : "";
   return (
     <ButtonPrimitive
       {...mergeProps<"button">(defaultProps, props)}
-      className={className}
+      className={cn(nativeFootprint, className)}
       style={style}
       render={showingStop ? stopRender : render}
       ref={ref}
