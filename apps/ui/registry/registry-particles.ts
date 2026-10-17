@@ -113,14 +113,19 @@ export const particles: ParticleItem[] = [
     categories: categories("agent", "loading"),
     dependencies: ["lucide-react"],
     description:
-      "User prompt and a streaming agent reply with a caret and timestamps",
+      "User prompt and a streaming agent reply with an avatar, caret, and timestamps",
     files: [{ path: "particles/p-agent-2.tsx", type: "registry:block" }],
     meta: {
       className:
         "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm",
     },
     name: "p-agent-2",
-    registryDependencies: ["@coss/agent", "@coss/button", "@coss/chat"],
+    registryDependencies: [
+      "@coss/agent",
+      "@coss/avatar",
+      "@coss/button",
+      "@coss/chat",
+    ],
     type: "registry:block",
   },
   {

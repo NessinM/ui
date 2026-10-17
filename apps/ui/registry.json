@@ -1457,7 +1457,7 @@
       "dependencies": [
         "lucide-react"
       ],
-      "description": "User prompt and a streaming agent reply with a caret and timestamps",
+      "description": "User prompt and a streaming agent reply with an avatar, caret, and timestamps",
       "files": [
         {
           "path": "registry/default/particles/p-agent-2.tsx",
@@ -1470,6 +1470,7 @@
       "name": "p-agent-2",
       "registryDependencies": [
         "@coss/agent",
+        "@coss/avatar",
         "@coss/button",
         "@coss/chat"
       ],

@@ -1357,9 +1357,9 @@ export const Index: Record<string, any> = {
   },
   "p-agent-2": {
     name: "p-agent-2",
-    description: "User prompt and a streaming agent reply with a caret and timestamps",
+    description: "User prompt and a streaming agent reply with an avatar, caret, and timestamps",
     type: "registry:block",
-    registryDependencies: ["@coss/agent","@coss/button","@coss/chat"],
+    registryDependencies: ["@coss/agent","@coss/avatar","@coss/button","@coss/chat"],
     files: [{
       path: "registry/default/particles/p-agent-2.tsx",
       type: "registry:block",
