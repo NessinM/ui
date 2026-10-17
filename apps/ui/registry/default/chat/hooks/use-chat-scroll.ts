@@ -20,7 +20,6 @@ export function useChatScroll({
 }: ChatScrollOptions = {}) {
   const viewportRef = useRef<HTMLDivElement>(null);
   const atBottomRef = useRef(true);
-  const lastScrollTop = useRef(0);
   const pendingInterruption = useRef(false);
   const [showJump, setShowJump] = useState(false);
   const [following, setFollowing] = useState(true);
@@ -41,7 +40,6 @@ export function useChatScroll({
     setShowJump(!atBottomRef.current);
     pendingInterruption.current = false;
     setFollowing(atBottomRef.current);
-    lastScrollTop.current = viewport.scrollTop;
   };
 
   const onScroll = (_event: UIEvent<HTMLDivElement>): void => {
@@ -51,15 +49,14 @@ export function useChatScroll({
     atBottomRef.current =
       viewport.scrollHeight - viewport.scrollTop - viewport.clientHeight <= 1;
     setShowJump(!atBottomRef.current);
-    // Content growth and drawer resizing can change the end gap before shadcn follows.
-    // Only movement toward history releases following; reaching the end resumes it.
-    if (viewport.scrollTop < lastScrollTop.current && !atBottomRef.current) {
+    // Safari can scroll while revealing the caret or resizing the keyboard.
+    // Only an explicit scroll gesture releases the application's follow intent.
+    if (!atBottomRef.current && pendingInterruption.current) {
       pendingInterruption.current = false;
       setFollowing(false);
     } else if (atBottomRef.current && !pendingInterruption.current) {
       setFollowing(true);
     }
-    lastScrollTop.current = viewport.scrollTop;
     if (atBottomRef.current) onReachEnd?.();
   };
 
@@ -104,7 +101,6 @@ export function useChatScroll({
       if (top > 0) {
         // A queued automatic scroll event can arrive before the first upward frame.
         pendingInterruption.current = true;
-        lastScrollTop.current = top;
         setFollowing(false);
       }
     },

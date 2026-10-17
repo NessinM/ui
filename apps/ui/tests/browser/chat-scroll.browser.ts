@@ -151,3 +151,32 @@ test("conversation resets honor start and end and manual return to the end resum
     viewport.getByText("Received 12", { exact: true }),
   );
 });
+
+test("dragging the Base UI scrollbar releases following before new messages arrive", async ({
+  page,
+}) => {
+  await page.goto("/ui/test-fixtures/chat");
+  const viewport = page.getByRole("region", { name: "Test chat", exact: true });
+  await expectAtEnd(
+    viewport,
+    viewport.getByText("Message 11", { exact: true }),
+  );
+  await viewport.hover();
+  const thumb = page.locator(
+    '[data-slot="scroll-area-scrollbar"][data-orientation="vertical"] [data-slot="scroll-area-thumb"]',
+  );
+  const box = await thumb.boundingBox();
+  if (!box) throw new Error("Expected scrollbar thumb");
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(box.x + box.width / 2, box.y - 250, { steps: 12 });
+  await page.mouse.up();
+  const first = viewport.getByText("Message 0", { exact: true });
+  await expect.poll(() => top(first, viewport)).toBe(0);
+  await page.getByRole("button", { name: "Receive", exact: true }).click();
+  await settle(viewport);
+  await expect.poll(() => top(first, viewport)).toBe(0);
+  await expect(
+    page.getByRole("button", { name: "1 unread", exact: true }),
+  ).toBeVisible();
+});
