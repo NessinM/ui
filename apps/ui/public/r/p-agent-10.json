@@ -1,0 +1,25 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "p-agent-10",
+  "description": "Agent status phases with a themeable shimmer while busy",
+  "registryDependencies": [
+    "@coss/agent",
+    "@coss/label",
+    "@coss/switch"
+  ],
+  "files": [
+    {
+      "path": "registry/default/particles/p-agent-10.tsx",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\nimport { AgentStatusIndicator } from \"@/registry/default/agent/agent-status-indicator\";\nimport { cn } from \"@/registry/default/lib/utils\";\nimport { Label } from \"@/registry/default/ui/label\";\nimport { Switch } from \"@/registry/default/ui/switch\";\n\nconst statuses = [\n  { label: \"Thinking…\", status: \"thinking\" },\n  { label: \"Checking your calendar…\", status: \"working\" },\n  { label: \"Response ready\", status: \"done\" },\n  { label: \"Response stopped\", status: \"stopped\" },\n  { label: \"Couldn’t reach the calendar\", status: \"failed\" },\n] as const;\n\nexport default function Particle() {\n  const [neutral, setNeutral] = useState(false);\n\n  return (\n    <div className=\"flex w-full max-w-xs flex-col gap-6\">\n      <div\n        className={cn(\n          \"flex flex-col gap-3\",\n          neutral &&\n            \"[--agent-shimmer:linear-gradient(105deg,transparent_30%,var(--color-foreground)_50%,transparent_70%)]\",\n        )}\n      >\n        {statuses.map(({ label, status }) => (\n          <AgentStatusIndicator key={status} status={status}>\n            {label}\n          </AgentStatusIndicator>\n        ))}\n      </div>\n      <Label>\n        <Switch checked={neutral} onCheckedChange={setNeutral} />\n        Neutral shimmer\n      </Label>\n    </div>\n  );\n}\n",
+      "type": "registry:block"
+    }
+  ],
+  "meta": {
+    "className": "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm"
+  },
+  "categories": [
+    "agent",
+    "loading"
+  ],
+  "type": "registry:block"
+}

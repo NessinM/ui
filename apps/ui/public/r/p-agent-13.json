@@ -1,0 +1,25 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "p-agent-13",
+  "description": "Result list showing the first rows with a show-more toggle",
+  "registryDependencies": [
+    "@coss/agent",
+    "@coss/badge"
+  ],
+  "files": [
+    {
+      "path": "registry/default/particles/p-agent-13.tsx",
+      "content": "\"use client\";\n\nimport {\n  type AgentResultItem,\n  AgentResultList,\n} from \"@/registry/default/agent/agent-result-list\";\nimport { Badge } from \"@/registry/default/ui/badge\";\n\nconst items: AgentResultItem[] = [\n  { description: \"Mon 09:30\", href: \"#\", id: \"1\", title: \"Design review\" },\n  {\n    description: \"Mon 11:00\",\n    href: \"#\",\n    id: \"2\",\n    title: \"Hiring sync\",\n    trailing: (\n      <Badge size=\"sm\" variant=\"warning\">\n        Pending\n      </Badge>\n    ),\n  },\n  { description: \"Tue 10:00\", href: \"#\", id: \"3\", title: \"Roadmap planning\" },\n  { description: \"Tue 15:30\", href: \"#\", id: \"4\", title: \"1:1 with Priya\" },\n  {\n    description: \"Wed 09:00\",\n    href: \"#\",\n    id: \"5\",\n    title: \"Customer call: Northwind\",\n    trailing: (\n      <Badge size=\"sm\" variant=\"secondary\">\n        External\n      </Badge>\n    ),\n  },\n  { description: \"Wed 14:00\", href: \"#\", id: \"6\", title: \"Brand workshop\" },\n  { description: \"Thu 10:00\", href: \"#\", id: \"7\", title: \"Sprint demo\" },\n  { description: \"Fri 16:00\", href: \"#\", id: \"8\", title: \"Team retro\" },\n];\n\nexport default function Particle() {\n  return (\n    <AgentResultList\n      className=\"max-w-sm\"\n      items={items}\n      showLessLabel=\"Show less\"\n      showMoreLabel={(count) => `Show ${count} more`}\n    />\n  );\n}\n",
+      "type": "registry:block"
+    }
+  ],
+  "meta": {
+    "className": "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm"
+  },
+  "categories": [
+    "agent",
+    "card",
+    "badge"
+  ],
+  "type": "registry:block"
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "p-agent-11",
+  "description": "Reasoning that opens while streaming and closes after it finishes",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "@coss/agent",
+    "@coss/button"
+  ],
+  "files": [
+    {
+      "path": "registry/default/particles/p-agent-11.tsx",
+      "content": "\"use client\";\n\nimport { RotateCcwIcon } from \"lucide-react\";\nimport { useEffect, useState } from \"react\";\nimport { AgentReasoning } from \"@/registry/default/agent/agent-reasoning\";\nimport { Button } from \"@/registry/default/ui/button\";\n\nconst reasoning =\n  \"The user wants an hour with the design team this week. Thursday morning is free for everyone except Priya, who is free after 14:00. Friday afternoon works for all four, so I’ll suggest Friday at 14:00 and offer Thursday as a fallback.\";\nconst chunks = reasoning.match(/\\S+\\s*/g) ?? [];\n\nexport default function Particle() {\n  const [count, setCount] = useState(0);\n  const [run, setRun] = useState(0);\n  const streaming = count < chunks.length;\n\n  useEffect(() => {\n    if (count >= chunks.length) return;\n    const timeout = window.setTimeout(() => setCount(count + 1), 70);\n    return () => window.clearTimeout(timeout);\n  }, [count]);\n\n  return (\n    <div className=\"flex w-full max-w-sm flex-col gap-6\">\n      <AgentReasoning\n        completedLabel=\"Thought for 3 seconds\"\n        key={run}\n        streaming={streaming}\n        streamingLabel=\"Thinking…\"\n      >\n        {chunks.slice(0, count).join(\"\")}\n      </AgentReasoning>\n      <Button\n        className=\"self-start\"\n        disabled={streaming}\n        size=\"sm\"\n        variant=\"outline\"\n        onClick={() => {\n          setRun(run + 1);\n          setCount(0);\n        }}\n      >\n        <RotateCcwIcon aria-hidden=\"true\" />\n        Replay\n      </Button>\n    </div>\n  );\n}\n",
+      "type": "registry:block"
+    }
+  ],
+  "meta": {
+    "className": "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm"
+  },
+  "categories": [
+    "agent",
+    "collapsible",
+    "loading"
+  ],
+  "type": "registry:block"
+}

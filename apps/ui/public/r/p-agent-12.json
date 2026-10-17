@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "p-agent-12",
+  "description": "Tool calls grouped behind one summary line, running, done, and failed",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "@coss/agent",
+    "@coss/button"
+  ],
+  "files": [
+    {
+      "path": "registry/default/particles/p-agent-12.tsx",
+      "content": "\"use client\";\n\nimport { CalendarIcon, RotateCcwIcon, UsersIcon } from \"lucide-react\";\nimport { useEffect, useState } from \"react\";\nimport {\n  AgentToolActivity,\n  type AgentToolRenderers,\n} from \"@/registry/default/agent/agent-tool-activity\";\nimport type { AgentToolCall } from \"@/registry/default/agent/lib/get-agent-tool-summary\";\nimport { Button } from \"@/registry/default/ui/button\";\n\nconst labels = {\n  denied: (count: number) =>\n    count === 1 ? \"Declined 1 step\" : `Declined ${count} steps`,\n  done: (count: number) =>\n    count === 1 ? \"Completed 1 step\" : `Completed ${count} steps`,\n  failed: (count: number) =>\n    count === 1 ? \"1 step failed\" : `${count} steps failed`,\n  running: (count: number) =>\n    count === 1 ? \"Running 1 step\" : `Running ${count} steps`,\n};\n\nconst renderers: AgentToolRenderers = {\n  availability: {\n    icon: <CalendarIcon />,\n    label: \"Checking availability\",\n    render: (call) =>\n      call.state === \"done\" ? `Found ${call.output} free slots` : undefined,\n  },\n  members: { icon: <UsersIcon />, label: \"Looking up the design team\" },\n};\n\nconst steps: AgentToolCall[][] = [\n  [{ id: \"1\", name: \"members\", state: \"running\" }],\n  [\n    { id: \"1\", name: \"members\", state: \"done\" },\n    { id: \"2\", name: \"availability\", state: \"running\" },\n  ],\n  [\n    { id: \"1\", name: \"members\", state: \"done\" },\n    { id: \"2\", name: \"availability\", output: 3, state: \"done\" },\n  ],\n];\n\nconst failed: AgentToolCall[] = [\n  { id: \"1\", name: \"members\", state: \"done\" },\n  {\n    error: \"The calendar service timed out.\",\n    id: \"2\",\n    name: \"availability\",\n    state: \"failed\",\n  },\n];\n\nexport default function Particle() {\n  const [step, setStep] = useState(0);\n  const running = step < steps.length - 1;\n\n  useEffect(() => {\n    if (!running) return;\n    const timeout = window.setTimeout(() => setStep(step + 1), 1600);\n    return () => window.clearTimeout(timeout);\n  }, [running, step]);\n\n  return (\n    <div className=\"flex w-full max-w-sm flex-col gap-4\">\n      <AgentToolActivity\n        calls={steps[step] ?? []}\n        labels={labels}\n        renderers={renderers}\n      />\n      <AgentToolActivity calls={failed} labels={labels} renderers={renderers} />\n      <Button\n        className=\"self-start\"\n        disabled={running}\n        size=\"sm\"\n        variant=\"outline\"\n        onClick={() => setStep(0)}\n      >\n        <RotateCcwIcon aria-hidden=\"true\" />\n        Replay\n      </Button>\n    </div>\n  );\n}\n",
+      "type": "registry:block"
+    }
+  ],
+  "meta": {
+    "className": "**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm"
+  },
+  "categories": [
+    "agent",
+    "collapsible",
+    "error"
+  ],
+  "type": "registry:block"
+}

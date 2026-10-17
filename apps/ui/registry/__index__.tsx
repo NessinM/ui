@@ -1169,7 +1169,7 @@ export const Index: Record<string, any> = {
     name: "agent",
     description: "Agent conversation, messages, message actions, and a screen reader announcer built on chat.",
     type: "registry:ui",
-    registryDependencies: ["@coss/button","@coss/chat","@coss/composer","@coss/toolbar","@coss/tooltip","@coss/use-copy-to-clipboard","@coss/use-media-query","@coss/utils"],
+    registryDependencies: ["@coss/button","@coss/card","@coss/chat","@coss/collapsible","@coss/composer","@coss/toolbar","@coss/tooltip","@coss/use-copy-to-clipboard","@coss/use-media-query","@coss/utils"],
     files: [{
       path: "registry/default/agent/agent-announcer.tsx",
       type: "registry:component",
@@ -1179,6 +1179,10 @@ export const Index: Record<string, any> = {
       type: "registry:component",
       target: "@components/agent/agent-conversation.tsx"
     },{
+      path: "registry/default/agent/agent-disclosure-trigger.tsx",
+      type: "registry:component",
+      target: "@components/agent/agent-disclosure-trigger.tsx"
+    },{
       path: "registry/default/agent/agent-message-actions.tsx",
       type: "registry:component",
       target: "@components/agent/agent-message-actions.tsx"
@@ -1186,6 +1190,26 @@ export const Index: Record<string, any> = {
       path: "registry/default/agent/agent-message.tsx",
       type: "registry:component",
       target: "@components/agent/agent-message.tsx"
+    },{
+      path: "registry/default/agent/agent-reasoning.tsx",
+      type: "registry:component",
+      target: "@components/agent/agent-reasoning.tsx"
+    },{
+      path: "registry/default/agent/agent-result-list.tsx",
+      type: "registry:component",
+      target: "@components/agent/agent-result-list.tsx"
+    },{
+      path: "registry/default/agent/agent-status-indicator.tsx",
+      type: "registry:component",
+      target: "@components/agent/agent-status-indicator.tsx"
+    },{
+      path: "registry/default/agent/agent-tool-activity.tsx",
+      type: "registry:component",
+      target: "@components/agent/agent-tool-activity.tsx"
+    },{
+      path: "registry/default/agent/agent-turn.tsx",
+      type: "registry:component",
+      target: "@components/agent/agent-turn.tsx"
     },{
       path: "registry/default/agent/hooks/use-agent-announcer.ts",
       type: "registry:component",
@@ -1199,9 +1223,25 @@ export const Index: Record<string, any> = {
       type: "registry:component",
       target: "@components/agent/lib/get-agent-announcement.ts"
     },{
+      path: "registry/default/agent/lib/get-agent-reasoning-state.ts",
+      type: "registry:component",
+      target: "@components/agent/lib/get-agent-reasoning-state.ts"
+    },{
       path: "registry/default/agent/lib/get-agent-scroll-offset.ts",
       type: "registry:component",
       target: "@components/agent/lib/get-agent-scroll-offset.ts"
+    },{
+      path: "registry/default/agent/lib/get-agent-tool-summary.ts",
+      type: "registry:component",
+      target: "@components/agent/lib/get-agent-tool-summary.ts"
+    },{
+      path: "registry/default/agent/lib/group-agent-tool-runs.ts",
+      type: "registry:component",
+      target: "@components/agent/lib/group-agent-tool-runs.ts"
+    },{
+      path: "registry/default/agent/lib/split-agent-result-items.ts",
+      type: "registry:component",
+      target: "@components/agent/lib/split-agent-result-items.ts"
     }],
     component: React.lazy(async () => {
       const mod = await import("@/registry/default/agent/agent-announcer.tsx")
@@ -1407,6 +1447,96 @@ export const Index: Record<string, any> = {
       return { default: mod.default || mod[exportName] }
     }),
     categories: ["agent","info"],
+    meta: {"className":"**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm"},
+  },
+  "p-agent-10": {
+    name: "p-agent-10",
+    description: "Agent status phases with a themeable shimmer while busy",
+    type: "registry:block",
+    registryDependencies: ["@coss/agent","@coss/label","@coss/switch"],
+    files: [{
+      path: "registry/default/particles/p-agent-10.tsx",
+      type: "registry:block",
+      target: ""
+    }],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/default/particles/p-agent-10.tsx")
+      const exportName = Object.keys(mod).find(key => typeof mod[key] === 'function' || typeof mod[key] === 'object') || item.name
+      return { default: mod.default || mod[exportName] }
+    }),
+    categories: ["agent","loading"],
+    meta: {"className":"**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm"},
+  },
+  "p-agent-11": {
+    name: "p-agent-11",
+    description: "Reasoning that opens while streaming and closes after it finishes",
+    type: "registry:block",
+    registryDependencies: ["@coss/agent","@coss/button"],
+    files: [{
+      path: "registry/default/particles/p-agent-11.tsx",
+      type: "registry:block",
+      target: ""
+    }],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/default/particles/p-agent-11.tsx")
+      const exportName = Object.keys(mod).find(key => typeof mod[key] === 'function' || typeof mod[key] === 'object') || item.name
+      return { default: mod.default || mod[exportName] }
+    }),
+    categories: ["agent","collapsible","loading"],
+    meta: {"className":"**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm"},
+  },
+  "p-agent-12": {
+    name: "p-agent-12",
+    description: "Tool calls grouped behind one summary line, running, done, and failed",
+    type: "registry:block",
+    registryDependencies: ["@coss/agent","@coss/button"],
+    files: [{
+      path: "registry/default/particles/p-agent-12.tsx",
+      type: "registry:block",
+      target: ""
+    }],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/default/particles/p-agent-12.tsx")
+      const exportName = Object.keys(mod).find(key => typeof mod[key] === 'function' || typeof mod[key] === 'object') || item.name
+      return { default: mod.default || mod[exportName] }
+    }),
+    categories: ["agent","collapsible","error"],
+    meta: {"className":"**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm"},
+  },
+  "p-agent-13": {
+    name: "p-agent-13",
+    description: "Result list showing the first rows with a show-more toggle",
+    type: "registry:block",
+    registryDependencies: ["@coss/agent","@coss/badge"],
+    files: [{
+      path: "registry/default/particles/p-agent-13.tsx",
+      type: "registry:block",
+      target: ""
+    }],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/default/particles/p-agent-13.tsx")
+      const exportName = Object.keys(mod).find(key => typeof mod[key] === 'function' || typeof mod[key] === 'object') || item.name
+      return { default: mod.default || mod[exportName] }
+    }),
+    categories: ["agent","card","badge"],
+    meta: {"className":"**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm"},
+  },
+  "p-agent-14": {
+    name: "p-agent-14",
+    description: "An agent turn rendering host parts with grouped tool calls and results",
+    type: "registry:block",
+    registryDependencies: ["@coss/agent","@coss/button","@coss/chat"],
+    files: [{
+      path: "registry/default/particles/p-agent-14.tsx",
+      type: "registry:block",
+      target: ""
+    }],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/default/particles/p-agent-14.tsx")
+      const exportName = Object.keys(mod).find(key => typeof mod[key] === 'function' || typeof mod[key] === 'object') || item.name
+      return { default: mod.default || mod[exportName] }
+    }),
+    categories: ["agent","loading"],
     meta: {"className":"**:data-[slot=preview]:w-full **:data-[slot=preview]:max-w-sm"},
   },
   "p-alert-4": {
